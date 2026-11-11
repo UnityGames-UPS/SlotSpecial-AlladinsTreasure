@@ -1,0 +1,1235 @@
+fileFormatVersion: 2
+guid: 6656ce6840217412aa23ac0c7e75930f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1691263215837254652
+    second: GemStone blast_00019_0
+  - first:
+      213: -7485499055827974710
+    second: GemStone blast_00019_1
+  - first:
+      213: 2321900684686124926
+    second: GemStone blast_00019_2
+  - first:
+      213: -2628994604687876158
+    second: GemStone blast_00019_3
+  - first:
+      213: -1856021886161838756
+    second: GemStone blast_00019_4
+  - first:
+      213: 7607691832878784485
+    second: GemStone blast_00019_5
+  - first:
+      213: -970829523676622121
+    second: GemStone blast_00019_6
+  - first:
+      213: -8671017803744904748
+    second: GemStone blast_00019_7
+  - first:
+      213: -8929066471145494665
+    second: GemStone blast_00019_8
+  - first:
+      213: -8539363786091486712
+    second: GemStone blast_00019_9
+  - first:
+      213: 4372831008268066465
+    second: GemStone blast_00019_10
+  - first:
+      213: 2960503287634767841
+    second: GemStone blast_00019_11
+  - first:
+      213: -6842211629030575484
+    second: GemStone blast_00019_12
+  - first:
+      213: -4422555099157122159
+    second: GemStone blast_00019_13
+  - first:
+      213: -8436904605081406873
+    second: GemStone blast_00019_14
+  - first:
+      213: -7613878406911944803
+    second: GemStone blast_00019_15
+  - first:
+      213: 1126170726480548077
+    second: GemStone blast_00019_16
+  - first:
+      213: 4598946618641149923
+    second: GemStone blast_00019_17
+  - first:
+      213: -6799698423764578060
+    second: GemStone blast_00019_18
+  - first:
+      213: 6630147252041489390
+    second: GemStone blast_00019_19
+  - first:
+      213: -5894069983817201487
+    second: GemStone blast_00019_20
+  - first:
+      213: 1921941419583833963
+    second: GemStone blast_00019_21
+  - first:
+      213: -5065616703953009957
+    second: GemStone blast_00019_22
+  - first:
+      213: -336808753858743117
+    second: GemStone blast_00019_23
+  - first:
+      213: -7225859149147834605
+    second: GemStone blast_00019_24
+  - first:
+      213: 7440008651146784187
+    second: GemStone blast_00019_25
+  - first:
+      213: -6398303909966680674
+    second: GemStone blast_00019_26
+  - first:
+      213: -6761169702793422414
+    second: GemStone blast_00019_27
+  - first:
+      213: -2971075135600014180
+    second: GemStone blast_00019_28
+  - first:
+      213: -886150178504339801
+    second: GemStone blast_00019_29
+  - first:
+      213: -5146208756877229751
+    second: GemStone blast_00019_30
+  - first:
+      213: -1048651199719363076
+    second: GemStone blast_00019_31
+  - first:
+      213: -3992529531247933764
+    second: GemStone blast_00019_32
+  - first:
+      213: 4478804241814979460
+    second: GemStone blast_00019_33
+  - first:
+      213: -7764469253322808677
+    second: GemStone blast_00019_34
+  - first:
+      213: 8184086798791922593
+    second: GemStone blast_00019_35
+  - first:
+      213: -946645728268751835
+    second: GemStone blast_00019_36
+  - first:
+      213: 2341934512302068324
+    second: GemStone blast_00019_37
+  - first:
+      213: 5184706504482517086
+    second: GemStone blast_00019_38
+  - first:
+      213: 3318225444412844451
+    second: GemStone blast_00019_39
+  - first:
+      213: -4502882270144741453
+    second: GemStone blast_00019_40
+  - first:
+      213: 5568414578090199693
+    second: GemStone blast_00019_41
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: GemStone blast_00019_0
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 559
+        width: 37
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40ce55ed01d6788e0800000000000000
+      internalID: -1691263215837254652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_1
+      rect:
+        serializedVersion: 2
+        x: 319
+        y: 562
+        width: 22
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac50ad2c44a2e1890800000000000000
+      internalID: -7485499055827974710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_2
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 581
+        width: 14
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e77e37aee5c093020800000000000000
+      internalID: 2321900684686124926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_3
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 578
+        width: 30
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cf1927065fe38bd0800000000000000
+      internalID: -2628994604687876158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_4
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 567
+        width: 24
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5d19fb9de51e36e0800000000000000
+      internalID: -1856021886161838756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_5
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 592
+        width: 30
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ef516b2a63f39960800000000000000
+      internalID: 7607691832878784485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_6
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 531
+        width: 28
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d21bcf11bbe682f0800000000000000
+      internalID: -970829523676622121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_7
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 521
+        width: 72
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d972be9f3b5aa780800000000000000
+      internalID: -8671017803744904748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_8
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 527
+        width: 33
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 777a58b4a55951480800000000000000
+      internalID: -8929066471145494665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_9
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 552
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 802ae2a41e51e7980800000000000000
+      internalID: -8539363786091486712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_10
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 464
+        width: 85
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ae91ae32aa6fac30800000000000000
+      internalID: 4372831008268066465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_11
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 423
+        width: 95
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1efa8dffd02d51920800000000000000
+      internalID: 2960503287634767841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_12
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 509
+        width: 82
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 482f59566c49b01a0800000000000000
+      internalID: -6842211629030575484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_13
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 422
+        width: 41
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 193b52ba19def92c0800000000000000
+      internalID: -4422555099157122159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_14
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 478
+        width: 81
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 762f34a56f71aea80800000000000000
+      internalID: -8436904605081406873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_15
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 495
+        width: 74
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d971ff0dde1165690800000000000000
+      internalID: -7613878406911944803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_16
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 403
+        width: 23
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de0115c1f46f0af00800000000000000
+      internalID: 1126170726480548077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_17
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 449
+        width: 42
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3efe619559db2df30800000000000000
+      internalID: 4598946618641149923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_18
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 389
+        width: 76
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f09ab75f4e92a1a0800000000000000
+      internalID: -6799698423764578060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_19
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 338
+        width: 59
+        height: 127
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeb17763cc3030c50800000000000000
+      internalID: 6630147252041489390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_20
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 413
+        width: 25
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b8884de39e043ea0800000000000000
+      internalID: -5894069983817201487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_21
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 374
+        width: 48
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b678769c98b1caa10800000000000000
+      internalID: 1921941419583833963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_22
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 417
+        width: 36
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd28890527053b9b0800000000000000
+      internalID: -5065616703953009957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_23
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 291
+        width: 44
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b4f10d093a635bf0800000000000000
+      internalID: -336808753858743117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_24
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 385
+        width: 30
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 317790a536798bb90800000000000000
+      internalID: -7225859149147834605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_25
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 345
+        width: 25
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbdef690378304760800000000000000
+      internalID: 7440008651146784187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_26
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 372
+        width: 46
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9d61795e78a437a0800000000000000
+      internalID: -6398303909966680674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_27
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 269
+        width: 91
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b95dde3aff7b22a0800000000000000
+      internalID: -6761169702793422414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_28
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 314
+        width: 26
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9cc095d7ee94c6d0800000000000000
+      internalID: -2971075135600014180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_29
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 313
+        width: 18
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ae89909b13c3b3f0800000000000000
+      internalID: -886150178504339801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_30
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 329
+        width: 40
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9410452c66ef498b0800000000000000
+      internalID: -5146208756877229751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_31
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 304
+        width: 11
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfda0733a417271f0800000000000000
+      internalID: -1048651199719363076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_32
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 323
+        width: 12
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb6c5be6b8fa798c0800000000000000
+      internalID: -3992529531247933764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_33
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 334
+        width: 8
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48305eb6ab8e72e30800000000000000
+      internalID: 4478804241814979460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_34
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 254
+        width: 60
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b92604e1a501f3490800000000000000
+      internalID: -7764469253322808677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_35
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 245
+        width: 52
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a3d4f41597b39170800000000000000
+      internalID: 8184086798791922593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_36
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 253
+        width: 41
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52c6666c9b6dcd2f0800000000000000
+      internalID: -946645728268751835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_37
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 253
+        width: 62
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4621ef4e709308020800000000000000
+      internalID: 2341934512302068324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_38
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 262
+        width: 11
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5076589817c3f740800000000000000
+      internalID: 5184706504482517086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_39
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 199
+        width: 37
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a9e3e20674bc0e20800000000000000
+      internalID: 3318225444412844451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_40
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 199
+        width: 34
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bf3e9ebe6c8281c0800000000000000
+      internalID: -4502882270144741453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GemStone blast_00019_41
+      rect:
+        serializedVersion: 2
+        x: 497
+        y: 199
+        width: 104
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8a4c295e8bf64d40800000000000000
+      internalID: 5568414578090199693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      GemStone blast_00019_0: -1691263215837254652
+      GemStone blast_00019_1: -7485499055827974710
+      GemStone blast_00019_10: 4372831008268066465
+      GemStone blast_00019_11: 2960503287634767841
+      GemStone blast_00019_12: -6842211629030575484
+      GemStone blast_00019_13: -4422555099157122159
+      GemStone blast_00019_14: -8436904605081406873
+      GemStone blast_00019_15: -7613878406911944803
+      GemStone blast_00019_16: 1126170726480548077
+      GemStone blast_00019_17: 4598946618641149923
+      GemStone blast_00019_18: -6799698423764578060
+      GemStone blast_00019_19: 6630147252041489390
+      GemStone blast_00019_2: 2321900684686124926
+      GemStone blast_00019_20: -5894069983817201487
+      GemStone blast_00019_21: 1921941419583833963
+      GemStone blast_00019_22: -5065616703953009957
+      GemStone blast_00019_23: -336808753858743117
+      GemStone blast_00019_24: -7225859149147834605
+      GemStone blast_00019_25: 7440008651146784187
+      GemStone blast_00019_26: -6398303909966680674
+      GemStone blast_00019_27: -6761169702793422414
+      GemStone blast_00019_28: -2971075135600014180
+      GemStone blast_00019_29: -886150178504339801
+      GemStone blast_00019_3: -2628994604687876158
+      GemStone blast_00019_30: -5146208756877229751
+      GemStone blast_00019_31: -1048651199719363076
+      GemStone blast_00019_32: -3992529531247933764
+      GemStone blast_00019_33: 4478804241814979460
+      GemStone blast_00019_34: -7764469253322808677
+      GemStone blast_00019_35: 8184086798791922593
+      GemStone blast_00019_36: -946645728268751835
+      GemStone blast_00019_37: 2341934512302068324
+      GemStone blast_00019_38: 5184706504482517086
+      GemStone blast_00019_39: 3318225444412844451
+      GemStone blast_00019_4: -1856021886161838756
+      GemStone blast_00019_40: -4502882270144741453
+      GemStone blast_00019_41: 5568414578090199693
+      GemStone blast_00019_5: 7607691832878784485
+      GemStone blast_00019_6: -970829523676622121
+      GemStone blast_00019_7: -8671017803744904748
+      GemStone blast_00019_8: -8929066471145494665
+      GemStone blast_00019_9: -8539363786091486712
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

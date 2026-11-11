@@ -1,0 +1,314 @@
+{
+  "id": "SL-AT",
+  "bets": [
+    0.01,
+    0.05,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1
+  ],
+  "ways": 243,
+  "matrix": {
+    "x": 5,
+    "y": 3
+  },
+  "symbols": [
+    {
+      "id": 0,
+      "name": "Fairy",
+      "group": "high",
+      "payout": [
+        100,
+        100,
+        600
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 2,
+        "1": 2,
+        "2": 2,
+        "3": 1,
+        "4": 1
+      }
+    },
+    {
+      "id": 1,
+      "name": "Unicorn",
+      "group": "high",
+      "payout": [
+        50,
+        100,
+        400
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 3,
+        "1": 3,
+        "2": 2,
+        "3": 2,
+        "4": 2
+      }
+    },
+    {
+      "id": 2,
+      "name": "Squirrel",
+      "group": "high",
+      "payout": [
+        40,
+        80,
+        250
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 4,
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3
+      }
+    },
+    {
+      "id": 3,
+      "name": "Mushrooms",
+      "group": "high",
+      "payout": [
+        30,
+        60,
+        200
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 5,
+        "1": 5,
+        "2": 4,
+        "3": 4,
+        "4": 4
+      }
+    },
+    {
+      "id": 4,
+      "name": "Lotus",
+      "group": "high",
+      "payout": [
+        20,
+        30,
+        120
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 6,
+        "1": 6,
+        "2": 5,
+        "3": 5,
+        "4": 5
+      }
+    },
+    {
+      "id": 5,
+      "name": "A",
+      "group": "low",
+      "payout": [
+        10,
+        20,
+        50
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 10,
+        "1": 10,
+        "2": 10,
+        "3": 9,
+        "4": 9
+      }
+    },
+    {
+      "id": 6,
+      "name": "K",
+      "group": "low",
+      "payout": [
+        10,
+        20,
+        50
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 10,
+        "1": 10,
+        "2": 10,
+        "3": 9,
+        "4": 9
+      }
+    },
+    {
+      "id": 7,
+      "name": "Q",
+      "group": "low",
+      "payout": [
+        5,
+        10,
+        25
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 12,
+        "1": 12,
+        "2": 12,
+        "3": 11,
+        "4": 11
+      }
+    },
+    {
+      "id": 8,
+      "name": "J",
+      "group": "low",
+      "payout": [
+        5,
+        10,
+        25
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 12,
+        "1": 12,
+        "2": 12,
+        "3": 11,
+        "4": 11
+      }
+    },
+    {
+      "id": 9,
+      "name": "10",
+      "group": "low",
+      "payout": [
+        5,
+        10,
+        25
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 14,
+        "1": 14,
+        "2": 14,
+        "3": 12,
+        "4": 12
+      }
+    },
+    {
+      "id": 10,
+      "name": "9",
+      "group": "low",
+      "payout": [
+        5,
+        10,
+        25
+      ],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 14,
+        "1": 14,
+        "2": 14,
+        "3": 12,
+        "4": 12
+      }
+    },
+    {
+      "id": 11,
+      "name": "Wild",
+      "group": "wild",
+      "payout": [],
+      "minMatch": 3,
+      "allowedReels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "reelsInstance": {
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 2
+      }
+    },
+    {
+      "id": 12,
+      "name": "BlueOrb",
+      "group": "scatter",
+      "payout": [],
+      "minMatch": 3,
+      "allowedReels": [],
+      "reelsInstance": {
+        "0": 2,
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 2
+      }
+    }
+  ],
+  "features": {
+    "wild": {
+      "enabled": true,
+      "symbolId": 11,
+      "freeGameReels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "mainGameReels": [
+        1,
+        2,
+        3
+      ]
+    },
+    "scatter": {
+      "enabled": true,
+      "symbolId": 12,
+      "minTrigger": 3
+    },
+    "freeGames": {
+      "frames": {
+        "endPrizes": {
+          "blue": 2,
+          "orange": 5,
+          "purple": 3
+        },
+        "orangeHitMultiplier": 10
+      },
+      "enabled": true,
+      "payMultiplier": 1,
+      "awardedOnTrigger": 10,
+      "retriggerEnabled": true,
+      "excludedSymbolIds": [
+        9,
+        10
+      ],
+      "maxTotalFreeGames": 300,
+      "awardedOnRetrigger": 3
+    }
+  },
+  "isSpecial": false,
+  "linesCount": [
+    243
+  ],
+  "creditDivisor": 50
+}
