@@ -9,19 +9,27 @@ public class GameManager : MonoBehaviour
     [SerializeField] internal UIManager uiManager;
     [SerializeField] private PopupManager popupManager;
     [SerializeField] private SlotView slotView;
-    [Tooltip("The free-spins screen furniture (FreeGameView). Wild Jokers' for now — rewritten for Aladdin's Treasure's free games.")]
+    [Tooltip("The free games' screen (FreeGameView) — the transition, the backgrounds, the top panel and TOTAL PRIZE.")]
     [SerializeField] private FreeGameView freeGameView;
-    [Tooltip("The feature popup (FeaturePopupView) — CONGRATULATIONS, TOTAL WIN. Wild Jokers' for now — rewritten for Aladdin's Treasure's free games.")]
+    [Tooltip("The free games' popups (FeaturePopupView) — \"N FREE GAMES\" and CONGRATULATIONS / COLLECT.")]
     [SerializeField] private FeaturePopupView featurePopupView;
+    [Tooltip("The free games' layer over the board (FramesView) — the frames, their effect, the end orbs and their prizes.")]
+    [SerializeField] private FramesView framesView;
 
     [Header("Spin Settings")]
     [SerializeField] private float normalSpinDuration = 3.5f;
     [SerializeField] private float turboSpinDuration = 2.0f;
     [SerializeField] private float quickSpinCycleDuration = 0.1f;
 
-    // How long a Free Spins trigger's (or retrigger's) boxes play before CONGRATULATIONS shows.
-    // A placeholder until the owner signs off the timings.
-    private const float TriggerBoxesHold = 1.5f;
+    [Header("Free Games Timings (ATFreeGamesBonus.md)")]
+    [Tooltip("How long FEATURE COMPLETE holds before the prize reveal (§5.6; owner: about 1 s).")]
+    [SerializeField] private float featureCompleteHold = 1f;
+    [Tooltip("A free game whose frames changed but that won nothing: the hold AFTER the frame effect ends, before the next game (§5.4; owner: 0.5 s).")]
+    [SerializeField] private float frameOnlyHold = 0.5f;
+    [Tooltip("A free game with no frame change and no win: the hold before the next game (§5.4; owner: 0.5 s).")]
+    [SerializeField] private float nothingHold = 0.5f;
+    [Tooltip("How long the win box takes to count a free game's win up onto the running total (§5.4).")]
+    [SerializeField] private float winCountUpDuration = 1f;
 
     // The big-win popup is switched off game-wide for now (owner, 2026-11-03). Set true to bring it
     // back; its threshold is bigWinMultiplierThreshold below.
@@ -49,22 +57,22 @@ public class GameManager : MonoBehaviour
     internal int savedAutoPlayRemainingRounds;
     internal int savedAutoPlayTotalRounds;
 
-    // Free Spins' round, all from the server's payload.freeSpins (BonusFreeSpins.md §9.4) — the client
-    // counts nothing itself. This is Wild Jokers' round, kept (dormant: Aladdin's Treasure never sends
-    // freeSpins) as the plumbing the AT free games are built on — ATFreeGamesBonus.md.
+    // The free games (ATFreeGamesBonus.md) — true from the transition in to the transition out. The
+    // name is inherited from the free-spins games; UIManager and SlotView read it.
     internal bool isInFreeSpins;
-    internal int freeSpinsRemaining;      // spins left after the last result; a retrigger folds in
-    internal int freeSpinsPlayed;         // the counter's X: totalSpins - spinsRemaining
-    internal int freeSpinsTotal;          // the counter's Y as shown: totalSpins, held back during a retrigger's presentation
-    internal double freeSpinsRoundWin;    // the round's running total: totalWinCash
+    // What the win box shows during the bonus: the running total as the player has seen it — each
+    // game's win counted up onto it, each end orb's prize added. Ends on the server's totalWin.
+    internal double freeSpinsRoundWin;
+    // The round's games so far (the server's totalAwarded) — a retrigger adds the change in it.
+    private int freeGamesTotalAwarded;
+    // The count the top panel shows during the next game: the last result's remaining.
+    private int freeGamesShownRemaining;
+    // The board the bonus was triggered on, put back on the reels when it ends (§8).
+    private List<List<int>> triggerMatrix;
 
-    // A retrigger landed and its Drums have not been shown yet — the counter's Y waits for them.
-    private bool retriggerPending;
-    private int retriggerTotal;
-
-    // A feature holding the shown balance back while the server's already includes its pay: Free Spins
-    // for the whole round, until TAKE (BonusFreeSpins.md §7). AT's free games do the same
-    // (ATFreeGamesBonus.md §8).
+    // A feature holding the shown balance back while the server's already includes its pay: the free
+    // games, for the whole round — the server credits each game as it is won, the player sees it all
+    // at the end (ATFreeGamesBonus.md §8, §11.5 item 5).
     private bool balanceHeld;
     private double heldBalance;
 
@@ -109,10 +117,16 @@ public class GameManager : MonoBehaviour
         isInitialized = true;
         currentState = GameState.Idle;
 
-        // The feature views start in the base game's look whatever the scene was saved with: logo on,
-        // Free Game panel, black film and feature popup off.
+        // The feature views start in the base game's look whatever the scene was saved with: base
+        // background, no top panel, no popups, no frames or orbs.
         if (freeGameView != null) freeGameView.ResetToBaseGame();
         if (featurePopupView != null) featurePopupView.HideImmediate();
+        if (framesView != null)
+        {
+            framesView.Configure(gameConfig.reelCount);
+            framesView.ResetAll();
+        }
+        if (slotView != null) slotView.SetFreeGamesFiller(false);
 
         uiManager.OnGameInitialized();
     }
@@ -252,9 +266,13 @@ public class GameManager : MonoBehaviour
 
         uiManager.OnSpinStarted();
 
+        // A free game: the count goes down as it starts (it includes this game — "LAST SPIN" at 1),
+        // and the reels all start together (ATFreeGamesBonus.md §5.1, §5.2).
+        if (isInFreeSpins && freeGameView != null) freeGameView.ShowRemaining(freeGamesShownRemaining);
+
         if (slotView != null)
         {
-            slotView.StartSpin();
+            slotView.StartSpin(together: isInFreeSpins);
         }
 
         socketManager.SendSpinRequest(currentBetIndex);
@@ -336,11 +354,17 @@ public class GameManager : MonoBehaviour
     // Everything that happens once the board is final.
     private void PresentSpinOutcome()
     {
-        // A base-game spin that triggers Free Spins hands the game over to the round (a retrigger is
-        // the round's own, PlayRetriggerSequence).
-        if (IsFreeSpinsTrigger(lastResult))
+        // A free game plays its own outcome: frames, wins, a retrigger, then the next game or the end.
+        if (isInFreeSpins)
         {
-            StartCoroutine(PlayFreeSpinsFeature(lastResult));
+            StartCoroutine(PlayFreeGame(lastResult));
+            return;
+        }
+
+        // A base-game spin that triggers the free games hands the game over to the bonus.
+        if (IsFreeGamesTrigger(lastResult))
+        {
+            StartCoroutine(PlayFreeGamesTrigger(lastResult));
             return;
         }
 
@@ -445,47 +469,14 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        // A retrigger: the Drum boxes and CONGRATULATIONS, then the counter's Y climbs to its new
-        // figure. No black fade and no START; the round simply carries on (owner).
-        if (isInFreeSpins && retriggerPending)
-        {
-            yield return StartCoroutine(PlayRetriggerSequence());
-        }
-
         ResumeAfterSpecialFeature();
     }
 
-    private IEnumerator PlayRetriggerSequence()
-    {
-        retriggerPending = false;
-
-        // One frame first: this runs from the win presentation's completion callback, and that
-        // presentation tears its layer down right after the callback returns during free spins —
-        // which would take the Drum boxes with it.
-        yield return null;
-
-        if (slotView != null) slotView.ShowFeatureTriggerBoxes(gameConfig != null ? gameConfig.freeSpinsSymbolId : -1);
-        yield return new WaitForSeconds(TriggerBoxesHold);
-
-        int added = retriggerTotal - freeSpinsTotal;
-        if (added <= 0 && gameConfig != null) added = gameConfig.freeSpinsCount;
-        yield return ShowFreeSpinsAwarded(added);
-
-        freeSpinsTotal = retriggerTotal;
-        if (freeGameView != null) freeGameView.UpdateCounter(freeSpinsPlayed, freeSpinsTotal);
-    }
-
-    // CONGRATULATIONS for an award of spins; returns once the popup has gone.
-    private IEnumerator ShowFreeSpinsAwarded(int spins)
-    {
-        bool closed = featurePopupView == null;
-        if (featurePopupView != null) featurePopupView.ShowFreeSpinsAwarded(spins, () => closed = true);
-        yield return new WaitUntil(() => closed);
-    }
-
+    // The base game's way on after a spin. The free games never come through here — PlayFreeGame
+    // carries the bonus on itself.
     private void ResumeAfterSpecialFeature()
     {
-        if (isAutoPlaying || isInFreeSpins)
+        if (isAutoPlaying)
         {
             StartCoroutine(DelayBeforeNextRound());
         }
@@ -529,38 +520,7 @@ public class GameManager : MonoBehaviour
 
         // The result is not handed to SlotView here. It writes the landed sprites itself as each reel
         // lands (StopSingleReel), in the same frame as the landing snap, so the swap is never seen.
-
-        // Update the round's numbers as soon as the response lands, so the counter moves as the spin
-        // starts. All of it is the server's: X = totalSpins - spinsRemaining, Y = totalSpins.
-        if (isInFreeSpins)
-        {
-            FreeGameData round = result.freeGame;
-            if (round == null || !round.present)
-            {
-                // Should never happen inside a round. Ending it is the one safe reading: the TOTAL WIN
-                // shows the last total the server sent, and the balance its own figure at TAKE.
-                Debug.LogError("[GameManager] A free spin's result carried no freeSpins block — ending the round.");
-                freeSpinsRemaining = 0;
-                return;
-            }
-
-            freeSpinsRemaining = round.spinsRemaining;
-            freeSpinsPlayed = round.totalSpins - round.spinsRemaining;
-            freeSpinsRoundWin = round.roundWin;
-
-            // A retrigger's new Y waits until its Drums and popup have shown — this only records it.
-            if (round.spinsAwarded)
-            {
-                retriggerPending = true;
-                retriggerTotal = round.totalSpins;
-            }
-            else
-            {
-                freeSpinsTotal = round.totalSpins;
-            }
-
-            if (freeGameView != null) freeGameView.UpdateCounter(freeSpinsPlayed, freeSpinsTotal);
-        }
+        // The free games read their figures once the reels have landed (PlayFreeGame).
     }
 
     private void ProcessSpinResult()
@@ -574,7 +534,7 @@ public class GameManager : MonoBehaviour
         // counter, so the two do not agree.
         lastResult = null;
 
-        if (isAutoPlaying && !isInFreeSpins)
+        if (isAutoPlaying)
         {
             if (autoPlayTotalRounds != -1)
             {
@@ -604,22 +564,6 @@ public class GameManager : MonoBehaviour
                     currentState = GameState.Idle;
                     RequestSpin();
                 }
-            }
-        }
-        else if (isInFreeSpins)
-        {
-            // Counters were updated in OnSpinResultReceived. spinsRemaining is the count *after*
-            // this spin, so zero means the round is done; a retrigger on the last spin has already
-            // put it back up. (The server's "active" flag on the last spin is not captured yet —
-            // BonusFreeSpins.md §9.4.)
-            if (freeSpinsRemaining <= 0)
-            {
-                EndFreeSpins();
-            }
-            else
-            {
-                currentState = GameState.Idle;
-                StartCoroutine(DelayBeforeNextFreeSpin());
             }
         }
         else
@@ -756,156 +700,291 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-    #region Free Spins
+    #region Free Games
 
-    // Free Spins (BonusFreeSpins.md): the trigger presentation, a round that plays itself, and TOTAL
-    // WIN / TAKE. Every figure is the server's (payload.freeSpins); the views animate and call back.
+    // Aladdin's Treasure's Free Games Bonus (ATFreeGamesBonus.md). GameManager runs the sequence; the
+    // views animate and call back. Every figure is the server's (payload.freeGames); the client counts
+    // nothing itself but the win box's running total, which it checks against the server's at the end.
 
-    // A base-game spin that awards Free Spins. A retrigger (awarded inside the round) is not one —
-    // it is presented by PlayRetriggerSequence.
-    private bool IsFreeSpinsTrigger(SpinResult result)
+    // A base-game spin that triggers the free games.
+    private bool IsFreeGamesTrigger(SpinResult result)
     {
-        if (isInFreeSpins || result == null || result.freeGame == null) return false;
-        return result.freeGame.spinsAwarded && !result.freeGame.active;
+        if (isInFreeSpins || result == null || result.freeGames == null) return false;
+        return result.freeGames.present && result.freeGames.triggered;
     }
 
-    // The trigger (BonusFreeSpins.md §5): win boxes on the Drums, CONGRATULATIONS, fade to black, the
-    // Free Game panel in place of the logo, fade back in, START. The game is already taken over
-    // (BeginFeatureSession); the round's TAKE (FreeSpinsOutro) hands it back.
-    private IEnumerator PlayFreeSpinsTrigger(SpinResult result)
+    // The trigger (§3, §4):
+    //  1. the game is taken over; the trigger spin's own win only reaches the balance — no win
+    //     presentation, the win box untouched (§3.2) — and from here the shown balance is held;
+    //  2. the BlueOrbs loop (no win box, no dim);
+    //  3. "N FREE GAMES" pops in, holds, pops out;
+    //  4. the transition — behind it the orbs stop, the free-games background and top panel come in,
+    //     the win box goes to 0 and the filler switches to the free games';
+    //  5. after it, in view, the Blue frames appear on the triggering positions with their effect;
+    //  6. START.
+    private IEnumerator PlayFreeGamesTrigger(SpinResult result)
     {
-        FreeGameData award = result.freeGame;
+        FreeGamesData award = result.freeGames;
+        triggerMatrix = result.resultMatrix;
 
-        // The trigger spin's own line win was paid on this spin: it shows in the win box, but its
-        // lines are not animated — the Drums are the presentation (owner).
-        uiManager.OnSpinStopping(result);
+        BeginFeatureSession(result);
 
-        if (slotView != null) slotView.ShowFeatureTriggerBoxes(gameConfig != null ? gameConfig.freeSpinsSymbolId : -1);
-        yield return new WaitForSeconds(TriggerBoxesHold);
+        heldBalance = playerData != null ? playerData.balance : 0;
+        balanceHeld = true;
+        uiManager.UpdateBalanceDisplay();
 
-        yield return ShowFreeSpinsAwarded(award.totalSpins);
+        int orbId = gameConfig != null ? gameConfig.freeSpinsSymbolId : -1;
+        if (slotView != null) slotView.LoopSymbolCells(orbId);
 
-        StartFreeSpins(award);
+        yield return ShowGamesAwarded(award.totalAwarded);
 
-        // The win box switches from the trigger spin's paid win to the round's running total while the
-        // screen is fully black, so the change is never seen — and the music to the round's.
-        void OnBlack()
+        void Covered()
         {
-            uiManager.RefreshFeatureDisplays();
+            if (slotView != null)
+            {
+                slotView.ClearWinPresentation();
+                slotView.SetFreeGamesFiller(true);
+            }
+
+            isInFreeSpins = true;
+            freeGamesTotalAwarded = award.totalAwarded;
+            freeGamesShownRemaining = award.remaining;
+            freeSpinsRoundWin = 0;
+
+            if (freeGameView != null)
+            {
+                freeGameView.ShowFreeGamesLook(true);
+                freeGameView.ShowRemaining(award.remaining);
+            }
+
+            uiManager.SetWinDisplay(0);
             AudioManager.Instance?.PlayFreeSpinsMusic();
         }
 
-        bool entered = freeGameView == null;
-        if (freeGameView != null)
-        {
-            freeGameView.EnterRound(freeSpinsPlayed, freeSpinsTotal, OnBlack, () => entered = true);
-        }
-        else
-        {
-            OnBlack();
-        }
-        yield return new WaitUntil(() => entered);
+        yield return PlayTransition(Covered);
 
-        pendingFeatureStart = BeginFreeSpins;
+        bool framesShown = framesView == null;
+        if (framesView != null) framesView.ShowFrames(award.frameLevels, () => framesShown = true);
+        yield return new WaitUntil(() => framesShown);
+
+        pendingFeatureStart = BeginFreeGames;
         uiManager.SetSpinButtonMode(UIManager.SpinButtonMode.FeatureStart);
     }
 
-    // The round's state, from the trigger's figures. From here the shown balance is held at the
-    // balance after the trigger spin — the same figure already on screen, so nothing visibly changes.
-    // The win box is switched to the round's running total by the caller, under the black fade.
-    private void StartFreeSpins(FreeGameData award)
-    {
-        isInFreeSpins = true;
-        freeSpinsRemaining = award.spinsRemaining;
-        freeSpinsTotal = award.totalSpins;
-        freeSpinsPlayed = award.totalSpins - award.spinsRemaining;
-        freeSpinsRoundWin = award.roundWin;
-        retriggerPending = false;
-        heldBalance = playerData != null ? playerData.balance : 0;
-        balanceHeld = true;
-    }
-
-    // START: the first free spin, straight away.
-    private void BeginFreeSpins()
+    // START: the first free game, straight away. The rest follow on their own.
+    private void BeginFreeGames()
     {
         currentState = GameState.Idle;
 
-        // Out of the explicit START mode, so the spins can put the button into Stop.
+        // Out of the explicit START mode, so the games can put the button into Stop.
         uiManager.ReleaseSpinButton(false);
         RequestSpin();
     }
 
-    private IEnumerator DelayBeforeNextFreeSpin()
+    // One free game, once its reels have landed (§5.3–§5.5):
+    //  1. its frame changes, all together, each with the effect (an Orange hit has no visual yet — V-9);
+    //  2. its ways wins — the overall win only — with the win box counting this game's win (ways +
+    //     Orange hit) up onto the running total; or a short hold when it won nothing;
+    //  3. a retrigger, when the round's total grew: the orbs loop and "N FREE GAMES" shows the games
+    //     actually added (a retrigger at the cap adds none and plays as an ordinary game);
+    //  4. the next game — or, after the last, the end phase.
+    private IEnumerator PlayFreeGame(SpinResult result)
     {
-        yield return new WaitForSeconds(0.3f);
+        currentState = GameState.ShowingWin;
+        uiManager.SetSpinStopButtonStates(isSpinningState: true, isInteractable: false);
 
-        // Wait for special win popup if it's still active or pending
-        while (waitingForSpecialWin || uiManager.IsSpecialWinActive)
+        FreeGamesData game = result != null ? result.freeGames : null;
+        if (game == null || !game.present)
         {
-            yield return null;
+            // Should never happen inside the bonus. Ending the round is the one safe reading: the
+            // win box and CONGRATULATIONS show what has been shown so far, the balance the server's.
+            Debug.LogError("[GameManager] A free game's result carried no freeGames block — ending the round.");
+            lastResult = null;
+            yield return PlayFreeGamesEnd(null);
+            yield break;
         }
 
+        // 1. Frames.
+        bool framesChanged = false;
+        foreach (FrameChange change in game.changes)
+        {
+            if (!change.IsOrangeHit) { framesChanged = true; break; }
+        }
+
+        if (game.changes.Count > 0 && framesView != null)
+        {
+            bool applied = false;
+            framesView.ApplyChanges(game.changes, () => applied = true);
+            yield return new WaitUntil(() => applied);
+        }
+
+        // 2. Wins. The Orange hit joins this game's count-up for now (owner, 2026-11-15) — the place
+        // to change once its presentation is known (V-9).
+        double gameWin = result.lineWinAmount + game.orangeHitCash;
+        if (gameWin > 0)
+        {
+            uiManager.CountWinDisplay(freeSpinsRoundWin, freeSpinsRoundWin + gameWin, winCountUpDuration);
+            freeSpinsRoundWin += gameWin;
+        }
+
+        bool hasWays = result.lineWinAmount > 0 && result.winLines != null && result.winLines.Count > 0;
+        if (hasWays && slotView != null)
+        {
+            // Free games stop after the total — every winning symbol twice, in step — and the next
+            // game follows (SlotView.PlayTwoPhaseWinLines skips the walk while isInFreeSpins).
+            bool presented = false;
+            slotView.ShowWinLineAnimation(result.winLines, result.lineWinAmount, () => presented = true);
+            yield return new WaitUntil(() => presented);
+        }
+        else
+        {
+            // Frames but no win: 0.5 s after the effect has ended. Nothing at all: 0.5 s.
+            yield return new WaitForSeconds(framesChanged ? frameOnlyHold : nothingHold);
+        }
+
+        // 3. Retrigger.
+        int added = game.totalAwarded - freeGamesTotalAwarded;
+        if (game.totalAwarded > 0) freeGamesTotalAwarded = game.totalAwarded;
+
+        if (added > 0)
+        {
+            if (slotView != null) slotView.LoopSymbolCells(gameConfig != null ? gameConfig.freeSpinsSymbolId : -1);
+            yield return ShowGamesAwarded(added);
+            if (slotView != null) slotView.ClearWinPresentation();
+
+            // The count goes up by what was added; it comes down by one as the next game starts.
+            if (freeGameView != null) freeGameView.ShowRemaining(freeGamesShownRemaining + added);
+        }
+
+        freeGamesShownRemaining = game.remaining;
+
+        // 4. On.
+        lastResult = null;
+        uiManager.UpdateBalanceDisplay();
+
+        if (game.isCompleted || !game.inFreeGames)
+        {
+            yield return PlayFreeGamesEnd(game);
+            yield break;
+        }
+
+        currentState = GameState.Idle;
         RequestSpin();
     }
 
-    // The round is over (BonusFreeSpins.md §7): TOTAL WIN counts up from 0 to the server's total, and
-    // TAKE takes over the button once it has. The round is still "in free spins" until TAKE, so the
-    // balance stays held.
-    //
-    // The last spin's win is not replayed here: free spins show no line walk, and the cycle would
-    // carry on over the base game.
-    private void EndFreeSpins()
+    // The end (§5.6–§8):
+    //  1. FEATURE COMPLETE, briefly;
+    //  2. every framed position empties — frame and symbol;
+    //  3. TOTAL PRIZE (blank) and every end orb pop in together;
+    //  4. one orb at a time — all Blue, then Purple, then Yellow; within a colour reel by reel, top to
+    //     bottom — opens and shows its prize, TOTAL PRIZE counting up meanwhile and the win box
+    //     stepping up by it;
+    //  5. CONGRATULATIONS counts up to the bonus total; COLLECT;
+    //  6. the transition — behind it the base game comes back with the triggering board, the balance
+    //     is released and the win box keeps the total until the next spin.
+    // last is null only when the bonus has to end without its last result.
+    private IEnumerator PlayFreeGamesEnd(FreeGamesData last)
     {
         currentState = GameState.ShowingWin;
         uiManager.SetSpinStopButtonStates(isSpinningState: false, isInteractable: false);
 
-        if (featurePopupView != null) featurePopupView.ShowTotalWin(freeSpinsRoundWin, ShowFreeSpinsTake);
-        else ShowFreeSpinsTake();
-    }
+        if (freeGameView != null) freeGameView.ShowFeatureComplete();
+        yield return new WaitForSeconds(featureCompleteHold);
 
-    private void ShowFreeSpinsTake()
-    {
-        pendingFeatureTake = OnFreeSpinsTaken;
-        uiManager.SetSpinButtonMode(UIManager.SpinButtonMode.FeatureTake);
-    }
+        var prizes = new List<EndPrize>();
+        if (last != null && last.endPrizes != null) prizes.AddRange(last.endPrizes);
 
-    private void OnFreeSpinsTaken()
-    {
-        StartCoroutine(FreeSpinsOutro());
-    }
+        int reelCount = gameConfig != null ? gameConfig.reelCount : 5;
+        prizes.Sort((a, b) =>
+        {
+            if (a.level != b.level) return a.level.CompareTo(b.level);                          // Blue, Purple, Yellow
+            int byReel = (a.cell % reelCount).CompareTo(b.cell % reelCount);                  // reel by reel
+            return byReel != 0 ? byReel : (a.cell / reelCount).CompareTo(b.cell / reelCount); // top to bottom
+        });
 
-    // TAKE: the popup fades and the win boxes clear, the panel fades out while the logo fades in, and
-    // the game is back in the base game with the server's balance. The round's total stays in the win
-    // box until the next spin.
-    private IEnumerator FreeSpinsOutro()
-    {
-        bool popupGone = featurePopupView == null;
-        if (featurePopupView != null) featurePopupView.HideTotalWin(() => popupGone = true);
+        var cells = new List<int>(prizes.Count);
+        foreach (EndPrize prize in prizes) cells.Add(prize.cell);
 
-        if (slotView != null) slotView.ClearWinPresentation();
+        // Any win presentation goes first: its teardown would put the hidden symbols back.
+        if (slotView != null)
+        {
+            slotView.ClearWinPresentation();
+            slotView.SetCellsHidden(cells);
+        }
+        if (framesView != null) framesView.ResetAll();
 
-        bool panelGone = freeGameView == null;
-        if (freeGameView != null) freeGameView.ExitRound(() => panelGone = true);
+        if (prizes.Count > 0)
+        {
+            if (freeGameView != null) freeGameView.PopInTotalPrize();
 
-        yield return new WaitUntil(() => popupGone && panelGone);
+            bool popped = framesView == null;
+            if (framesView != null) framesView.PopInOrbs(prizes, () => popped = true);
+            yield return new WaitUntil(() => popped);
 
+            double prizeSoFar = 0;
+            foreach (EndPrize prize in prizes)
+            {
+                prizeSoFar += prize.cash;
+                freeSpinsRoundWin += prize.cash;
+
+                float reveal = framesView != null ? framesView.GetRevealDuration(prize.level) : 0f;
+                if (freeGameView != null) freeGameView.CountTotalPrizeTo(prizeSoFar, reveal);
+                uiManager.SetWinDisplay(freeSpinsRoundWin);
+
+                bool revealed = framesView == null;
+                if (framesView != null) framesView.RevealOrb(prize, () => revealed = true);
+                yield return new WaitUntil(() => revealed);
+            }
+        }
+
+        // The server's total is the one that counts.
+        if (last != null)
+        {
+            if (System.Math.Abs(freeSpinsRoundWin - last.totalWin) > 0.005)
+            {
+                Debug.LogWarning($"[GameManager] Free games: the win box reached {freeSpinsRoundWin:0.00} but the server's total is {last.totalWin:0.00} — showing the server's.");
+            }
+            freeSpinsRoundWin = last.totalWin;
+        }
+        uiManager.SetWinDisplay(freeSpinsRoundWin);
+
+        bool collected = featurePopupView == null;
+        if (featurePopupView != null) featurePopupView.ShowCongratulations(freeSpinsRoundWin, () => collected = true);
+        yield return new WaitUntil(() => collected);
+
+        void Covered()
+        {
+            if (featurePopupView != null) featurePopupView.HideImmediate();
+            if (framesView != null) framesView.ResetAll();
+            if (freeGameView != null) freeGameView.ShowFreeGamesLook(false);
+
+            if (slotView != null)
+            {
+                slotView.SetFreeGamesFiller(false);
+                if (triggerMatrix != null) slotView.RestoreBoard(triggerMatrix);
+            }
+
+            // The hold is off: the balance shown is the server's again.
+            balanceHeld = false;
+            uiManager.UpdateBalanceDisplay();
+            AudioManager.Instance?.PlayBgMusic();
+        }
+
+        yield return PlayTransition(Covered);
+
+        double bonusTotal = freeSpinsRoundWin;
         isInFreeSpins = false;
-        freeSpinsRemaining = 0;
-        freeSpinsPlayed = 0;
-        freeSpinsTotal = 0;
-        retriggerPending = false;
+        freeGamesTotalAwarded = 0;
+        freeGamesShownRemaining = 0;
+        freeSpinsRoundWin = 0;
+        triggerMatrix = null;
+        lastResult = null;
 
-        // The hold is off: the balance shown is the server's again.
-        balanceHeld = false;
-        uiManager.UpdateBalanceDisplay();
-
-        // Spin again, but without clearing the win box, which still shows the round's total.
+        // Spin again, without clearing the win box: it keeps the bonus total until the next spin.
         uiManager.ReleaseSpinButton(true);
         uiManager.SetFeatureButtonLock(false);
-
-        freeSpinsRoundWin = 0;
+        uiManager.SetWinDisplay(bonusTotal);
         currentState = GameState.Idle;
-        AudioManager.Instance?.PlayBgMusic();
 
         if (ShouldResumeAutoPlay())
         {
@@ -913,17 +992,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // "N FREE GAMES"; returns once the popup has gone.
+    private IEnumerator ShowGamesAwarded(int games)
+    {
+        bool closed = featurePopupView == null;
+        if (featurePopupView != null) featurePopupView.ShowGamesAwarded(games, () => closed = true);
+        yield return new WaitUntil(() => closed);
+    }
+
+    // The full-screen transition; covered runs while it hides the screen. Returns once it has ended.
+    private IEnumerator PlayTransition(System.Action covered)
+    {
+        if (freeGameView == null)
+        {
+            covered?.Invoke();
+            yield break;
+        }
+
+        bool done = false;
+        freeGameView.PlayTransition(covered, () => done = true);
+        yield return new WaitUntil(() => done);
+    }
+
     #endregion
 
     #region Feature Session
-
-    // A base-game spin that triggers Free Spins: the game is taken over, then the trigger plays and
-    // ends at START. The round's TAKE (FreeSpinsOutro) hands the game back.
-    private IEnumerator PlayFreeSpinsFeature(SpinResult result)
-    {
-        BeginFeatureSession(result);
-        yield return PlayFreeSpinsTrigger(result);
-    }
 
     // The game is the feature's from here: ShowingWin before autoplay is parked, so StopAutoPlay doesn't
     // start a line walk under it; the buttons locked, Spin greyed. Autoplay or not, a feature waits for

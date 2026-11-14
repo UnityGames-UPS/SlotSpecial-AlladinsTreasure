@@ -197,7 +197,9 @@ public class ServerPlayerBalance
 [Serializable]
 public class ServerPayload
 {
-    // Equals grandTotalWin on every capture. grandTotalWin is the figure to display.
+    // This spin's WAYS wins only. Equals grandTotalWin in the base game; in the free games
+    // grandTotalWin also carries an Orange hit and (on the last game) the end prizes
+    // (ATFreeGamesBonus.md §11.2), so this is the board total during the bonus.
     public double winAmount;
     // One entry per winning SYMBOL, not per way. An empty list (not a missing field) on a losing
     // spin. Wins can share cells: a Wild serving two symbols is in both entries' matchedPositions.
@@ -205,18 +207,17 @@ public class ServerPayload
     public List<ServerWaysWin> waysWins;
 
     // BlueOrbs anywhere on the board, cells not reels. A lone BlueOrb pays nothing and has no
-    // waysWins entry. Bound for the free-games step; nothing reads it yet.
+    // waysWins entry. Bound for completeness; the client reads the board itself.
     public int scatterCount;
 
-    // The spin's total — the sum of the waysWins entries — and the only figure to display. The
-    // balance moves by exactly this minus the total bet (bet x 50): 0.30 on a 0.50 bet took the
-    // balance down 0.20.
+    // Everything this result paid. In the base game, the sum of the waysWins entries; in the free
+    // games, ways wins + Orange hit + (last game) end prizes. The balance moves by exactly this (less
+    // the total bet in the base game).
     public double grandTotalWin;
 
-    // Wild Jokers' Free Spins round state (BonusFreeSpins.md §9.4). Aladdin's Treasure never sends
-    // it — its round is payload.freeGames (ATFreeGamesBonus.md §11), bound with the free games. Kept
-    // so the dormant WJ round plumbing in GameManager compiles until then.
-    public ServerFreeSpinsResult freeSpins;
+    // The free games (ATFreeGamesBonus.md §11.2). Sent only on the trigger and on every free game;
+    // missing on an ordinary base spin, which reads as "not in the bonus".
+    public ServerFreeGamesResult freeGames;
 
     // Sent and deliberately unbound:
     //  - "betAmountPerLine" and "totalBetAmount" (0.01 and 0.2 at the lowest bet): the client
@@ -224,21 +225,57 @@ public class ServerPayload
     //  - "netReturnRatio" (grandTotalWin over total bet): the controller derives the same ratio.
 }
 
+// payload.freeGames (captured 2026-11-14, ATFreeGamesBonus.md §11.2). Sent and deliberately unbound:
+// "awarded" and "retriggered" (not reliable when the cap is hit — the games added are the change in
+// totalAwarded, §11.5), "orbType" (the client goes by level), and the duplicates (spinsRemaining,
+// totalSpins, totalWinCash / featureWin / totalWin, active, gameWin, multiplier).
 [Serializable]
-public class ServerFreeSpinsResult
+public class ServerFreeGamesResult
 {
-    // Spins were awarded ON THIS SPIN: the trigger, or a retrigger inside the round.
+    // True on the base-game spin that triggers the bonus.
     public bool triggered;
-    // This spin was played inside the round: false on the base-game spin that triggers, true on
-    // every free spin. What the round's last spin sends is not captured yet.
-    public bool active;
-    // Spins left after this one. A retrigger's spins are already folded in, so it can go up.
-    public int spinsRemaining;
-    // Spins awarded in the round so far, retriggers included.
-    public int totalSpins;
-    // The round's running total in cash, this spin included. Excludes the trigger spin's own win,
-    // which was paid on that spin.
-    public double totalWinCash;
+    // True from the trigger result on; false again on the last free game's result.
+    public bool inFreeGames;
+    // True only on the last free game's result: the end phase follows that game.
+    public bool isCompleted;
+    // Games in the round so far, retriggers included (and capped by the server).
+    public int totalAwarded;
+    // Free games played so far — 0 on the trigger result.
+    public int played;
+    // totalAwarded - played.
+    public int remaining;
+    // The frame grid AFTER this result, row-major like matrix: 0 none, 1 Blue, 2 Purple, 3 Orange.
+    public List<List<int>> frames;
+    // This game's frame changes, one per BlueOrb that landed. Empty on the trigger result.
+    public List<ServerFrameUpgrade> frameUpgrades;
+    // This game's Orange-hit total.
+    public double orangeHitCash;
+    // The running bonus total: ways wins + Orange hits, and on the last game the end prizes too.
+    public double totalFreeGamesWin;
+    // Only on the last game's result: one per framed position.
+    public List<ServerEndFramePrize> endFramePrizes;
+    // The sum of endFramePrizes (0 on every other result).
+    public double endFrameCash;
+}
+
+[Serializable]
+public class ServerFrameUpgrade
+{
+    public int row;
+    public int col;
+    public int fromLevel;
+    public int toLevel;          // fromLevel 3 -> toLevel 3 is an Orange hit
+    public double orangeHitCash;
+}
+
+[Serializable]
+public class ServerEndFramePrize
+{
+    public int row;
+    public int col;
+    public int level;            // 1 Blue, 2 Purple ("PINK"), 3 Orange ("GOLD" — the Yellow orb)
+    public double multiplier;    // 2 / 3 / 5
+    public double winInCash;     // multiplier x total bet
 }
 
 // One winning symbol. Ways pay left to right from reel 1, on adjacent reels, 3 reels or more; a Wild
@@ -344,12 +381,17 @@ public class GameConfig
     public int freeSpinsMaxTotal;           // 300
     public double freeSpinsPayMultiplier;   // 1
 
-    // The frames mechanic, from features.freeGames.frames. Rules unknown; nothing reads these yet.
+    // The frames mechanic, from features.freeGames.frames (ATFreeGamesBonus.md §1). Reference only:
+    // every amount the client shows is the server's own figure from the result.
     public double frameEndPrizeBlue;        // 2
     public double frameEndPrizePurple;      // 3
     public double frameEndPrizeOrange;      // 5
     public double frameOrangeHitMultiplier; // 10
 
+    // Symbols that never appear in the free games: "10" (id 9) and "9" (id 10). Set here, not from
+    // the init: the rules page says so (ATFreeGamesBonus.md §1.6) and the init doesn't send it (only
+    // the backend's own config does). Used for the free games' scrolling filler.
+    public List<int> freeGamesExcludedSymbolIds = new List<int> { 9, 10 };
 }
 
 [Serializable]
@@ -389,18 +431,19 @@ public class SpinResult
     // Column-major: [reel][row], the transpose of the server's row-major matrix.
     public List<List<int>> resultMatrix;
 
-    // Everything the spin paid, from grandTotalWin. This is the figure to show and the one the
+    // Everything the spin paid, from grandTotalWin. The base game's figure to show, and the one the
     // balance moved by.
     public double winAmount;
-    // payload.winAmount. It equals winAmount on every capture, so nothing reads it.
+    // payload.winAmount: the ways wins only. Equal to winAmount in the base game; the board total
+    // during the free games, where winAmount also carries Orange hits and end prizes.
     public double lineWinAmount;
 
     // One entry per winning symbol (payload.waysWins). The name is inherited from the payline games.
     public List<WinLine> winLines;
     public PlayerData playerData;
 
-    // The free-spins state, from payload.freeSpins (Wild Jokers'; AT never sends it). Never null.
-    public FreeGameData freeGame;
+    // The free games, from payload.freeGames. Never null: present is false on an ordinary base spin.
+    public FreeGamesData freeGames;
 }
 
 /// <summary>
@@ -429,31 +472,67 @@ public class WinLine
 }
 
 /// <summary>
-/// The Free Spins facts for one spin, from payload.freeSpins (BonusFreeSpins.md §9.4).
-/// A base-game trigger is spinsAwarded and not active; a retrigger is spinsAwarded and active.
+/// The free-games facts for one result, from payload.freeGames (ATFreeGamesBonus.md §11.2). Cells
+/// are flat indices (row * reelCount + col), like WinLine.positions.
 /// </summary>
 [Serializable]
-public class FreeGameData
+public class FreeGamesData
 {
-    // The block was sent. False on an ordinary base spin, and every other field is then zero.
+    // The block was sent. False on an ordinary base spin, and every other field is then empty.
     public bool present;
 
-    // Spins were awarded on this spin — the trigger, or a retrigger inside the round.
-    public bool spinsAwarded;
+    // The base-game spin that triggers the bonus.
+    public bool triggered;
+    // True from the trigger on; false again on the last game.
+    public bool inFreeGames;
+    // The last free game: the end phase follows it.
+    public bool isCompleted;
 
-    // This spin was played inside the round. False on the base-game spin that triggers.
-    public bool active;
+    // Games in the round so far, retriggers included. A retrigger adds the CHANGE in this — the
+    // server's own "awarded" is not reliable at the cap.
+    public int totalAwarded;
+    // Games still to play after this result. During the next game the top panel shows this figure.
+    public int remaining;
 
-    // Spins left AFTER this one. Retriggers are folded in, so it can go up as well as down.
-    public int spinsRemaining;
+    // The frame level at each position after this result, column-major like resultMatrix
+    // ([reel][row]): 0 none, 1 Blue, 2 Purple, 3 Orange.
+    public List<List<int>> frameLevels;
 
-    // Spins awarded in the round so far, retriggers included. The counter's Y; its X, the spins
-    // played, is totalSpins - spinsRemaining.
-    public int totalSpins;
+    // This game's frame changes — every one plays together.
+    public List<FrameChange> changes = new List<FrameChange>();
 
-    // The round's running total, server-authoritative, this spin included. Excludes the trigger
-    // spin's own win.
-    public double roundWin;
+    // This game's Orange-hit total, already paid by the server.
+    public double orangeHitCash;
+
+    // The running bonus total, server-authoritative: the win box during the bonus and the
+    // CONGRATULATIONS amount at the end.
+    public double totalWin;
+
+    // Only on the last game: one per framed position, in the server's (row-by-row) order.
+    public List<EndPrize> endPrizes = new List<EndPrize>();
+}
+
+/// <summary>One BlueOrb landing on a position during the bonus (ATFreeGamesBonus.md §1.3).</summary>
+[Serializable]
+public class FrameChange
+{
+    public int cell;
+    public int fromLevel;
+    public int toLevel;
+    // > 0 on an Orange hit (fromLevel 3 -> toLevel 3).
+    public double orangeHitCash;
+
+    internal bool IsOrangeHit => fromLevel >= 3 && toLevel >= 3;
+}
+
+/// <summary>One framed position's end prize (ATFreeGamesBonus.md §1.5, §6).</summary>
+[Serializable]
+public class EndPrize
+{
+    public int cell;
+    // 1 Blue, 2 Purple, 3 Orange (the Yellow orb).
+    public int level;
+    public double cash;
 }
 
 #endregion
@@ -746,25 +825,83 @@ public static class InitDataConverter
                 currentBetIndex = 0
             },
 
-            freeGame = ConvertFreeGame(payload?.freeSpins)
+            freeGames = ConvertFreeGames(payload?.freeGames, gameConfig)
         };
     }
 
     // Never returns null, so the controller can read it without guarding every access. A missing
-    // block is an ordinary base spin: not in a round, nothing awarded.
-    private static FreeGameData ConvertFreeGame(ServerFreeSpinsResult serverFreeSpins)
+    // block is an ordinary base spin: not in the bonus.
+    private static FreeGamesData ConvertFreeGames(ServerFreeGamesResult server, GameConfig gameConfig)
     {
-        if (serverFreeSpins == null) return new FreeGameData();
+        var data = new FreeGamesData();
+        if (server == null) return data;
 
-        return new FreeGameData
+        data.present = true;
+        data.triggered = server.triggered;
+        data.inFreeGames = server.inFreeGames;
+        data.isCompleted = server.isCompleted;
+        data.totalAwarded = server.totalAwarded;
+        data.remaining = server.remaining;
+        data.orangeHitCash = server.orangeHitCash;
+        data.totalWin = server.totalFreeGamesWin;
+        data.frameLevels = ConvertFrameLevels(server.frames, gameConfig);
+
+        if (server.frameUpgrades != null)
         {
-            present = true,
-            spinsAwarded = serverFreeSpins.triggered,
-            active = serverFreeSpins.active,
-            spinsRemaining = serverFreeSpins.spinsRemaining,
-            totalSpins = serverFreeSpins.totalSpins,
-            roundWin = serverFreeSpins.totalWinCash
-        };
+            for (int i = 0; i < server.frameUpgrades.Count; i++)
+            {
+                ServerFrameUpgrade up = server.frameUpgrades[i];
+                if (up == null) continue;
+                if (!TryGetFlatIndex(up.row, up.col, gameConfig, $"freeGames.frameUpgrades[{i}]", out int cell)) continue;
+
+                data.changes.Add(new FrameChange
+                {
+                    cell = cell,
+                    fromLevel = up.fromLevel,
+                    toLevel = up.toLevel,
+                    orangeHitCash = up.orangeHitCash
+                });
+            }
+        }
+
+        if (server.endFramePrizes != null)
+        {
+            for (int i = 0; i < server.endFramePrizes.Count; i++)
+            {
+                ServerEndFramePrize prize = server.endFramePrizes[i];
+                if (prize == null) continue;
+                if (!TryGetFlatIndex(prize.row, prize.col, gameConfig, $"freeGames.endFramePrizes[{i}]", out int cell)) continue;
+
+                data.endPrizes.Add(new EndPrize { cell = cell, level = prize.level, cash = prize.winInCash });
+            }
+        }
+
+        return data;
+    }
+
+    // The server's row-major frame grid, transposed to the client's [reel][row]. Missing or short
+    // rows read as 0 (no frame).
+    private static List<List<int>> ConvertFrameLevels(List<List<int>> serverFrames, GameConfig gameConfig)
+    {
+        int reelCount = gameConfig != null ? gameConfig.reelCount : 5;
+        int rowCount = gameConfig != null ? gameConfig.rowCount : 3;
+
+        var levels = new List<List<int>>(reelCount);
+        for (int col = 0; col < reelCount; col++)
+        {
+            var column = new List<int>(rowCount);
+            for (int row = 0; row < rowCount; row++)
+            {
+                int level = 0;
+                if (serverFrames != null && row < serverFrames.Count && serverFrames[row] != null && col < serverFrames[row].Count)
+                {
+                    level = serverFrames[row][col];
+                }
+                column.Add(level);
+            }
+            levels.Add(column);
+        }
+        return levels;
     }
 
     // The one place a row and column become a flat index, so the bounds check cannot drift between

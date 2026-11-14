@@ -1,263 +1,214 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;
 
 /// <summary>
-/// Wild Jokers' Free Spins popup (BonusFreeSpins.md §8): a backdrop that rotates anticlockwise, a
-/// frame, and one child per message, of which exactly one is shown. Kept for now as the base for
-/// Aladdin's Treasure's free-games popups ("N FREE GAMES", CONGRATULATIONS / COLLECT —
-/// ATFreeGamesBonus.md), which replace it. The pick bonuses' and Mystery Respin's messages went with
-/// those features (2026-11-14).
+/// The free games' two popups (ATFreeGamesBonus.md §3.3, §5.5, §7):
+///  - "N FREE GAMES" — the trigger's award and every retrigger's: pops in from 0 with an overshoot,
+///    holds, then grows a little and shrinks to 0, on its own;
+///  - "CONGRATULATIONS! YOU WIN X" — appears instantly, X counts up from 0 to the bonus total, and
+///    COLLECT (greyed until the count-up ends) hands back to the controller. It has no exit of its
+///    own: the transition covers it and the controller hides it behind that (§8).
 ///
-/// This object holds the script and stays on. The popup itself is popupGroup (PopupImage in the
-/// scene): its CanvasGroup fades it, and it is what is switched on and off. The backdrop and the
-/// frame under it are switched on whenever it opens, so the scene can be saved with any of them off.
-///
-/// Free Spins uses CONGRATULATIONS (with the awarded spin count) and TOTAL WIN (counted up, taken down
-/// at TAKE).
-///
-/// View layer only: GameManager calls in and is called back when a message has gone. Everything is
-/// DOTween-driven. Every reference is optional — a missing message still calls back, so a round
-/// never stalls on it.
+/// View layer only: GameManager calls in and is called back. Every reference is optional — a missing
+/// popup still calls back, so a round never stalls on it (an unwired COLLECT collects at once).
 /// </summary>
 public class FeaturePopupView : MonoBehaviour
 {
-    [Header("Popup")]
-    [Tooltip("PopupImage — the popup's parent, holding the backdrop and the frame. Its CanvasGroup fades the popup; it is switched on to show and off to hide. Unwired, this object and its own CanvasGroup are used instead.")]
-    [SerializeField] private CanvasGroup popupGroup;
+    [Header("\"N FREE GAMES\"")]
+    [Tooltip("The popup panel. Switched on to show; scaled from 0 in, and to 0 out.")]
+    [SerializeField] private RectTransform awardedPopup;
+    [Tooltip("N — the games added (10 on the trigger; 3, or fewer at the cap, on a retrigger).")]
+    [SerializeField] private TMPro.TMP_Text awardedCountText;
+    [Tooltip("The \"FREE GAMES\" label, shown for any N but 1. Optional.")]
+    [SerializeField] private GameObject awardedLabelPlural;
+    [Tooltip("The \"FREE GAME\" label, shown when N is 1 (a retrigger cut by the cap). Optional.")]
+    [SerializeField] private GameObject awardedLabelSingular;
+    [Tooltip("On: N is written as sprite digits. Off: plain text.")]
+    [SerializeField] private bool countUsesSpriteDigits;
+    [Tooltip("Seconds the popup holds before it goes on its own (owner: 5 s to start with).")]
+    [SerializeField] private float awardedHold = 5f;
+    [SerializeField] private float popInDuration = 0.4f;
+    [SerializeField] private float popInOvershoot = 1.7f;
+    [Tooltip("On the way out it first grows to this many times its size…")]
+    [SerializeField] private float popOutGrowScale = 1.1f;
+    [SerializeField] private float popOutGrowDuration = 0.12f;
+    [Tooltip("…then shrinks to 0 over this.")]
+    [SerializeField] private float popOutShrinkDuration = 0.25f;
 
-    [Header("Backdrop")]
-    [Tooltip("PopupBackground — rotates anticlockwise while the popup is up.")]
-    [SerializeField] private RectTransform popupBackground;
+    [Header("CONGRATULATIONS")]
+    [Tooltip("The CONGRATULATIONS popup. Switched on as it is — no scale, no fade.")]
+    [SerializeField] private GameObject congratulationsPopup;
+    [Tooltip("X — counted up from 0 to the bonus total.")]
+    [SerializeField] private TMPro.TMP_Text congratulationsAmountText;
+    [Tooltip("On: X is written as sprite digits. Off: plain text, \"12.50\".")]
+    [SerializeField] private bool amountUsesSpriteDigits;
+    [SerializeField] private float congratulationsCountUpDuration = 2f;
+    [Tooltip("COLLECT — greyed (not interactable) until the count-up ends. Its click is added in code.")]
+    [SerializeField] private Button collectButton;
 
-    [Header("Messages (children of Popup)")]
-    [Tooltip("CongratulationsFreeSpins — shown when Free Spins are awarded, on a trigger or a retrigger.")]
-    [SerializeField] private GameObject congratulationsFreeSpins;
-    [Tooltip("TotalWin — the round's total, counted up, until TAKE.")]
-    [SerializeField] private GameObject totalWin;
+    private readonly List<Tween> tweens = new List<Tween>();
+    private Vector3 awardedHomeScale = Vector3.one;
+    private bool awardedHomeRead;
+    private Action pendingCollect;
 
-    [Header("Texts (sprite digits)")]
-    [Tooltip("10Text — the number of spins awarded.")]
-    [SerializeField] private TMPro.TMP_Text awardedSpinsText;
-    [Tooltip("TotalWinAmount — the round's total win.")]
-    [SerializeField] private TMPro.TMP_Text totalWinAmountText;
-
-    // Tuning — placeholders until the owner signs off the timings (BonusFreeSpins.md §11).
-    private const float CongratulationsHold = 6.5f;      // seconds CONGRATULATIONS stays before it fades — with the fade, the length of its sound (6.9 s, owner)
-    private const float FadeOutDuration = 0.4f;          // the CanvasGroup's fade to 0
-    private const float RotationPeriod = 8f;             // seconds for one full anticlockwise turn of the backdrop
-    private const float TotalWinCountUpDuration = 2f;    // TOTAL WIN's count from 0 to the total
-
-    private CanvasGroup ownCanvasGroup;
-    private bool ownCanvasGroupLooked;
-    private Tween rotationTween;
-    private Sequence activeSequence;
-    private Tween countUpTween;
-
-    // The CanvasGroup that fades the popup: popupGroup, or — unwired — one on this object, found on
-    // first use rather than in Awake, which would not run while this object is off.
-    private CanvasGroup Group
+    private void Awake()
     {
-        get
-        {
-            if (popupGroup != null) return popupGroup;
-
-            if (!ownCanvasGroupLooked)
-            {
-                ownCanvasGroup = GetComponent<CanvasGroup>();
-                ownCanvasGroupLooked = true;
-            }
-            return ownCanvasGroup;
-        }
+        if (collectButton != null) collectButton.onClick.AddListener(OnCollectPressed);
     }
-
-    // What is switched on to show the popup and off to hide it.
-    private GameObject PopupObject => popupGroup != null ? popupGroup.gameObject : gameObject;
 
     #region Called by GameManager
 
-    /// <summary>Hidden, with nothing running. Called at init, so the scene's saved state never shows.</summary>
+    /// <summary>Both popups hidden, nothing running. At init, and behind the transition out (§8).</summary>
     internal void HideImmediate()
     {
         KillTweens();
-        StopRotation();
-        ShowOnly(null);
-        PopupObject.SetActive(false);
+        AudioManager.Instance?.StopTotalWin();
+        pendingCollect = null;
+
+        if (awardedPopup != null)
+        {
+            ReadAwardedHome();
+            awardedPopup.localScale = awardedHomeScale;
+            awardedPopup.gameObject.SetActive(false);
+        }
+        if (congratulationsPopup != null) congratulationsPopup.SetActive(false);
     }
 
     /// <summary>
-    /// CONGRATULATIONS! YOU WON <spins> FREE SPINS: shows, holds, fades out. onClosed fires once it
-    /// has gone. spins is the server's award, never a constant.
+    /// "N FREE GAMES" (§3.3): pops in, holds, pops out. onClosed fires once it has gone. N is the games
+    /// actually added — never a constant.
     /// </summary>
-    internal void ShowFreeSpinsAwarded(int spins, Action onClosed)
+    internal void ShowGamesAwarded(int games, Action onClosed)
     {
-        if (awardedSpinsText != null) awardedSpinsText.text = SpriteTextFormatter.ToSpriteDigits(spins.ToString());
+        if (awardedPopup == null)
+        {
+            onClosed?.Invoke();
+            return;
+        }
+
+        KillTweens();
+
+        if (awardedCountText != null)
+        {
+            string n = Mathf.Max(0, games).ToString();
+            awardedCountText.text = countUsesSpriteDigits ? SpriteTextFormatter.ToSpriteDigits(n) : n;
+        }
+        if (awardedLabelSingular != null) awardedLabelSingular.SetActive(games == 1);
+        if (awardedLabelPlural != null) awardedLabelPlural.SetActive(games != 1);
+
+        ReadAwardedHome();
+        awardedPopup.DOKill();
+        awardedPopup.localScale = Vector3.zero;
+        awardedPopup.gameObject.SetActive(true);
 
         AudioManager.Instance?.PlayCongratulations();
-        ShowThenFade(congratulationsFreeSpins, CongratulationsHold, onClosed);
+
+        Sequence seq = DOTween.Sequence()
+            .Append(awardedPopup.DOScale(awardedHomeScale, popInDuration).SetEase(Ease.OutBack, popInOvershoot))
+            .AppendInterval(Mathf.Max(0f, awardedHold))
+            .Append(awardedPopup.DOScale(awardedHomeScale * popOutGrowScale, popOutGrowDuration).SetEase(Ease.OutQuad))
+            .Append(awardedPopup.DOScale(Vector3.zero, popOutShrinkDuration).SetEase(Ease.InBack))
+            .OnComplete(() =>
+            {
+                awardedPopup.gameObject.SetActive(false);
+                awardedPopup.localScale = awardedHomeScale;
+                onClosed?.Invoke();
+            });
+        tweens.Add(seq);
     }
 
     /// <summary>
-    /// TOTAL WIN: shows and counts up from 0 to amount. It stays up — HideTotalWin takes it down.
-    /// onCountedUp fires when the count has reached the total.
+    /// CONGRATULATIONS! YOU WIN X (§7): shown instantly, X counting up from 0 to total; COLLECT goes live
+    /// once the count has landed, and its press fires onCollect (once). The popup stays up — the
+    /// controller hides it behind the transition.
     /// </summary>
-    internal void ShowTotalWin(double amount, Action onCountedUp)
+    internal void ShowCongratulations(double total, Action onCollect)
     {
-        if (totalWin == null)
+        KillTweens();
+        pendingCollect = onCollect;
+
+        if (congratulationsPopup == null)
         {
-            onCountedUp?.Invoke();
+            Collect();
             return;
         }
 
-        Open(totalWin);
+        congratulationsPopup.SetActive(true);
+        if (collectButton != null) collectButton.interactable = false;
 
         double shown = 0;
-        WriteTotal(0);
-        // Once, from here; cut by HideTotalWin if the popup goes first.
+        WriteAmount(0);
         AudioManager.Instance?.PlayTotalWin();
 
-        countUpTween = DOTween.To(() => shown, value => { shown = value; WriteTotal(value); }, amount, TotalWinCountUpDuration)
+        void Landed()
+        {
+            WriteAmount(total);
+            if (collectButton != null) collectButton.interactable = true;
+            else Collect();   // nothing to press: carry on rather than stall
+        }
+
+        if (congratulationsCountUpDuration <= 0f || total <= 0)
+        {
+            Landed();
+            return;
+        }
+
+        tweens.Add(DOTween.To(() => shown, v => { shown = v; WriteAmount(v); }, total, congratulationsCountUpDuration)
             .SetEase(Ease.Linear)
-            .OnComplete(() =>
-            {
-                countUpTween = null;
-                WriteTotal(amount);   // land exactly on the server's figure
-                onCountedUp?.Invoke();
-            });
-    }
-
-    /// <summary>TOTAL WIN goes: its sound is cut, the popup fades out. onHidden fires once it has gone.</summary>
-    internal void HideTotalWin(Action onHidden)
-    {
-        AudioManager.Instance?.StopTotalWin();
-
-        if (!PopupObject.activeInHierarchy)
-        {
-            onHidden?.Invoke();
-            return;
-        }
-
-        KillTweens();
-        FadeOut(onHidden);
-    }
-
-    #endregion
-
-    #region Sequences
-
-    // One message: open, hold, fade out, close, call back. A missing message calls straight back.
-    private void ShowThenFade(GameObject message, float hold, Action onClosed)
-    {
-        if (message == null)
-        {
-            onClosed?.Invoke();
-            return;
-        }
-
-        Open(message);
-
-        activeSequence = DOTween.Sequence()
-            .AppendInterval(hold)
-            .OnComplete(() =>
-            {
-                activeSequence = null;
-                FadeOut(onClosed);
-            });
-    }
-
-    // Switches the popup on, fully visible, with only this message showing and the backdrop turning.
-    // Everything on the way down to the message is switched on too — this object, the popup, the
-    // backdrop and the message's frame — so none of them can be left off by how the scene was saved.
-    private void Open(GameObject message)
-    {
-        KillTweens();
-
-        ShowOnly(message);
-        if (Group != null) Group.alpha = 1f;
-
-        gameObject.SetActive(true);
-        PopupObject.SetActive(true);
-        if (popupBackground != null) popupBackground.gameObject.SetActive(true);
-
-        Transform frame = message.transform.parent;
-        if (frame != null) frame.gameObject.SetActive(true);
-
-        StartRotation();
-    }
-
-    private void FadeOut(Action onClosed)
-    {
-        void Close()
-        {
-            activeSequence = null;
-            StopRotation();
-            ShowOnly(null);
-            PopupObject.SetActive(false);
-            if (Group != null) Group.alpha = 1f;
-            onClosed?.Invoke();
-        }
-
-        if (Group == null)
-        {
-            Close();
-            return;
-        }
-
-        activeSequence = DOTween.Sequence()
-            .Append(Group.DOFade(0f, FadeOutDuration).SetEase(Ease.Linear))
-            .OnComplete(Close);
+            .OnComplete(Landed));
     }
 
     #endregion
 
     #region Helpers
 
-    // Anticlockwise is a positive z angle in Unity's UI (clockwise is negative).
-    private void StartRotation()
+    private void OnCollectPressed()
     {
-        StopRotation();
-        if (popupBackground == null) return;
-
-        rotationTween = popupBackground
-            .DORotate(new Vector3(0f, 0f, 360f), RotationPeriod, RotateMode.FastBeyond360)
-            .SetRelative(true)
-            .SetEase(Ease.Linear)
-            .SetLoops(-1, LoopType.Restart);
+        if (pendingCollect == null) return;
+        if (collectButton != null) collectButton.interactable = false;
+        AudioManager.Instance?.PlayTakeButton();
+        Collect();
     }
 
-    private void StopRotation()
+    private void Collect()
     {
-        rotationTween?.Kill();
-        rotationTween = null;
-        if (popupBackground != null) popupBackground.localRotation = Quaternion.identity;
+        Action callback = pendingCollect;
+        pendingCollect = null;
+        AudioManager.Instance?.StopTotalWin();
+        callback?.Invoke();
     }
 
-    // Exactly one message on (or none, for null).
-    private void ShowOnly(GameObject message)
+    private void WriteAmount(double amount)
     {
-        if (congratulationsFreeSpins != null) congratulationsFreeSpins.SetActive(congratulationsFreeSpins == message);
-        if (totalWin != null) totalWin.SetActive(totalWin == message);
+        if (congratulationsAmountText == null) return;
+        congratulationsAmountText.text = amountUsesSpriteDigits
+            ? SpriteTextFormatter.ToSpriteMoney(amount)
+            : amount.ToString(SpriteTextFormatter.MoneyFormat);
     }
 
-    private void WriteTotal(double amount)
+    // The scale the popup was saved with, read once, so every pop lands back on it.
+    private void ReadAwardedHome()
     {
-        if (totalWinAmountText != null) totalWinAmountText.text = SpriteTextFormatter.ToSpriteMoney(amount);
+        if (awardedHomeRead || awardedPopup == null) return;
+        awardedHomeRead = true;
+        if (awardedPopup.localScale != Vector3.zero) awardedHomeScale = awardedPopup.localScale;
     }
 
-    // Killed without completing, so no callback of an interrupted message ever fires.
+    // Killed without completing, so no callback of an interrupted popup ever fires.
     private void KillTweens()
     {
-        activeSequence?.Kill();
-        activeSequence = null;
-        countUpTween?.Kill();
-        countUpTween = null;
-        if (Group != null) Group.DOKill();
+        foreach (Tween tween in tweens) tween?.Kill();
+        tweens.Clear();
+        if (awardedPopup != null) awardedPopup.DOKill();
     }
 
     private void OnDestroy()
     {
         KillTweens();
-        rotationTween?.Kill();
+        if (collectButton != null) collectButton.onClick.RemoveListener(OnCollectPressed);
     }
 
     #endregion

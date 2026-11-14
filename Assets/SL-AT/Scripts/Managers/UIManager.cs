@@ -544,6 +544,7 @@ public class UIManager : MonoBehaviour
         // RefreshFeatureDisplays sets it as the round starts, and the next base spin clears it.
         if (gameManager == null || !gameManager.isInFreeSpins)
         {
+            KillWinCountUp();
             UpdateWinDisplay(0);
         }
 
@@ -1348,6 +1349,49 @@ public class UIManager : MonoBehaviour
         // DisplayBalance, not playerData.balance: it is where a feature holds the shown balance back
         // (Wild Jokers' Free Spins freezes it for the whole round).
         SetTMPText(balanceText, balanceTextPortrait, "BALANCE : " + FormatAmount(gameManager.DisplayBalance));
+    }
+
+    /// <summary>
+    /// The win box, straight to an amount — the free games' end orbs add their prizes this way
+    /// (ATFreeGamesBonus.md §6.3). Ends any count-up still running.
+    /// </summary>
+    internal void SetWinDisplay(double amount)
+    {
+        KillWinCountUp();
+        UpdateWinDisplay(amount);
+    }
+
+    /// <summary>
+    /// The win box counting up from one amount to another — each free game's win on top of the
+    /// running total (§5.4). Lands exactly on 'to'.
+    /// </summary>
+    internal void CountWinDisplay(double from, double to, float duration)
+    {
+        KillWinCountUp();
+
+        if (duration <= 0f || to <= from)
+        {
+            UpdateWinDisplay(to);
+            return;
+        }
+
+        double shown = from;
+        UpdateWinDisplay(from);
+        winCountUpTween = DOTween.To(() => shown, value => { shown = value; UpdateWinDisplay(value); }, to, duration)
+            .SetEase(Ease.Linear)
+            .OnComplete(() =>
+            {
+                winCountUpTween = null;
+                UpdateWinDisplay(to);
+            });
+    }
+
+    private Tween winCountUpTween;
+
+    private void KillWinCountUp()
+    {
+        winCountUpTween?.Kill();
+        winCountUpTween = null;
     }
 
     private void UpdateWinDisplay(double amount)

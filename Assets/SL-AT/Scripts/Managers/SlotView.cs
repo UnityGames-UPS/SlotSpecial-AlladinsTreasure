@@ -280,6 +280,9 @@ public class SlotView : MonoBehaviour
     // gameConfig doesn't change after init and this is read on every buffer icon of every spin. See
     // EnsureFillerSymbolIds for what would justify excluding a symbol from it.
     private List<int>[] fillerSymbolIdsByReel;
+    // The free games' pools, built alongside, and which set is in use.
+    private List<int>[] freeGamesFillerSymbolIdsByReel;
+    private bool useFreeGamesFiller;
 
 
     internal List<List<int>> currentDisplayMatrix;
@@ -648,25 +651,33 @@ public class SlotView : MonoBehaviour
     {
         EnsureFillerSymbolIds();
 
-        if (fillerSymbolIdsByReel != null && columnIndex >= 0 && columnIndex < fillerSymbolIdsByReel.Length)
+        List<int>[] pools = useFreeGamesFiller ? freeGamesFillerSymbolIdsByReel : fillerSymbolIdsByReel;
+        if (pools != null && columnIndex >= 0 && columnIndex < pools.Length)
         {
-            return fillerSymbolIdsByReel[columnIndex];
+            return pools[columnIndex];
         }
 
-        return BuildFillerSymbolIds(columnIndex, null);
+        return BuildFillerSymbolIds(columnIndex, null, false);
+    }
+
+    /// <summary>
+    /// Switches the scrolling filler between the base game's pools and the free games' (the Wild on
+    /// reels 2-5, no "10" or "9" — ATFreeGamesBonus.md §1.6). The controller switches it while the
+    /// transition covers the screen.
+    /// </summary>
+    internal void SetFreeGamesFiller(bool on)
+    {
+        useFreeGamesFiller = on;
     }
 
     // Builds the per-reel filler pools once and reuses them — gameConfig is fixed for the session,
     // and this is read on every buffer icon of every spin.
     //
     // Every id is in every pool, except that the Wild only scrolls past on the reels it can land on
-    // in the base game (features.wild.mainGameReels: reels 2-4). Exclude a symbol here if it should
-    // never appear as random filler — anything the backend has to PLACE deliberately, because it
-    // carries a value or only means something inside a sequence. Seeing one scroll past would be
-    // showing something the server never sent.
-    //
-    // Base game only. Free games allow the Wild on reel 5 and leave out ids 9 and 10; that switch
-    // belongs to the free-games step.
+    // (features.wild.mainGameReels in the base game, freeGameReels in the free games), and the free
+    // games leave out the symbols they never show (GameConfig.freeGamesExcludedSymbolIds). Exclude a
+    // symbol here if it should never appear as random filler — anything the backend has to PLACE
+    // deliberately. Seeing one scroll past would be showing something the server never sent.
     private void EnsureFillerSymbolIds()
     {
         if (fillerSymbolIdsByReel != null) return;
@@ -675,25 +686,31 @@ public class SlotView : MonoBehaviour
         if (config == null) return;
 
         fillerSymbolIdsByReel = new List<int>[ReelCount];
+        freeGamesFillerSymbolIdsByReel = new List<int>[ReelCount];
         for (int col = 0; col < fillerSymbolIdsByReel.Length; col++)
         {
-            fillerSymbolIdsByReel[col] = BuildFillerSymbolIds(col, config);
+            fillerSymbolIdsByReel[col] = BuildFillerSymbolIds(col, config, false);
+            freeGamesFillerSymbolIdsByReel[col] = BuildFillerSymbolIds(col, config, true);
         }
     }
 
-    private static List<int> BuildFillerSymbolIds(int columnIndex, GameConfig config)
+    private static List<int> BuildFillerSymbolIds(int columnIndex, GameConfig config, bool freeGames)
     {
         int wildId = config != null ? config.wildSymbolId : -1;
+        List<int> wildReels = config == null ? null : (freeGames ? config.wildFreeGameReels : config.wildMainGameReels);
         // No reel list sent means no known rule, so the Wild is left on every reel rather than none.
         bool wildAllowed = wildId < 0
-            || config.wildMainGameReels == null
-            || config.wildMainGameReels.Count == 0
-            || config.wildMainGameReels.Contains(columnIndex);
+            || wildReels == null
+            || wildReels.Count == 0
+            || wildReels.Contains(columnIndex);
+
+        List<int> excluded = freeGames && config != null ? config.freeGamesExcludedSymbolIds : null;
 
         var ids = new List<int>(SymbolCount);
         for (int id = 0; id < SymbolCount; id++)
         {
             if (id == wildId && !wildAllowed) continue;
+            if (excluded != null && excluded.Contains(id)) continue;
             ids.Add(id);
         }
         return ids;
@@ -703,7 +720,9 @@ public class SlotView : MonoBehaviour
 
     #region Spin Animation
 
-    internal void StartSpin()
+    // together: every reel starts at once (the free games, ATFreeGamesBonus.md §5.2) instead of one
+    // after another. Landing is unaffected — the reels still land left to right.
+    internal void StartSpin(bool together = false)
     {
         if (isSpinning) return;
 
@@ -722,7 +741,7 @@ public class SlotView : MonoBehaviour
         for (int col = 0; col < ReelCount; col++)
         {
             RandomizeBufferSprites(col);
-            StartReelCycleWithDelay(col, col * reelStartStagger);
+            StartReelCycleWithDelay(col, together ? 0f : col * reelStartStagger);
         }
     }
 
@@ -876,19 +895,37 @@ public class SlotView : MonoBehaviour
     }
 
     /// <summary>
-    /// Which reels are held back to tease a trigger. No rule yet: Wild Jokers' Drum and Sandbell rules
-    /// were removed with those features (2026-11-14), and Aladdin's Treasure's BlueOrb rule comes with
-    /// the free games (ATFreeGamesBonus.md §3.1) — so nothing anticipates today. The hold, the effects
-    /// and their timing below are the machinery that rule will use.
+    /// Which reels are held back to tease a trigger — the BlueOrb rule (ATFreeGamesBonus.md §3.1), in
+    /// the base game and the free games alike (where a third orb is a retrigger). Orbs are counted by
+    /// cell, so two on one reel count as two. Once two have landed, every reel after the one holding
+    /// the second is held, one after another as they land — until a reel lands the third, which ends
+    /// it: the reels after that land normally. A quick stop never calls this.
     /// </summary>
     private void ComputeAnticipatedReels(List<List<int>> resultMatrix, HashSet<int> results)
     {
         GameConfig config = gameManager != null ? gameManager.gameConfig : null;
         if (resultMatrix == null || config == null) return;
+
+        int orbId = config.freeSpinsSymbolId;
+        if (orbId < 0) return;
+
+        int trigger = config.freeSpinsMinTrigger > 0 ? config.freeSpinsMinTrigger : 3;
+        int landedSoFar = 0;
+
+        for (int col = 0; col < ReelCount; col++)
+        {
+            // Two already down and the trigger not yet complete: this reel is held.
+            if (landedSoFar >= trigger - 1 && landedSoFar < trigger) results.Add(col);
+
+            landedSoFar += CountSymbolInColumn(resultMatrix, col, orbId);
+
+            // The trigger is complete once this reel lands: nothing after it is held.
+            if (landedSoFar >= trigger) break;
+        }
     }
 
     // How many visible cells of one reel show the symbol — counted by cell, so two on one reel count
-    // as two. Kept for the BlueOrb anticipation rule (ATFreeGamesBonus.md §3.1).
+    // as two.
     private int CountSymbolInColumn(List<List<int>> matrix, int col, int symbolId)
     {
         if (symbolId < 0 || matrix == null || col < 0 || col >= matrix.Count || matrix[col] == null) return 0;
@@ -1053,15 +1090,14 @@ public class SlotView : MonoBehaviour
 
     #endregion
 
-    #region Feature Trigger Boxes
+    #region Feature Trigger
 
     /// <summary>
-    /// A feature trigger's presentation: every cell showing symbolId (the scatter) is lifted above the
-    /// dim with a looping win box over it. It stays up until the next spin's teardown, or
-    /// ClearWinPresentation. Inherited from Wild Jokers' Drum; Aladdin's Treasure's trigger (the
-    /// BlueOrbs looping, ATFreeGamesBonus.md §3.2) replaces it with the free games.
+    /// A free-games trigger or retrigger (ATFreeGamesBonus.md §3.2, §5.5): every cell showing symbolId
+    /// (the BlueOrb) plays its clip on a loop — no win box, no dim (owner, 2026-11-15). It runs until
+    /// ClearWinPresentation or the next spin's teardown.
     /// </summary>
-    internal void ShowFeatureTriggerBoxes(int symbolId)
+    internal void LoopSymbolCells(int symbolId)
     {
         KillWinTweens();
 
@@ -1083,26 +1119,40 @@ public class SlotView : MonoBehaviour
             }
         }
 
-        ShowFeatureTriggerBoxes(cells);
+        if (cells.Count == 0) return;
+        winAnimationCoroutine = StartCoroutine(LoopCells(cells));
     }
 
-    // The same presentation for an explicit set of cells (flat indices).
-    private void ShowFeatureTriggerBoxes(List<int> cells)
-    {
-        KillWinTweens();
-        lastWinLines = null;
-
-        if (cells == null || cells.Count == 0) return;
-
-        // A copy, so the caller's list can't change what is animating.
-        winAnimationCoroutine = StartCoroutine(AnimateTriggerCells(new List<int>(cells)));
-    }
-
-    private IEnumerator AnimateTriggerCells(List<int> cells)
+    private IEnumerator LoopCells(List<int> cells)
     {
         // rounds 0 is the closing hold: everything loops, and nothing waits on it.
-        yield return AnimateWinPositions(cells, rounds: 0, includeScatters: true);
+        yield return AnimateWinPositions(cells, rounds: 0, includeScatters: true, showBoxes: false, raiseDim: false);
         winAnimationCoroutine = null;
+    }
+
+    /// <summary>
+    /// The end phase (ATFreeGamesBonus.md §6.1): the reel symbol at each of these cells (flat indices)
+    /// goes, so the end orb shows on an empty position. Call after ClearWinPresentation — any win
+    /// teardown puts every icon back. RestoreBoard brings them back for the base game.
+    /// </summary>
+    internal void SetCellsHidden(IEnumerable<int> cells)
+    {
+        if (cells == null) return;
+        foreach (int cell in cells)
+        {
+            SetDisplayIconActive(cell % ReelCount, cell / ReelCount, false);
+        }
+    }
+
+    /// <summary>
+    /// Puts a board back on the reels — the triggering board, after the free games (§8) — with every
+    /// reel icon showing again and any presentation taken down.
+    /// </summary>
+    internal void RestoreBoard(List<List<int>> matrix)
+    {
+        lastWinLines = null;
+        KillWinTweens();
+        SetInitialMatrix(matrix);
     }
 
     /// <summary>Takes any win or trigger presentation down — for a feature that ends without a spin.</summary>
@@ -1322,10 +1372,13 @@ public class SlotView : MonoBehaviour
     /// Zero or less means the closing hold — start them looping and do not wait at all.
     /// </param>
     /// <param name="includeScatters">
-    /// True only for a feature trigger's boxes (ShowFeatureTriggerBoxes), which box the scatters
-    /// themselves. A line win never does — see the guard below.
+    /// True only for a feature trigger (LoopSymbolCells), which animates the scatters themselves. A
+    /// line win never does — see the guard below.
     /// </param>
-    private IEnumerator AnimateWinPositions(IEnumerable<int> flatPositions, int rounds = 1, bool includeScatters = false)
+    /// <param name="showBoxes">False: no win box over the cells (the trigger's looping orbs).</param>
+    /// <param name="raiseDim">False: the board is not dimmed (the trigger's looping orbs).</param>
+    private IEnumerator AnimateWinPositions(IEnumerable<int> flatPositions, int rounds = 1, bool includeScatters = false,
+                                            bool showBoxes = true, bool raiseDim = true)
     {
         if (flatPositions == null) yield break;
 
@@ -1383,7 +1436,7 @@ public class SlotView : MonoBehaviour
 
             // The box over this cell. Every winning cell gets one, whether or not its symbol
             // animates, and the rounds below wait on it like any symbol clip.
-            ImageAnimation box = GetWinBox(col, row);
+            ImageAnimation box = showBoxes ? GetWinBox(col, row) : null;
             if (box != null && winBoxFrames != null && winBoxFrames.Count > 0)
             {
                 box.textureArray = winBoxFrames;
@@ -1417,7 +1470,7 @@ public class SlotView : MonoBehaviour
         // fully-invalid position set would darken the reels with nothing shown on top.
         if (anyShown)
         {
-            if (winDimOverlay != null) winDimOverlay.SetActive(true);
+            if (raiseDim && winDimOverlay != null) winDimOverlay.SetActive(true);
             if (winAnimationLayer != null) winAnimationLayer.SetActive(true);
         }
 
