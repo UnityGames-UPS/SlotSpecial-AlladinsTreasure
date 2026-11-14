@@ -24,13 +24,11 @@
       "id": 0,
       "name": "Fairy",
       "group": "high",
-      "payout": [
-        100,
-        100,
-        600
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 100,
+        "4": 100,
+        "5": 600
+      },
       "reelsInstance": {
         "0": 2,
         "1": 2,
@@ -43,13 +41,11 @@
       "id": 1,
       "name": "Unicorn",
       "group": "high",
-      "payout": [
-        50,
-        100,
-        400
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 50,
+        "4": 100,
+        "5": 400
+      },
       "reelsInstance": {
         "0": 3,
         "1": 3,
@@ -62,13 +58,11 @@
       "id": 2,
       "name": "Squirrel",
       "group": "high",
-      "payout": [
-        40,
-        80,
-        250
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 40,
+        "4": 80,
+        "5": 250
+      },
       "reelsInstance": {
         "0": 4,
         "1": 4,
@@ -81,13 +75,11 @@
       "id": 3,
       "name": "Mushrooms",
       "group": "high",
-      "payout": [
-        30,
-        60,
-        200
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 30,
+        "4": 60,
+        "5": 200
+      },
       "reelsInstance": {
         "0": 5,
         "1": 5,
@@ -100,13 +92,11 @@
       "id": 4,
       "name": "Lotus",
       "group": "high",
-      "payout": [
-        20,
-        30,
-        120
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 20,
+        "4": 30,
+        "5": 120
+      },
       "reelsInstance": {
         "0": 6,
         "1": 6,
@@ -119,13 +109,11 @@
       "id": 5,
       "name": "A",
       "group": "low",
-      "payout": [
-        10,
-        20,
-        50
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 10,
+        "4": 20,
+        "5": 50
+      },
       "reelsInstance": {
         "0": 10,
         "1": 10,
@@ -138,13 +126,11 @@
       "id": 6,
       "name": "K",
       "group": "low",
-      "payout": [
-        10,
-        20,
-        50
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 10,
+        "4": 20,
+        "5": 50
+      },
       "reelsInstance": {
         "0": 10,
         "1": 10,
@@ -157,13 +143,11 @@
       "id": 7,
       "name": "Q",
       "group": "low",
-      "payout": [
-        5,
-        10,
-        25
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 5,
+        "4": 10,
+        "5": 25
+      },
       "reelsInstance": {
         "0": 12,
         "1": 12,
@@ -176,13 +160,11 @@
       "id": 8,
       "name": "J",
       "group": "low",
-      "payout": [
-        5,
-        10,
-        25
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 5,
+        "4": 10,
+        "5": 25
+      },
       "reelsInstance": {
         "0": 12,
         "1": 12,
@@ -195,13 +177,11 @@
       "id": 9,
       "name": "10",
       "group": "low",
-      "payout": [
-        5,
-        10,
-        25
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 5,
+        "4": 10,
+        "5": 25
+      },
       "reelsInstance": {
         "0": 14,
         "1": 14,
@@ -214,13 +194,11 @@
       "id": 10,
       "name": "9",
       "group": "low",
-      "payout": [
-        5,
-        10,
-        25
-      ],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {
+        "3": 5,
+        "4": 10,
+        "5": 25
+      },
       "reelsInstance": {
         "0": 14,
         "1": 14,
@@ -233,8 +211,7 @@
       "id": 11,
       "name": "Wild",
       "group": "wild",
-      "payout": [],
-      "minMatch": 3,
+      "payouts": {},
       "allowedReels": [
         1,
         2,
@@ -252,9 +229,7 @@
       "id": 12,
       "name": "BlueOrb",
       "group": "scatter",
-      "payout": [],
-      "minMatch": 3,
-      "allowedReels": [],
+      "payouts": {},
       "reelsInstance": {
         "0": 2,
         "1": 2,
@@ -295,20 +270,17 @@
         "orangeHitMultiplier": 10
       },
       "enabled": true,
-      "payMultiplier": 1,
-      "awardedOnTrigger": 10,
-      "retriggerEnabled": true,
+      "retrigger": true,
+      "multiplier": 1,
+      "spinsCount": 10,
+      "maxFreeSpins": 14,
+      "triggerCount": 3,
       "excludedSymbolIds": [
         9,
         10
       ],
-      "maxTotalFreeGames": 300,
-      "awardedOnRetrigger": 3
+      "retriggerSpinsCount": 1
     }
   },
-  "isSpecial": false,
-  "linesCount": [
-    243
-  ],
   "creditDivisor": 50
 }
