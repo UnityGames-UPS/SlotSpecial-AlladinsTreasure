@@ -609,14 +609,6 @@ public class UIManager : MonoBehaviour
         UpdateBalanceDisplay();
     }
 
-    // A feature has finished paying out: the win box shows its prize, and the balance whatever
-    // GameManager.DisplayBalance now gives — the server's, once the feature's hold is released.
-    internal void ShowFeaturePayout(double amount)
-    {
-        UpdateWinDisplay(amount);
-        UpdateBalanceDisplay();
-    }
-
     internal void TriggerBigWinPopup(SpinResult result, System.Action onComplete = null)
     {
         double winAmount = (result != null) ? result.winAmount : 0;
@@ -671,13 +663,6 @@ public class UIManager : MonoBehaviour
                 AudioManager.Instance?.PlayTakeButton();
                 ApplySpinButtonState(SpinButtonMode.FeatureTake, interactable: false);
                 gameManager.OnFeatureTakePressed();
-                return;
-
-            case SpinButtonMode.RespinStart:
-                // Out of the explicit mode first, so GameManager can put the button into Stop for the
-                // respin. The respin's own spin sound starts with the reel.
-                ApplySpinButtonState(SpinButtonMode.Stop, interactable: false);
-                gameManager.OnRespinStartPressed();
                 return;
 
             case SpinButtonMode.BigWinTake:
@@ -1165,8 +1150,7 @@ public class UIManager : MonoBehaviour
     // Modes that share art stay distinct because they answer to different owners: FeatureTake calls
     // back into GameManager for whichever feature showed it, BigWinTake closes the popup.
     // FeatureStart / FeatureTake are the START and TAKE of a feature round — Free Spins' START before
-    // the first free spin and TAKE after TOTAL WIN (BonusFreeSpins.md §5, §7). RespinStart is the
-    // Spin face, waiting for the press that starts a Mystery Respin (BonusFreeSpins.md §4).
+    // the first free spin and TAKE after TOTAL WIN (BonusFreeSpins.md §5, §7).
     internal enum SpinButtonMode
     {
         Spin,
@@ -1174,8 +1158,7 @@ public class UIManager : MonoBehaviour
         AutoplayStop,
         BigWinTake,
         FeatureStart,
-        FeatureTake,
-        RespinStart
+        FeatureTake
     }
 
     private SpinButtonMode spinButtonMode = SpinButtonMode.Spin;
@@ -1187,8 +1170,7 @@ public class UIManager : MonoBehaviour
     {
         return mode == SpinButtonMode.BigWinTake
             || mode == SpinButtonMode.FeatureStart
-            || mode == SpinButtonMode.FeatureTake
-            || mode == SpinButtonMode.RespinStart;
+            || mode == SpinButtonMode.FeatureTake;
     }
 
     internal void SetSpinButtonMode(SpinButtonMode mode, bool interactable = true)

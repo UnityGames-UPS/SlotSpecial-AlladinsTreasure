@@ -65,17 +65,8 @@ public class AudioManager : MonoBehaviour
     [Tooltip("Music for a Free Spins round (free spin bg.mp3), in place of clipGameMainBg until TAKE.")]
     [SerializeField] private AudioClip clipFreeSpinsMusic;
 
-    [Tooltip("MYSTERY RESPIN (mystery respin.mp3): from the popup opening until the respun reel lands, where it is cut.")]
-    [SerializeField] private AudioClip clipMysteryRespin;
-
-    [Tooltip("TOTAL WIN (total win .mp3): once, from the popup opening; cut when the popup goes (TAKE, or the Sandbell Pick's own fade).")]
+    [Tooltip("TOTAL WIN (total win .mp3): once, from the popup opening; cut when the popup goes (TAKE).")]
     [SerializeField] private AudioClip clipTotalWin;
-
-    [Tooltip("A gem breaking in the Ball Gale Pick (glass break in ball game.mp3).")]
-    [SerializeField] private AudioClip clipGemBreak;
-
-    [Tooltip("The Ball Gale Pick's slide in and out (ball game swoosh.mp3).")]
-    [SerializeField] private AudioClip clipBonusSwoosh;
 
     // A music switch dips rather than overlaps: there is one music source, so the old track fades out
     // over the first half and the new one starts and fades in over the second.
@@ -313,16 +304,11 @@ public class AudioManager : MonoBehaviour
     // music switch.
     internal void PlayFreeSpinsMusic() => SwitchMusic(clipFreeSpinsMusic);
 
-    // MYSTERY RESPIN and TOTAL WIN outlast what they go with, so they are cut: played with Play() on
-    // uiSource, since a one-shot can't be stopped. While one plays, uiSource reads as
-    // busy and other UI sounds go to reserveSource, so cutting it never cuts them.
-    internal void PlayMysteryRespin() => PlayCuttable(clipMysteryRespin);
-    internal void StopMysteryRespin() => StopCuttable(clipMysteryRespin);
+    // TOTAL WIN outlasts what it goes with, so it is cut: played with Play() on uiSource, since a
+    // one-shot can't be stopped. While it plays, uiSource reads as busy and other UI sounds go to
+    // reserveSource, so cutting it never cuts them.
     internal void PlayTotalWin() => PlayCuttable(clipTotalWin);
     internal void StopTotalWin() => StopCuttable(clipTotalWin);
-
-    internal void PlayGemBreak() => PlayUISound(clipGemBreak);
-    internal void PlayBonusSwoosh() => PlayUISound(clipBonusSwoosh);
 
     private void PlayCuttable(AudioClip clip)
     {

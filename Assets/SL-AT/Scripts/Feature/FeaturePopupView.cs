@@ -3,16 +3,18 @@ using UnityEngine;
 using DG.Tweening;
 
 /// <summary>
-/// The feature popup shared by all three features (BonusFreeSpins.md §8): a backdrop that rotates
-/// anticlockwise, a frame, and one child per message, of which exactly one is shown.
+/// Wild Jokers' Free Spins popup (BonusFreeSpins.md §8): a backdrop that rotates anticlockwise, a
+/// frame, and one child per message, of which exactly one is shown. Kept for now as the base for
+/// Aladdin's Treasure's free-games popups ("N FREE GAMES", CONGRATULATIONS / COLLECT —
+/// ATFreeGamesBonus.md), which replace it. The pick bonuses' and Mystery Respin's messages went with
+/// those features (2026-11-14).
 ///
 /// This object holds the script and stays on. The popup itself is popupGroup (PopupImage in the
 /// scene): its CanvasGroup fades it, and it is what is switched on and off. The backdrop and the
 /// frame under it are switched on whenever it opens, so the scene can be saved with any of them off.
 ///
-/// Free Spins uses MYSTERY RESPIN, CONGRATULATIONS (with the awarded spin count) and TOTAL WIN (counted
-/// up, taken down at TAKE). Sandbell Pick uses MYSTERY RESPIN, its own CONGRATULATIONS and TOTAL WIN
-/// (taken down on its own). The Ball's CONGRATULATIONS child is wired when that feature is built.
+/// Free Spins uses CONGRATULATIONS (with the awarded spin count) and TOTAL WIN (counted up, taken down
+/// at TAKE).
 ///
 /// View layer only: GameManager calls in and is called back when a message has gone. Everything is
 /// DOTween-driven. Every reference is optional — a missing message still calls back, so a round
@@ -29,14 +31,8 @@ public class FeaturePopupView : MonoBehaviour
     [SerializeField] private RectTransform popupBackground;
 
     [Header("Messages (children of Popup)")]
-    [Tooltip("MysteryRespin — shown before a near-miss respin.")]
-    [SerializeField] private GameObject mysteryRespin;
     [Tooltip("CongratulationsFreeSpins — shown when Free Spins are awarded, on a trigger or a retrigger.")]
     [SerializeField] private GameObject congratulationsFreeSpins;
-    [Tooltip("CongratulationsSandbellPick — shown when the Sandbell Pick is won.")]
-    [SerializeField] private GameObject congratulationsSandbellPick;
-    [Tooltip("CongratulationsBallGale — shown when the Ball Gale Pick is won.")]
-    [SerializeField] private GameObject congratulationsBallGalePick;
     [Tooltip("TotalWin — the round's total, counted up, until TAKE.")]
     [SerializeField] private GameObject totalWin;
 
@@ -47,7 +43,6 @@ public class FeaturePopupView : MonoBehaviour
     [SerializeField] private TMPro.TMP_Text totalWinAmountText;
 
     // Tuning — placeholders until the owner signs off the timings (BonusFreeSpins.md §11).
-    private const float MysteryRespinHold = 1.5f;        // seconds MYSTERY RESPIN stays before it fades
     private const float CongratulationsHold = 6.5f;      // seconds CONGRATULATIONS stays before it fades — with the fade, the length of its sound (6.9 s, owner)
     private const float FadeOutDuration = 0.4f;          // the CanvasGroup's fade to 0
     private const float RotationPeriod = 8f;             // seconds for one full anticlockwise turn of the backdrop
@@ -91,16 +86,6 @@ public class FeaturePopupView : MonoBehaviour
     }
 
     /// <summary>
-    /// MYSTERY RESPIN: shows, holds, fades out. onClosed fires once it has gone. Its sound runs on
-    /// through the respin — GameManager cuts it when the reel lands.
-    /// </summary>
-    internal void ShowMysteryRespin(Action onClosed)
-    {
-        AudioManager.Instance?.PlayMysteryRespin();
-        ShowThenFade(mysteryRespin, MysteryRespinHold, onClosed);
-    }
-
-    /// <summary>
     /// CONGRATULATIONS! YOU WON <spins> FREE SPINS: shows, holds, fades out. onClosed fires once it
     /// has gone. spins is the server's award, never a constant.
     /// </summary>
@@ -110,26 +95,6 @@ public class FeaturePopupView : MonoBehaviour
 
         AudioManager.Instance?.PlayCongratulations();
         ShowThenFade(congratulationsFreeSpins, CongratulationsHold, onClosed);
-    }
-
-    /// <summary>
-    /// CONGRATULATIONS! YOU WON SANDBELL PICK BONUS: shows, holds, fades out on its own. onClosed
-    /// fires once it has gone.
-    /// </summary>
-    internal void ShowSandbellPickAwarded(Action onClosed)
-    {
-        AudioManager.Instance?.PlayCongratulations();
-        ShowThenFade(congratulationsSandbellPick, CongratulationsHold, onClosed);
-    }
-
-    /// <summary>
-    /// CONGRATULATIONS! YOU WON BALL GALE PICK BONUS: shows, holds, fades out on its own. onClosed
-    /// fires once it has gone.
-    /// </summary>
-    internal void ShowBallGalePickAwarded(Action onClosed)
-    {
-        AudioManager.Instance?.PlayCongratulations();
-        ShowThenFade(congratulationsBallGalePick, CongratulationsHold, onClosed);
     }
 
     /// <summary>
@@ -270,10 +235,7 @@ public class FeaturePopupView : MonoBehaviour
     // Exactly one message on (or none, for null).
     private void ShowOnly(GameObject message)
     {
-        if (mysteryRespin != null) mysteryRespin.SetActive(mysteryRespin == message);
         if (congratulationsFreeSpins != null) congratulationsFreeSpins.SetActive(congratulationsFreeSpins == message);
-        if (congratulationsSandbellPick != null) congratulationsSandbellPick.SetActive(congratulationsSandbellPick == message);
-        if (congratulationsBallGalePick != null) congratulationsBallGalePick.SetActive(congratulationsBallGalePick == message);
         if (totalWin != null) totalWin.SetActive(totalWin == message);
     }
 

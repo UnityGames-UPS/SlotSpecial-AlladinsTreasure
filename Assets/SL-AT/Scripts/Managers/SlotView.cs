@@ -153,23 +153,14 @@ public class SlotView : MonoBehaviour
     [SerializeField] private float quickStopDuration = 0.2f;
 
     [Header("Scatter Anticipation")]
-    [Tooltip("Effects shown around a reel that could still complete a feature trigger. Index 0 = reel 2, index 1 = reel 3, index 2 = reel 4, index 3 = reel 5. Reel 1 can never anticipate, since a near miss needs earlier reels to have landed. Each needs an ImageAnimation; its own frame list stays empty — the green / orange lists below are handed to it.")]
+    [Tooltip("Effects shown around a reel that could still complete a feature trigger. Index 0 = reel 2, index 1 = reel 3, index 2 = reel 4, index 3 = reel 5. Reel 1 can never anticipate, since a near miss needs earlier reels to have landed. Each needs an ImageAnimation; its own frame list stays empty — the list below is handed to it.")]
     [SerializeField] private GameObject[] anticipationEffects = new GameObject[4];
-    [Tooltip("The anticipation effect's frames while a reel is held for a possible trigger (AnticipationEffects/Green).")]
+    [Tooltip("The anticipation effect's frames while a reel is held for a possible trigger.")]
     [SerializeField] private List<Sprite> anticipationGreenFrames = new List<Sprite>();
-    [Tooltip("The anticipation effect's frames while a reel is respun on a near miss (AnticipationEffects/Orange). The same orange for every feature.")]
-    [SerializeField] private List<Sprite> anticipationOrangeFrames = new List<Sprite>();
-    [Tooltip("Extra time each held reel keeps spinning. Applied per held reel and cumulative, so several holds in one spin add up. Also how long a respun reel spins.")]
+    [Tooltip("Extra time each held reel keeps spinning. Applied per held reel and cumulative, so several holds in one spin add up.")]
     [SerializeField] private float anticipationExtraTime = 2f;
     [Tooltip("Shorter hold used when the player is on Turbo.")]
     [SerializeField] private float anticipationExtraTimeTurbo = 1f;
-
-    // How long a respun reel spins (owner, 2026-11-04), on Normal and Turbo alike, unless STOPped.
-    private const float RespinSpinTime = 2.4f;
-
-    // How long a respun reel spins on Quick Spin or after STOP: just enough to read as a spin before it
-    // lands.
-    private const float QuickRespinSpinTime = 0.3f;
 
     // Added to the computed stop time before a stop sequence stops waiting for its reels to report
     // they landed. Only reached if a landing tween is killed before it completes; the round then
@@ -226,9 +217,6 @@ public class SlotView : MonoBehaviour
     // so a speed equal to the frame count plays at 24 fps: 33 frames, about 1.4 s a loop.
     private const float winBoxAnimationSpeed = 33f;
 
-    // True while a feature takes the board's clicks itself (the Sandbell Pick): the symbol info card
-    // stays shut. Set by the controller.
-    private bool symbolTapsBlocked;
     [Tooltip("The per-line win amount, ONE PER ROW, top to bottom — element 0 is the top row. This game draws no payline graphics: a win is shown by animating its symbols and putting its payout on the middle reel, so only three positions are ever needed.")]
     [SerializeField] private TMPro.TMP_Text[] winLineAmounts = new TMPro.TMP_Text[3];
 
@@ -268,7 +256,7 @@ public class SlotView : MonoBehaviour
     // replays the presentation after the controller has already let go of that spin's result.
     private double lastWinTotal;
 
-    // Which reels are being held back to tease a trigger this spin — or the one reel being respun.
+    // Which reels are being held back to tease a trigger this spin.
     // Filled before the reels start stopping; StopSingleReel raises and clears each effect off its
     // own landing events. More than one reel can be held in a single spin — see
     // ComputeAnticipatedReels.
@@ -309,8 +297,8 @@ public class SlotView : MonoBehaviour
     // in the server payload, in currentDisplayMatrix, and in each reel's displayImages list.
     internal int RowCount => (gameManager != null && gameManager.gameConfig != null) ? gameManager.gameConfig.rowCount : 3;
 
-    // Every symbol the init's symbol table puts in the scatter group — the Drum, the Ball and the
-    // Sandbell. Read from the table's group, so it covers all three whichever feature is built.
+    // Every symbol the init's symbol table puts in the scatter group — the BlueOrb in Aladdin's
+    // Treasure. Read from the table's group, so it follows the init.
     private bool IsScatterSymbol(int symbolId)
     {
         var symbols = gameManager?.gameConfig?.symbols;
@@ -407,8 +395,7 @@ public class SlotView : MonoBehaviour
 
     internal void OnSymbolClicked(int col, int row, RectTransform symbolRect)
     {
-        // During the Sandbell Pick only the Sandbells take clicks — through their pick cells.
-        if (isSpinning || symbolTapsBlocked)
+        if (isSpinning)
         {
             if (symbolInfoCard != null) symbolInfoCard.HideCard();
             return;
@@ -889,70 +876,19 @@ public class SlotView : MonoBehaviour
     }
 
     /// <summary>
-    /// Which reels are held back to tease a trigger: the union of each feature's rule. Free Spins and
-    /// Sandbell Pick anticipate — the Sandbell inside a Free Spins round too, where it can also be won;
-    /// Ball Gale Pick never does (its spec's §3). Decided on the board the
-    /// reels land on — before any respin — so a respin that completes a trigger still reads as a near
-    /// miss first.
+    /// Which reels are held back to tease a trigger. No rule yet: Wild Jokers' Drum and Sandbell rules
+    /// were removed with those features (2026-11-14), and Aladdin's Treasure's BlueOrb rule comes with
+    /// the free games (ATFreeGamesBonus.md §3.1) — so nothing anticipates today. The hold, the effects
+    /// and their timing below are the machinery that rule will use.
     /// </summary>
     private void ComputeAnticipatedReels(List<List<int>> resultMatrix, HashSet<int> results)
     {
         GameConfig config = gameManager != null ? gameManager.gameConfig : null;
         if (resultMatrix == null || config == null) return;
-
-        AddDrumAnticipation(resultMatrix, config, results);
-
-        // In the base game and inside Free Spins alike: the Sandbell Pick can be won in a round too
-        // (backend, 2026-11-06).
-        AddSandbellAnticipation(resultMatrix, config, results);
     }
 
-    /// <summary>
-    /// <b>The Drum</b> (BonusFreeSpins.md §3): once every near-miss reel (the init's nearMissReels —
-    /// reels 2 and 3) shows a Drum, every reel after the last of them is held — reels 4 and 5 — until
-    /// one of them completes the trigger (a Drum on each of triggerReels). Reel 4 landing the third
-    /// Drum therefore ends it: reel 5 is not held. Reel 5 can never show a Drum, but is held when
-    /// reel 4 misses (owner). Reels covered, not Drums counted: two Drums on reel 2 are not a near miss.
-    /// </summary>
-    private void AddDrumAnticipation(List<List<int>> resultMatrix, GameConfig config, HashSet<int> results)
-    {
-        int drumId = config.freeSpinsSymbolId;
-        List<int> nearMissReels = config.freeSpinsNearMissReels;
-        if (drumId < 0 || nearMissReels == null || nearMissReels.Count == 0) return;
-
-        int lastNearMissReel = -1;
-        foreach (int reel in nearMissReels)
-        {
-            if (!ColumnHasSymbol(resultMatrix, reel, drumId)) return;
-            lastNearMissReel = Mathf.Max(lastNearMissReel, reel);
-        }
-
-        for (int col = lastNearMissReel + 1; col < ReelCount; col++)
-        {
-            results.Add(col);
-            if (IsTriggerCompleteBy(resultMatrix, col, drumId, config.freeSpinsTriggerReels)) break;
-        }
-    }
-
-    /// <summary>
-    /// <b>The Sandbell</b> (SandbellPickBonus.md §3): once a second Sandbell has landed, every reel
-    /// after it is held — a count of cells, so two stacked on one reel count as two. Unlike the Drum
-    /// it keeps going after the third (owner): every remaining reel can still land one.
-    /// </summary>
-    private void AddSandbellAnticipation(List<List<int>> resultMatrix, GameConfig config, HashSet<int> results)
-    {
-        int sandbellId = config.sandbellBonusSymbolId;
-        if (sandbellId < 0) return;
-
-        int landedSoFar = 0;
-        for (int col = 0; col < ReelCount; col++)
-        {
-            if (landedSoFar >= 2) results.Add(col);
-            landedSoFar += CountSymbolInColumn(resultMatrix, col, sandbellId);
-        }
-    }
-
-    // How many visible cells of one reel show the symbol.
+    // How many visible cells of one reel show the symbol — counted by cell, so two on one reel count
+    // as two. Kept for the BlueOrb anticipation rule (ATFreeGamesBonus.md §3.1).
     private int CountSymbolInColumn(List<List<int>> matrix, int col, int symbolId)
     {
         if (symbolId < 0 || matrix == null || col < 0 || col >= matrix.Count || matrix[col] == null) return 0;
@@ -966,32 +902,6 @@ public class SlotView : MonoBehaviour
         return count;
     }
 
-    // True once every trigger reel up to and including lastReel shows the symbol, and none lies
-    // beyond it — i.e. the trigger is complete by the time lastReel has landed.
-    private bool IsTriggerCompleteBy(List<List<int>> matrix, int lastReel, int symbolId, List<int> triggerReels)
-    {
-        if (triggerReels == null || triggerReels.Count == 0) return false;
-
-        foreach (int reel in triggerReels)
-        {
-            if (reel > lastReel || !ColumnHasSymbol(matrix, reel, symbolId)) return false;
-        }
-        return true;
-    }
-
-    // Whether one reel shows the symbol in any visible row.
-    private bool ColumnHasSymbol(List<List<int>> matrix, int col, int symbolId)
-    {
-        if (symbolId < 0 || matrix == null || col < 0 || col >= matrix.Count || matrix[col] == null) return false;
-
-        int rowEnd = Mathf.Min(RowCount, matrix[col].Count);
-        for (int row = 0; row < rowEnd; row++)
-        {
-            if (matrix[col][row] == symbolId) return true;
-        }
-        return false;
-    }
-
     private float GetAnticipationHold()
     {
         bool isTurbo = gameManager != null && gameManager.currentSpinSpeed == SpinSpeed.Turbo;
@@ -1001,10 +911,10 @@ public class SlotView : MonoBehaviour
     // effects[0] belongs to reel index 1, effects[1] to reel index 2, and so on — reel 0 can never
     // anticipate, since a near miss needs earlier reels to have landed.
     //
-    // frames picks the colour — anticipationGreenFrames for a hold, anticipationOrangeFrames for a
-    // respin. They are handed to the effect's ImageAnimation before it is switched on, so its Start On
-    // Enable plays the right clip; an effect that is already on is restarted on the new frames. An
-    // empty list leaves the effect's own frames alone.
+    // frames is the clip to play (anticipationGreenFrames). It is handed to the effect's
+    // ImageAnimation before it is switched on, so its Start On Enable plays the right clip; an effect
+    // that is already on is restarted on the new frames. An empty list leaves the effect's own frames
+    // alone.
     private void SetAnticipationEffect(int reelIndex, bool visible, List<Sprite> frames = null)
     {
         int effectIndex = reelIndex - 1;
@@ -1068,8 +978,8 @@ public class SlotView : MonoBehaviour
             AudioManager.Instance?.PlayAnticipation();
         }
 
-        // The reel is at rest. If it was being teased (or respun), its effect goes whether or not the
-        // Drum actually turned up; other reels keep their own holds.
+        // The reel is at rest. If it was being teased, its effect goes whether or not the trigger
+        // symbol actually turned up; other reels keep their own holds.
         void OnReelLanded()
         {
             if (anticipatedReels.Remove(columnIndex))
@@ -1114,93 +1024,6 @@ public class SlotView : MonoBehaviour
 
     #endregion
 
-    #region Respin
-
-    /// <summary>
-    /// The near-miss respin (BonusFreeSpins.md §4): one reel, already landed on the board before the
-    /// respin, spins again with the orange effect and lands on finalMatrix — the result's final
-    /// board. It spins for RespinSpinTime, or briefly when quick (Quick Spin, or STOP).
-    /// onLanded fires once it is at rest.
-    /// </summary>
-    internal void RespinReel(int reelIndex, List<List<int>> finalMatrix, bool quick, System.Action onLanded)
-    {
-        bool usable = finalMatrix != null
-            && reelIndex >= 0 && reelIndex < ReelCount && reelIndex < finalMatrix.Count
-            && reelTransforms != null && reelIndex < reelTransforms.Length && reelTransforms[reelIndex] != null;
-
-        if (!usable)
-        {
-            // Nothing to animate with — put the final board up and carry on, never stall.
-            Debug.LogWarning($"[SlotView] Cannot respin reel {reelIndex} — landing the final board directly.");
-            if (finalMatrix != null && finalMatrix.Count == ReelCount)
-            {
-                currentDisplayMatrix = finalMatrix;
-                for (int col = 0; col < ReelCount; col++) SetReelSymbols(col, finalMatrix[col]);
-            }
-            onLanded?.Invoke();
-            return;
-        }
-
-        StartCoroutine(RespinReelRoutine(reelIndex, finalMatrix, quick, onLanded));
-    }
-
-    /// <summary>
-    /// STOP during a respin: the reel stops spinning now and lands quickly. Ignored once it is landing.
-    /// </summary>
-    internal void RequestRespinStop()
-    {
-        respinStopRequested = true;
-    }
-
-    // Set by RequestRespinStop while a respun reel is still spinning; reset as each respin starts.
-    private bool respinStopRequested;
-
-    private IEnumerator RespinReelRoutine(int reelIndex, List<List<int>> finalMatrix, bool quick, System.Action onLanded)
-    {
-        if (symbolInfoCard != null) symbolInfoCard.HideCard();
-
-        isSpinning = true;
-
-        // The final board from here on: the respun reel's landing write and its Drum cue read it, and
-        // every other reel already shows the same symbols.
-        currentDisplayMatrix = finalMatrix;
-
-        RandomizeBufferSprites(reelIndex);
-        StartReelCycleWithDelay(reelIndex, 0f);
-        AudioManager.Instance?.PlaySpinStart();
-
-        // Only this reel is "held", so its landing clears the orange effect and the tension sound.
-        anticipatedReels.Clear();
-        anticipatedReels.Add(reelIndex);
-        SetAnticipationEffect(reelIndex, true, anticipationOrangeFrames);
-        AudioManager.Instance?.PlayAnticipation();
-
-        // Spins for its time, or until STOP (RequestRespinStop), which lands it quickly.
-        respinStopRequested = false;
-        float spinTime = quick ? QuickRespinSpinTime : RespinSpinTime;
-        for (float elapsed = 0f; elapsed < spinTime && !respinStopRequested; elapsed += Time.deltaTime)
-        {
-            yield return null;
-        }
-        bool quickLanding = quick || respinStopRequested;
-
-        bool landed = false;
-        yield return StopSingleReel(reelIndex, finalMatrix[reelIndex], 0f, quickLanding, () => landed = true);
-
-        // Safety net only, as in StopSpinSequence.
-        float giveUpAt = Time.time + (quickLanding ? quickStopDuration : stopDuration) + LandingTimeoutMargin;
-        yield return new WaitUntil(() => landed || Time.time >= giveUpAt);
-        if (!landed) Debug.LogWarning($"[SlotView] Respun reel {reelIndex} never reported landing — carrying on.");
-
-        isSpinning = false;
-        AudioManager.Instance?.StopSpinLoop();
-        AudioManager.Instance?.StopAnticipation();
-
-        onLanded?.Invoke();
-    }
-
-    #endregion
-
     #region Quick Spin
 
     internal void QuickStop(List<List<int>> resultMatrix, System.Action onComplete = null)
@@ -1233,10 +1056,10 @@ public class SlotView : MonoBehaviour
     #region Feature Trigger Boxes
 
     /// <summary>
-    /// A feature trigger's presentation: every cell showing symbolId (the Drum, for Free Spins) is
-    /// lifted above the dim with a looping win box over it. It stays up until the next spin's
-    /// teardown, or ClearWinPresentation. Gold of Luck's scatter animation, which this replaces,
-    /// read scatterSymbolId.
+    /// A feature trigger's presentation: every cell showing symbolId (the scatter) is lifted above the
+    /// dim with a looping win box over it. It stays up until the next spin's teardown, or
+    /// ClearWinPresentation. Inherited from Wild Jokers' Drum; Aladdin's Treasure's trigger (the
+    /// BlueOrbs looping, ATFreeGamesBonus.md §3.2) replaces it with the free games.
     /// </summary>
     internal void ShowFeatureTriggerBoxes(int symbolId)
     {
@@ -1263,11 +1086,8 @@ public class SlotView : MonoBehaviour
         ShowFeatureTriggerBoxes(cells);
     }
 
-    /// <summary>
-    /// The same presentation for an explicit set of cells (flat indices) — the Sandbell Pick's, which
-    /// come from the server's bonus.
-    /// </summary>
-    internal void ShowFeatureTriggerBoxes(List<int> cells)
+    // The same presentation for an explicit set of cells (flat indices).
+    private void ShowFeatureTriggerBoxes(List<int> cells)
     {
         KillWinTweens();
         lastWinLines = null;
@@ -1276,15 +1096,6 @@ public class SlotView : MonoBehaviour
 
         // A copy, so the caller's list can't change what is animating.
         winAnimationCoroutine = StartCoroutine(AnimateTriggerCells(new List<int>(cells)));
-    }
-
-    /// <summary>
-    /// Shuts (or reopens) the symbol info card while a feature takes the board's clicks itself.
-    /// </summary>
-    internal void SetSymbolTapsBlocked(bool blocked)
-    {
-        symbolTapsBlocked = blocked;
-        if (blocked && symbolInfoCard != null) symbolInfoCard.HideCard();
     }
 
     private IEnumerator AnimateTriggerCells(List<int> cells)

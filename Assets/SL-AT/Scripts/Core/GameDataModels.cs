@@ -213,103 +213,15 @@ public class ServerPayload
     // balance down 0.20.
     public double grandTotalWin;
 
-    // The near-miss respin, decided by the server in this same result: the board landed before the
-    // respin and which reel was respun. Null when the spin had none. "matrix" is the board AFTER it.
-    public ServerNearMissRespin nearMissRespin;
-    // True / 1 on a spin that carried a respin. Bound for completeness; nearMissRespin is what the
-    // client acts on.
-    public bool isRespin;
-    public int respinCount;
-
-    // Free Spins' round state. Sent on the spin that triggers and on every spin of the round; an
-    // ordinary base spin has no block at all, which reads as "not in a round" (BonusFreeSpins.md §9.4).
+    // Wild Jokers' Free Spins round state (BonusFreeSpins.md §9.4). Aladdin's Treasure never sends
+    // it — its round is payload.freeGames (ATFreeGamesBonus.md §11), bound with the free games. Kept
+    // so the dormant WJ round plumbing in GameManager compiles until then.
     public ServerFreeSpinsResult freeSpins;
-
-    // The Sandbell Pick, whole, on the spin that triggers it — the pick is never sent to the server
-    // (SandbellPickBonus.md §8.2). Absent on every other spin.
-    public ServerSandbellPickBonus sandbellPickBonus;
-
-    // The Ball Gale Pick, whole, on the spin that triggers it: every pick, in order, decided with the
-    // spin — each click only chooses which gem shows the next one (BallGalePickBonus.md §9.2).
-    public ServerBallPickemBonus ballPickemBonus;
 
     // Sent and deliberately unbound:
     //  - "betAmountPerLine" and "totalBetAmount" (0.01 and 0.2 at the lowest bet): the client
     //    already knows its own bet. Sent on free spins too, where nothing is charged.
     //  - "netReturnRatio" (grandTotalWin over total bet): the controller derives the same ratio.
-}
-
-[Serializable]
-public class ServerBallPickemBonus
-{
-    public string featureName;     // "ballPickemBonus"
-    public bool triggered;
-    // The picks in the order the player makes them; the last has isEnd (and isCollect).
-    public List<ServerBallPick> picks;
-    // The picks' values summed (× total bet).
-    public double totalWinMultiplier;
-    // The prize in cash: totalWinMultiplier × total bet. TOTAL WIN.
-    public double winInCash;
-
-    // Sent and deliberately unbound: "grid", "gridDimensions" and "centerBox" (the backend says ignore
-    // them; "grid" is to be removed), and "triggerPositions" (the Balls' boxes come from the symbol id,
-    // as the Drum's do).
-}
-
-[Serializable]
-public class ServerBallPick
-{
-    public int pickIndex;
-    // An X value from availablePrizes, × total bet; 0 on the COLLECT pick.
-    public double multiplier;
-    // The last pick: picking ends here.
-    public bool isEnd;
-    // The COLLECT pick, worth nothing. Always equal to isEnd (backend); each is read for its own job.
-    public bool isCollect;
-
-    // "revealedPrize" (= multiplier) and "revealed" ("x15" / "end") are sent and deliberately unbound.
-}
-
-[Serializable]
-public class ServerSandbellPickBonus
-{
-    public string featureName;     // "sandbellPickBonus"
-    public bool triggered;
-    // The winning value, on a cell of the server's choosing — the client puts it on whichever
-    // Sandbell the player clicks.
-    public ServerPickPosition pickedPosition;
-    // One per other Sandbell on the board, stacked ones included: the values the player missed.
-    public List<ServerPickPosition> unpickedPositions;
-    // The winning value again (× total bet). "prizeMultiplier" is sent too, always equal, and left
-    // unbound.
-    public double totalWinMultiplier;
-    // The prize in cash: winning value × total bet. TOTAL WIN.
-    public double winInCash;
-}
-
-[Serializable]
-public class ServerPickPosition
-{
-    public int row;
-    public int col;
-    // An X value from availablePrizes, × total bet.
-    public double multiplier;
-}
-
-[Serializable]
-public class ServerNearMissRespin
-{
-    public bool triggered;
-    // Zero-based reel that was respun: 3 for the Drum, 4 for the Ball and the Sandbell.
-    public int reelIndex;
-    // Row-major like matrix: the board before the respin. Only reel reelIndex differs from matrix.
-    public List<List<string>> originalMatrix;
-    // Which feature the near miss was for: "freeSpins", "sandbellPickBonus" — and "ballPickem" for
-    // the Ball, which doesn't match its init key (reported).
-    public string featureName;
-
-    // "newMatrix" (the board after the respin) is deliberately unbound: it is not always sent, and
-    // the top-level matrix is always that board.
 }
 
 [Serializable]
@@ -438,14 +350,6 @@ public class GameConfig
     public double frameEndPrizeOrange;      // 5
     public double frameOrangeHitMultiplier; // 10
 
-    // Wild Jokers leftovers. Aladdin's Treasure has none of these features, so the init never sets
-    // them and they stay -1 / empty, which keeps the Drum and Sandbell anticipation and the pick
-    // bonuses switched off. Removed along with that code.
-    public int ballBonusSymbolId = -1;
-    public int sandbellBonusSymbolId = -1;
-    public List<int> freeSpinsTriggerReels = new List<int>();
-    public List<int> freeSpinsNearMissReels = new List<int>();
-    public int freeSpinsRespinReel = -1;
 }
 
 [Serializable]
@@ -495,75 +399,8 @@ public class SpinResult
     public List<WinLine> winLines;
     public PlayerData playerData;
 
-    // The free-spins state, from payload.freeSpins. Never null.
+    // The free-spins state, from payload.freeSpins (Wild Jokers'; AT never sends it). Never null.
     public FreeGameData freeGame;
-
-    // The near-miss respin, or null when the spin had none. resultMatrix is the board after it.
-    public RespinData respin;
-
-    // The Sandbell Pick this spin won, or null.
-    public SandbellPickData sandbellPick;
-
-    // The Ball Gale Pick this spin won, or null.
-    public BallGalePickData ballGalePick;
-}
-
-/// <summary>
-/// A won Sandbell Pick (SandbellPickBonus.md §5, §8.2): which cells hold Sandbells and the values to
-/// reveal. The winning value goes on the Sandbell the player clicks; the missed values on the rest.
-/// </summary>
-[Serializable]
-public class SandbellPickData
-{
-    // Flat indices (row * reelCount + col) of every Sandbell, in board order: left to right, then top
-    // to bottom within a reel.
-    public List<int> cells;
-    // The winning X value (× total bet).
-    public double winValue;
-    // The missed X values, in the order the server sent them — one per other Sandbell.
-    public List<double> missedValues;
-    // The prize in cash, the server's figure: TOTAL WIN.
-    public double prize;
-}
-
-/// <summary>
-/// A won Ball Gale Pick (BallGalePickBonus.md §6, §9.2): the picks in the order they are revealed —
-/// the n-th click shows picks[n] — and the prize. Which gem shows which pick is the player's click.
-/// </summary>
-[Serializable]
-public class BallGalePickData
-{
-    // In pickIndex order. The last has isEnd.
-    public List<BallPick> picks;
-    // The prize in cash, the server's figure: TOTAL WIN. Never the client's sum of the values.
-    public double prize;
-}
-
-/// <summary>One revealed gem: an X value, or COLLECT.</summary>
-[Serializable]
-public class BallPick
-{
-    // The X value (× total bet). 0 on COLLECT.
-    public double value;
-    // Shows COLLECT instead of a value, and adds nothing to the total.
-    public bool isCollect;
-    // Picking ends after this one.
-    public bool isEnd;
-}
-
-/// <summary>
-/// A near-miss respin decided by the server: land originalMatrix, then respin reelIndex onto the
-/// result's final board.
-/// </summary>
-[Serializable]
-public class RespinData
-{
-    // Zero-based reel to respin.
-    public int reelIndex;
-    // Column-major like resultMatrix: the board the reels land on before the respin.
-    public List<List<int>> originalMatrix;
-    // The feature the near miss was for, as the server names it ("freeSpins", ...).
-    public string featureName;
 }
 
 /// <summary>
@@ -909,103 +746,7 @@ public static class InitDataConverter
                 currentBetIndex = 0
             },
 
-            freeGame = ConvertFreeGame(payload?.freeSpins),
-            respin = ConvertRespin(payload?.nearMissRespin, gameConfig),
-            sandbellPick = ConvertSandbellPick(payload?.sandbellPickBonus, gameConfig),
-            ballGalePick = ConvertBallGalePick(payload?.ballPickemBonus)
-        };
-    }
-
-    // Null unless the bonus was won with at least one pick. The picks are put in pickIndex order; the
-    // server's order already is, but nothing depends on that.
-    private static BallGalePickData ConvertBallGalePick(ServerBallPickemBonus serverBonus)
-    {
-        if (serverBonus == null || !serverBonus.triggered) return null;
-
-        var picks = new List<ServerBallPick>();
-        if (serverBonus.picks != null)
-        {
-            foreach (ServerBallPick pick in serverBonus.picks)
-            {
-                if (pick != null) picks.Add(pick);
-            }
-        }
-
-        if (picks.Count == 0)
-        {
-            UnityEngine.Debug.LogError("[InitDataConverter] ballPickemBonus carried no picks — bonus ignored.");
-            return null;
-        }
-
-        picks.Sort((a, b) => a.pickIndex.CompareTo(b.pickIndex));
-
-        var converted = new List<BallPick>(picks.Count);
-        foreach (ServerBallPick pick in picks)
-        {
-            converted.Add(new BallPick
-            {
-                value = pick.multiplier,
-                isCollect = pick.isCollect,
-                isEnd = pick.isEnd
-            });
-        }
-
-        return new BallGalePickData
-        {
-            picks = converted,
-            prize = serverBonus.winInCash
-        };
-    }
-
-    // Null unless the bonus was won. The cells come from the server's positions (they match the
-    // board); only the values matter beyond that — which Sandbell shows which is the click's.
-    private static SandbellPickData ConvertSandbellPick(ServerSandbellPickBonus serverBonus, GameConfig gameConfig)
-    {
-        if (serverBonus == null || !serverBonus.triggered) return null;
-
-        if (serverBonus.pickedPosition == null)
-        {
-            UnityEngine.Debug.LogError("[InitDataConverter] sandbellPickBonus carried no pickedPosition — bonus ignored.");
-            return null;
-        }
-
-        var cells = new List<int>();
-        var missedValues = new List<double>();
-
-        if (TryGetFlatIndex(serverBonus.pickedPosition.row, serverBonus.pickedPosition.col, gameConfig, "sandbellPickBonus.pickedPosition", out int pickedCell))
-        {
-            cells.Add(pickedCell);
-        }
-
-        if (serverBonus.unpickedPositions != null)
-        {
-            for (int i = 0; i < serverBonus.unpickedPositions.Count; i++)
-            {
-                ServerPickPosition position = serverBonus.unpickedPositions[i];
-                if (position == null) continue;
-
-                missedValues.Add(position.multiplier);
-                if (TryGetFlatIndex(position.row, position.col, gameConfig, $"sandbellPickBonus.unpickedPositions[{i}]", out int cell))
-                {
-                    cells.Add(cell);
-                }
-            }
-        }
-
-        // Board order: by reel, then by row — the order the missed values are laid out in.
-        int reelCount = gameConfig != null ? gameConfig.reelCount : 5;
-        cells.Sort((a, b) =>
-        {
-            int byReel = (a % reelCount).CompareTo(b % reelCount);
-            return byReel != 0 ? byReel : (a / reelCount).CompareTo(b / reelCount);
-        });
-
-        return new SandbellPickData
-        {
-            cells = cells,
-            winValue = serverBonus.pickedPosition.multiplier,
-            missedValues = missedValues,
-            prize = serverBonus.winInCash
+            freeGame = ConvertFreeGame(payload?.freeSpins)
         };
     }
 
@@ -1023,33 +764,6 @@ public static class InitDataConverter
             spinsRemaining = serverFreeSpins.spinsRemaining,
             totalSpins = serverFreeSpins.totalSpins,
             roundWin = serverFreeSpins.totalWinCash
-        };
-    }
-
-    // Null unless the server actually respun a reel. A respin without a usable board or reel is
-    // logged and dropped: the client then just lands the final board, which is never wrong.
-    private static RespinData ConvertRespin(ServerNearMissRespin serverRespin, GameConfig gameConfig)
-    {
-        if (serverRespin == null || !serverRespin.triggered) return null;
-
-        int reelCount = gameConfig != null ? gameConfig.reelCount : 5;
-        if (serverRespin.reelIndex < 0 || serverRespin.reelIndex >= reelCount)
-        {
-            UnityEngine.Debug.LogError($"[InitDataConverter] nearMissRespin.reelIndex {serverRespin.reelIndex} is outside the {reelCount} reels — respin ignored.");
-            return null;
-        }
-
-        if (serverRespin.originalMatrix == null || serverRespin.originalMatrix.Count == 0)
-        {
-            UnityEngine.Debug.LogError("[InitDataConverter] nearMissRespin carried no originalMatrix — respin ignored.");
-            return null;
-        }
-
-        return new RespinData
-        {
-            reelIndex = serverRespin.reelIndex,
-            originalMatrix = ConvertMatrixToColumns(serverRespin.originalMatrix, gameConfig),
-            featureName = serverRespin.featureName
         };
     }
 
