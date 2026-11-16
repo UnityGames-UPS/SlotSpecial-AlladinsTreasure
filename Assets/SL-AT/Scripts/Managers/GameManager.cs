@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] internal UIManager uiManager;
     [SerializeField] private PopupManager popupManager;
     [SerializeField] private SlotView slotView;
-    [Tooltip("The free games' screen (FreeGameView) — the transition, the backgrounds, the top panel and TOTAL PRIZE.")]
+    [Tooltip("The free games' screen (FreeGameView) — the transition, the background's sprite swap, the top panel and TOTAL PRIZE.")]
     [SerializeField] private FreeGameView freeGameView;
     [Tooltip("The free games' popups (FeaturePopupView) — \"N FREE GAMES\" and CONGRATULATIONS / COLLECT.")]
     [SerializeField] private FeaturePopupView featurePopupView;
@@ -374,7 +374,7 @@ public class GameManager : MonoBehaviour
             double multiplier = totalPay > 0 ? (lastResult.winAmount / totalPay) : 0;
 
             // The big-win popup is switched off for now (BigWinPopupEnabled), and never shows during
-            // free spins (owner): they show their win boxes and move on.
+            // free spins (owner): they show their wins and move on.
             if (IsBigWin(multiplier))
             {
                 uiManager.DisableControlsDuringWinAnimation();
@@ -716,7 +716,7 @@ public class GameManager : MonoBehaviour
     // The trigger (§3, §4):
     //  1. the game is taken over; the trigger spin's own win only reaches the balance — no win
     //     presentation, the win box untouched (§3.2) — and from here the shown balance is held;
-    //  2. the BlueOrbs loop (no win box, no dim);
+    //  2. the BlueOrbs loop (no dim);
     //  3. "N FREE GAMES" pops in, holds, pops out;
     //  4. the transition — behind it the orbs stop, the free-games background and top panel come in,
     //     the win box goes to 0 and the filler switches to the free games';

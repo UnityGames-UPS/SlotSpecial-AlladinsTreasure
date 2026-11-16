@@ -51,7 +51,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip clipGeneralButtonClick;
     [SerializeField] private AudioClip clipPopupOpenClose;
     [SerializeField] private AudioClip clipAutoplayPanelOpen;
-    [Tooltip("The winning symbols and their win boxes coming up (normal win.mp3).")]
+    [Tooltip("The winning symbols coming up (normal win.mp3).")]
     [SerializeField] private AudioClip clipWinPresentationStart;
     [SerializeField] private AudioClip clipTurboButton;
 

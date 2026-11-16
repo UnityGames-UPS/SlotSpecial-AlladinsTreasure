@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;
 
 /// <summary>
 /// The free games' screen (ATFreeGamesBonus.md §4, §5.1, §6.2, §8): the full-screen transition in and
-/// out, the two backgrounds, the top panel above the slot machine ("N FREE GAMES REMAINING" / "LAST
+/// out, the background's sprite swap, the top panel above the slot machine ("N FREE GAMES REMAINING" / "LAST
 /// SPIN" / "FEATURE COMPLETE") and the TOTAL PRIZE panel. The popups are FeaturePopupView's; the frames
 /// and end orbs are FramesView's.
 ///
@@ -18,14 +19,18 @@ public class FreeGameView : MonoBehaviour
     [Header("Transition")]
     [Tooltip("The full-screen transition: an ImageAnimation playing its sprite frames once, the same going in and out. Switched on to play and off at its end; its own frame list holds the clip.")]
     [SerializeField] private ImageAnimation transition;
-    [Tooltip("Seconds into the transition at which the screen is covered and the swap happens behind it (backgrounds, top panel, board). Never later than the clip's end.")]
+    [Tooltip("Seconds into the transition at which the screen is covered and the swap happens behind it (background sprite, top panel, board). Never later than the clip's end.")]
     [SerializeField] private float transitionSwapDelay = 0.5f;
     [Tooltip("How long the transition lasts when it has no clip (or none is wired): the swap still happens, then it ends.")]
     [SerializeField] private float transitionFallbackDuration = 0f;
 
-    [Header("Backgrounds")]
-    [SerializeField] private GameObject baseGameBackground;
-    [SerializeField] private GameObject freeGamesBackground;
+    [Header("Background")]
+    [Tooltip("The one background Image (MainCanvas/BG). Its sprite is swapped between the two below — no second object.")]
+    [SerializeField] private Image background;
+    [Tooltip("The base game's background. Empty: whatever sprite the background Image has in the scene.")]
+    [SerializeField] private Sprite baseGameBackgroundSprite;
+    [Tooltip("The free games' background. Empty: the background is left as it is.")]
+    [SerializeField] private Sprite freeGamesBackgroundSprite;
 
     [Header("Top panel")]
     [Tooltip("The panel above the slot machine. On for the whole bonus, off in the base game.")]
@@ -126,8 +131,7 @@ public class FreeGameView : MonoBehaviour
     /// </summary>
     internal void ShowFreeGamesLook(bool on)
     {
-        if (baseGameBackground != null) baseGameBackground.SetActive(!on);
-        if (freeGamesBackground != null) freeGamesBackground.SetActive(on);
+        SwapBackground(on);
         if (topPanel != null) topPanel.SetActive(on);
 
         if (!on)
@@ -164,12 +168,13 @@ public class FreeGameView : MonoBehaviour
     }
 
     /// <summary>
-    /// TOTAL PRIZE (§6.2): replaces FEATURE COMPLETE and pops in — from 0, overshooting, back to scale —
-    /// its value blank until the first count-up.
+    /// TOTAL PRIZE (§6.2): replaces the top panel (FEATURE COMPLETE and its panel go) and pops in —
+    /// from 0, overshooting, back to scale — its value blank until the first count-up.
     /// </summary>
     internal void PopInTotalPrize()
     {
         ShowOnlyState(null);
+        if (topPanel != null) topPanel.SetActive(false);
         totalPrizeShown = 0;
         if (totalPrizeValueText != null) totalPrizeValueText.text = string.Empty;
         if (totalPrizePanel == null) return;
@@ -213,6 +218,18 @@ public class FreeGameView : MonoBehaviour
     #endregion
 
     #region Helpers
+
+    // The background's sprite, swapped (§4, §8). The base sprite is read off the Image the first time
+    // when none is set, so the scene's own background is what comes back after the bonus.
+    private void SwapBackground(bool freeGames)
+    {
+        if (background == null) return;
+
+        if (baseGameBackgroundSprite == null) baseGameBackgroundSprite = background.sprite;
+
+        Sprite sprite = freeGames ? freeGamesBackgroundSprite : baseGameBackgroundSprite;
+        if (sprite != null) background.sprite = sprite;
+    }
 
     // Exactly one of the top panel's states on (or none, for null).
     private void ShowOnlyState(GameObject state)

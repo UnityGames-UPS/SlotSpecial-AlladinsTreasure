@@ -22,10 +22,8 @@ public class FeaturePopupView : MonoBehaviour
     [SerializeField] private RectTransform awardedPopup;
     [Tooltip("N — the games added (10 on the trigger; 3, or fewer at the cap, on a retrigger).")]
     [SerializeField] private TMPro.TMP_Text awardedCountText;
-    [Tooltip("The \"FREE GAMES\" label, shown for any N but 1. Optional.")]
+    [Tooltip("The \"FREE GAMES\" label — shown for every N, 1 included (owner, 2026-11-16). Optional.")]
     [SerializeField] private GameObject awardedLabelPlural;
-    [Tooltip("The \"FREE GAME\" label, shown when N is 1 (a retrigger cut by the cap). Optional.")]
-    [SerializeField] private GameObject awardedLabelSingular;
     [Tooltip("On: N is written as sprite digits. Off: plain text.")]
     [SerializeField] private bool countUsesSpriteDigits;
     [Tooltip("Seconds the popup holds before it goes on its own (owner: 5 s to start with).")]
@@ -96,8 +94,7 @@ public class FeaturePopupView : MonoBehaviour
             string n = Mathf.Max(0, games).ToString();
             awardedCountText.text = countUsesSpriteDigits ? SpriteTextFormatter.ToSpriteDigits(n) : n;
         }
-        if (awardedLabelSingular != null) awardedLabelSingular.SetActive(games == 1);
-        if (awardedLabelPlural != null) awardedLabelPlural.SetActive(games != 1);
+        if (awardedLabelPlural != null) awardedLabelPlural.SetActive(true);
 
         ReadAwardedHome();
         awardedPopup.DOKill();
