@@ -39119,6 +39119,19 @@ MonoBehaviour:
   animSpritesNine: []
   animSpritesWild: []
   animSpritesBlueOrb: []
+  spineFairy: {fileID: 0}
+  spineUnicorn: {fileID: 0}
+  spineSquirrel: {fileID: 0}
+  spineMushrooms: {fileID: 0}
+  spineLotus: {fileID: 0}
+  spineA: {fileID: 0}
+  spineK: {fileID: 0}
+  spineQ: {fileID: 0}
+  spineJ: {fileID: 0}
+  spineTen: {fileID: 0}
+  spineNine: {fileID: 0}
+  spineWild: {fileID: 0}
+  spineBlueOrb: {fileID: 0}
   reelTransforms:
   - {fileID: 682958188}
   - {fileID: 1123152039}
@@ -39330,38 +39343,53 @@ MonoBehaviour:
   - rows:
     - image: {fileID: 122589508}
       animation: {fileID: 122589509}
+      spine: {fileID: 0}
     - image: {fileID: 1219794888}
       animation: {fileID: 1219794889}
+      spine: {fileID: 0}
     - image: {fileID: 443072716}
       animation: {fileID: 443072717}
+      spine: {fileID: 0}
   - rows:
     - image: {fileID: 634429291}
       animation: {fileID: 634429292}
+      spine: {fileID: 0}
     - image: {fileID: 421893798}
       animation: {fileID: 421893799}
+      spine: {fileID: 0}
     - image: {fileID: 942604820}
       animation: {fileID: 942604821}
+      spine: {fileID: 0}
   - rows:
     - image: {fileID: 1864330682}
       animation: {fileID: 1864330683}
+      spine: {fileID: 0}
     - image: {fileID: 2119853469}
       animation: {fileID: 2119853470}
+      spine: {fileID: 0}
     - image: {fileID: 2000756181}
       animation: {fileID: 2000756182}
+      spine: {fileID: 0}
   - rows:
     - image: {fileID: 987073413}
       animation: {fileID: 987073414}
+      spine: {fileID: 0}
     - image: {fileID: 1927922726}
       animation: {fileID: 1927922727}
+      spine: {fileID: 0}
     - image: {fileID: 2123384064}
       animation: {fileID: 2123384065}
+      spine: {fileID: 0}
   - rows:
     - image: {fileID: 882808987}
       animation: {fileID: 882808988}
+      spine: {fileID: 0}
     - image: {fileID: 1058995532}
       animation: {fileID: 1058995533}
+      spine: {fileID: 0}
     - image: {fileID: 505563897}
       animation: {fileID: 505563898}
+      spine: {fileID: 0}
   winLineAmounts:
   - {fileID: 1347515941}
   - {fileID: 1559597159}

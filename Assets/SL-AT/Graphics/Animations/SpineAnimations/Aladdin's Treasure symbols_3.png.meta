@@ -1,0 +1,1287 @@
+fileFormatVersion: 2
+guid: 6455175546e7843458e126b49621e2b2
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 710197811603002921
+    second: Aladdin's Treasure symbols_3_0
+  - first:
+      213: -4417903093157622927
+    second: Aladdin's Treasure symbols_3_1
+  - first:
+      213: -2792494293387082600
+    second: Aladdin's Treasure symbols_3_2
+  - first:
+      213: -5013959452615499828
+    second: Aladdin's Treasure symbols_3_3
+  - first:
+      213: -1556257896989939435
+    second: Aladdin's Treasure symbols_3_4
+  - first:
+      213: -7776798330193853869
+    second: Aladdin's Treasure symbols_3_5
+  - first:
+      213: 4693852457561360757
+    second: Aladdin's Treasure symbols_3_6
+  - first:
+      213: -1828059238065918188
+    second: Aladdin's Treasure symbols_3_7
+  - first:
+      213: -6132340563314799183
+    second: Aladdin's Treasure symbols_3_8
+  - first:
+      213: -5501472326657305920
+    second: Aladdin's Treasure symbols_3_9
+  - first:
+      213: 4444697674652367904
+    second: Aladdin's Treasure symbols_3_10
+  - first:
+      213: 2923330728307429483
+    second: Aladdin's Treasure symbols_3_11
+  - first:
+      213: -2005138443820080162
+    second: Aladdin's Treasure symbols_3_12
+  - first:
+      213: -5128957724679640902
+    second: Aladdin's Treasure symbols_3_13
+  - first:
+      213: 2348424315116736667
+    second: Aladdin's Treasure symbols_3_14
+  - first:
+      213: 6299567857843050462
+    second: Aladdin's Treasure symbols_3_15
+  - first:
+      213: -1684374082170770667
+    second: Aladdin's Treasure symbols_3_16
+  - first:
+      213: -7473261159887083193
+    second: Aladdin's Treasure symbols_3_17
+  - first:
+      213: 3464902845289429574
+    second: Aladdin's Treasure symbols_3_18
+  - first:
+      213: -4758978879214119146
+    second: Aladdin's Treasure symbols_3_19
+  - first:
+      213: -3099544808405876120
+    second: Aladdin's Treasure symbols_3_20
+  - first:
+      213: 7055939864425360188
+    second: Aladdin's Treasure symbols_3_21
+  - first:
+      213: 5186910392015567460
+    second: Aladdin's Treasure symbols_3_22
+  - first:
+      213: -4113852680869897726
+    second: Aladdin's Treasure symbols_3_23
+  - first:
+      213: 6854168132455381569
+    second: Aladdin's Treasure symbols_3_24
+  - first:
+      213: -1881279454362059168
+    second: Aladdin's Treasure symbols_3_25
+  - first:
+      213: -7817119683219097796
+    second: Aladdin's Treasure symbols_3_26
+  - first:
+      213: -1906571485043627180
+    second: Aladdin's Treasure symbols_3_27
+  - first:
+      213: -7230288797829844101
+    second: Aladdin's Treasure symbols_3_28
+  - first:
+      213: -5070035990302385642
+    second: Aladdin's Treasure symbols_3_29
+  - first:
+      213: -7805729137808488306
+    second: Aladdin's Treasure symbols_3_30
+  - first:
+      213: 3446548702202027895
+    second: Aladdin's Treasure symbols_3_31
+  - first:
+      213: 8550525790063715740
+    second: Aladdin's Treasure symbols_3_32
+  - first:
+      213: -5686757037752342672
+    second: Aladdin's Treasure symbols_3_33
+  - first:
+      213: -2491820896610913643
+    second: Aladdin's Treasure symbols_3_34
+  - first:
+      213: 64264571857264723
+    second: Aladdin's Treasure symbols_3_35
+  - first:
+      213: -3415983856757445439
+    second: Aladdin's Treasure symbols_3_36
+  - first:
+      213: -15848858187998928
+    second: Aladdin's Treasure symbols_3_37
+  - first:
+      213: 4458014055936885980
+    second: Aladdin's Treasure symbols_3_38
+  - first:
+      213: 1965022147608467510
+    second: Aladdin's Treasure symbols_3_39
+  - first:
+      213: -3830648789066646446
+    second: Aladdin's Treasure symbols_3_40
+  - first:
+      213: 7646615535031810218
+    second: Aladdin's Treasure symbols_3_41
+  - first:
+      213: 8042136561925114892
+    second: Aladdin's Treasure symbols_3_42
+  - first:
+      213: 9203637154937691758
+    second: Aladdin's Treasure symbols_3_43
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 0
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1
+        width: 228
+        height: 236
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9265bd895212bd900800000000000000
+      internalID: 710197811603002921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_1
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 2
+        width: 313
+        height: 259
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17b8d383b8470b2c0800000000000000
+      internalID: -4417903093157622927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_2
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 2
+        width: 195
+        height: 258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8948b554c311f39d0800000000000000
+      internalID: -2792494293387082600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_3
+      rect:
+        serializedVersion: 2
+        x: 678
+        y: 3
+        width: 272
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccf14a46176da6ab0800000000000000
+      internalID: -5013959452615499828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_4
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 168
+        width: 9
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 519a40720bf076ae0800000000000000
+      internalID: -1556257896989939435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_5
+      rect:
+        serializedVersion: 2
+        x: 1049
+        y: 158
+        width: 20
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 352c1f63f13431490800000000000000
+      internalID: -7776798330193853869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_6
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 23
+        width: 128
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5790a09e0f9e32140800000000000000
+      internalID: 4693852457561360757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_7
+      rect:
+        serializedVersion: 2
+        x: 1173
+        y: 145
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41fa5b6fecd61a6e0800000000000000
+      internalID: -1828059238065918188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_8
+      rect:
+        serializedVersion: 2
+        x: 1205
+        y: 135
+        width: 19
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bd07e98fbc85eaa0800000000000000
+      internalID: -6132340563314799183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_9
+      rect:
+        serializedVersion: 2
+        x: 1278
+        y: 1
+        width: 114
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c213f32118d6a3b0800000000000000
+      internalID: -5501472326657305920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_10
+      rect:
+        serializedVersion: 2
+        x: 1320
+        y: 145
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02cb8af6cfcbead30800000000000000
+      internalID: 4444697674652367904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_11
+      rect:
+        serializedVersion: 2
+        x: 1351
+        y: 135
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b609fb51fc1c19820800000000000000
+      internalID: 2923330728307429483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_12
+      rect:
+        serializedVersion: 2
+        x: 950
+        y: 119
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed3ef9285315c24e0800000000000000
+      internalID: -2005138443820080162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_13
+      rect:
+        serializedVersion: 2
+        x: 965
+        y: 125
+        width: 25
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab86970bf1842d8b0800000000000000
+      internalID: -5128957724679640902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_14
+      rect:
+        serializedVersion: 2
+        x: 1132
+        y: 19
+        width: 113
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b905c6cd877479020800000000000000
+      internalID: 2348424315116736667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_15
+      rect:
+        serializedVersion: 2
+        x: 953
+        y: 102
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed71435179f8c6750800000000000000
+      internalID: 6299567857843050462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_16
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 96
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51b265b42b6ef98e0800000000000000
+      internalID: -1684374082170770667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_17
+      rect:
+        serializedVersion: 2
+        x: 1118
+        y: 102
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 749e433f194a94890800000000000000
+      internalID: -7473261159887083193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_18
+      rect:
+        serializedVersion: 2
+        x: 1233
+        y: 104
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64a77baa7cec51030800000000000000
+      internalID: 3464902845289429574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_19
+      rect:
+        serializedVersion: 2
+        x: 1266
+        y: 103
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6171bda6ce5b4fdb0800000000000000
+      internalID: -4758978879214119146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_20
+      rect:
+        serializedVersion: 2
+        x: 1380
+        y: 105
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 862cf893b643cf4d0800000000000000
+      internalID: -3099544808405876120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_21
+      rect:
+        serializedVersion: 2
+        x: 1092
+        y: 86
+        width: 17
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3b67973cebbbe160800000000000000
+      internalID: 7055939864425360188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_22
+      rect:
+        serializedVersion: 2
+        x: 1119
+        y: 88
+        width: 13
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46abed5258b9bf740800000000000000
+      internalID: 5186910392015567460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_23
+      rect:
+        serializedVersion: 2
+        x: 1236
+        y: 83
+        width: 16
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20a167a68c8a8e6c0800000000000000
+      internalID: -4113852680869897726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_24
+      rect:
+        serializedVersion: 2
+        x: 1267
+        y: 90
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14a3ecdf995ee1f50800000000000000
+      internalID: 6854168132455381569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_25
+      rect:
+        serializedVersion: 2
+        x: 1383
+        y: 75
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06e328fbd4a54e5e0800000000000000
+      internalID: -1881279454362059168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_26
+      rect:
+        serializedVersion: 2
+        x: 1240
+        y: 74
+        width: 17
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c37f203a013048390800000000000000
+      internalID: -7817119683219097796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_27
+      rect:
+        serializedVersion: 2
+        x: 1106
+        y: 64
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45be517f55f7a85e0800000000000000
+      internalID: -1906571485043627180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_28
+      rect:
+        serializedVersion: 2
+        x: 955
+        y: 47
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b73bdd565aad8ab90800000000000000
+      internalID: -7230288797829844101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_29
+      rect:
+        serializedVersion: 2
+        x: 1254
+        y: 55
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61a9497012d93a9b0800000000000000
+      internalID: -5070035990302385642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_30
+      rect:
+        serializedVersion: 2
+        x: 1401
+        y: 56
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e884208a4ba7ca390800000000000000
+      internalID: -7805729137808488306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_31
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 30
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77fd5d7b8c994df20800000000000000
+      internalID: 3446548702202027895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_32
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 40
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c95609747e199a670800000000000000
+      internalID: 8550525790063715740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_33
+      rect:
+        serializedVersion: 2
+        x: 1269
+        y: 41
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 077a1d89a949411b0800000000000000
+      internalID: -5686757037752342672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_34
+      rect:
+        serializedVersion: 2
+        x: 1384
+        y: 26
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5927c95c8164b6dd0800000000000000
+      internalID: -2491820896610913643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_35
+      rect:
+        serializedVersion: 2
+        x: 1033
+        y: 20
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350e131a94054e000800000000000000
+      internalID: 64264571857264723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_36
+      rect:
+        serializedVersion: 2
+        x: 1071
+        y: 16
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cce08be7ccf790d0800000000000000
+      internalID: -3415983856757445439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_37
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 16
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 039db952c81b7cff0800000000000000
+      internalID: -15848858187998928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_38
+      rect:
+        serializedVersion: 2
+        x: 1224
+        y: 12
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd401df0a2c0edd30800000000000000
+      internalID: 4458014055936885980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_39
+      rect:
+        serializedVersion: 2
+        x: 1237
+        y: 25
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6385afb6b39254b10800000000000000
+      internalID: 1965022147608467510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_40
+      rect:
+        serializedVersion: 2
+        x: 1009
+        y: 2
+        width: 12
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25cf664d83dc6dac0800000000000000
+      internalID: -3830648789066646446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_41
+      rect:
+        serializedVersion: 2
+        x: 1034
+        y: 1
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa8fd8bc05c3e1a60800000000000000
+      internalID: 7646615535031810218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_42
+      rect:
+        serializedVersion: 2
+        x: 1171
+        y: 1
+        width: 12
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0c4ab018986b9f60800000000000000
+      internalID: 8042136561925114892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aladdin's Treasure symbols_3_43
+      rect:
+        serializedVersion: 2
+        x: 1192
+        y: 1
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6ed5adba33e9bf70800000000000000
+      internalID: 9203637154937691758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Aladdin's Treasure symbols_3_0: 710197811603002921
+      Aladdin's Treasure symbols_3_1: -4417903093157622927
+      Aladdin's Treasure symbols_3_10: 4444697674652367904
+      Aladdin's Treasure symbols_3_11: 2923330728307429483
+      Aladdin's Treasure symbols_3_12: -2005138443820080162
+      Aladdin's Treasure symbols_3_13: -5128957724679640902
+      Aladdin's Treasure symbols_3_14: 2348424315116736667
+      Aladdin's Treasure symbols_3_15: 6299567857843050462
+      Aladdin's Treasure symbols_3_16: -1684374082170770667
+      Aladdin's Treasure symbols_3_17: -7473261159887083193
+      Aladdin's Treasure symbols_3_18: 3464902845289429574
+      Aladdin's Treasure symbols_3_19: -4758978879214119146
+      Aladdin's Treasure symbols_3_2: -2792494293387082600
+      Aladdin's Treasure symbols_3_20: -3099544808405876120
+      Aladdin's Treasure symbols_3_21: 7055939864425360188
+      Aladdin's Treasure symbols_3_22: 5186910392015567460
+      Aladdin's Treasure symbols_3_23: -4113852680869897726
+      Aladdin's Treasure symbols_3_24: 6854168132455381569
+      Aladdin's Treasure symbols_3_25: -1881279454362059168
+      Aladdin's Treasure symbols_3_26: -7817119683219097796
+      Aladdin's Treasure symbols_3_27: -1906571485043627180
+      Aladdin's Treasure symbols_3_28: -7230288797829844101
+      Aladdin's Treasure symbols_3_29: -5070035990302385642
+      Aladdin's Treasure symbols_3_3: -5013959452615499828
+      Aladdin's Treasure symbols_3_30: -7805729137808488306
+      Aladdin's Treasure symbols_3_31: 3446548702202027895
+      Aladdin's Treasure symbols_3_32: 8550525790063715740
+      Aladdin's Treasure symbols_3_33: -5686757037752342672
+      Aladdin's Treasure symbols_3_34: -2491820896610913643
+      Aladdin's Treasure symbols_3_35: 64264571857264723
+      Aladdin's Treasure symbols_3_36: -3415983856757445439
+      Aladdin's Treasure symbols_3_37: -15848858187998928
+      Aladdin's Treasure symbols_3_38: 4458014055936885980
+      Aladdin's Treasure symbols_3_39: 1965022147608467510
+      Aladdin's Treasure symbols_3_4: -1556257896989939435
+      Aladdin's Treasure symbols_3_40: -3830648789066646446
+      Aladdin's Treasure symbols_3_41: 7646615535031810218
+      Aladdin's Treasure symbols_3_42: 8042136561925114892
+      Aladdin's Treasure symbols_3_43: 9203637154937691758
+      Aladdin's Treasure symbols_3_5: -7776798330193853869
+      Aladdin's Treasure symbols_3_6: 4693852457561360757
+      Aladdin's Treasure symbols_3_7: -1828059238065918188
+      Aladdin's Treasure symbols_3_8: -6132340563314799183
+      Aladdin's Treasure symbols_3_9: -5501472326657305920
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
