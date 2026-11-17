@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Spine.Unity;
 
 public class SlotView : MonoBehaviour
 {
@@ -112,6 +113,25 @@ public class SlotView : MonoBehaviour
 
     // Internal array of animation sprite lists
     private List<Sprite>[] animationSpriteArrays;
+
+    [Header("Win Animation Spine Assets")]
+    [Tooltip("Optional per-symbol Spine win animation (the _SkeletonData asset). A symbol with one plays it on its win-layer cell; one without falls back to its frame list above, then to its static sprite.")]
+    [SerializeField] private SkeletonDataAsset spineFairy;           // ID: 0
+    [SerializeField] private SkeletonDataAsset spineUnicorn;         // ID: 1
+    [SerializeField] private SkeletonDataAsset spineSquirrel;        // ID: 2
+    [SerializeField] private SkeletonDataAsset spineMushrooms;       // ID: 3
+    [SerializeField] private SkeletonDataAsset spineLotus;           // ID: 4
+    [SerializeField] private SkeletonDataAsset spineA;               // ID: 5
+    [SerializeField] private SkeletonDataAsset spineK;               // ID: 6
+    [SerializeField] private SkeletonDataAsset spineQ;               // ID: 7
+    [SerializeField] private SkeletonDataAsset spineJ;               // ID: 8
+    [SerializeField] private SkeletonDataAsset spineTen;             // ID: 9  (named "10")
+    [SerializeField] private SkeletonDataAsset spineNine;            // ID: 10 (named "9")
+    [SerializeField] private SkeletonDataAsset spineWild;            // ID: 11
+    [SerializeField] private SkeletonDataAsset spineBlueOrb;         // ID: 12
+
+    // Internal array of Spine assets, indexed by symbol id
+    private SkeletonDataAsset[] spineAssets;
 
     [Header("Reel Containers")]
     [SerializeField] private Transform[] reelTransforms;
@@ -453,6 +473,22 @@ public class SlotView : MonoBehaviour
         animationSpriteArrays[10] = animSpritesNine;
         animationSpriteArrays[11] = animSpritesWild;
         animationSpriteArrays[12] = animSpritesBlueOrb;
+
+        // Build the Spine asset array (any entry left empty falls back to frames, then the sprite)
+        spineAssets = new SkeletonDataAsset[SymbolCount];
+        spineAssets[0] = spineFairy;
+        spineAssets[1] = spineUnicorn;
+        spineAssets[2] = spineSquirrel;
+        spineAssets[3] = spineMushrooms;
+        spineAssets[4] = spineLotus;
+        spineAssets[5] = spineA;
+        spineAssets[6] = spineK;
+        spineAssets[7] = spineQ;
+        spineAssets[8] = spineJ;
+        spineAssets[9] = spineTen;
+        spineAssets[10] = spineNine;
+        spineAssets[11] = spineWild;
+        spineAssets[12] = spineBlueOrb;
     }
 
     private void InitializeReels()
@@ -1377,6 +1413,7 @@ public class SlotView : MonoBehaviour
         int rowLimit = (gameManager != null && gameManager.gameConfig != null) ? gameManager.gameConfig.rowCount : 3;
 
         List<ImageAnimation> activeAnims = new List<ImageAnimation>();
+        List<SpineAnimController> activeSpines = new List<SpineAnimController>();
 
         bool anyShown = false;
 
@@ -1426,6 +1463,14 @@ public class SlotView : MonoBehaviour
             // on screen and dimmed. HideWinSlots puts every icon back.
             SetDisplayIconActive(col, row, false);
 
+            // Spine first: a symbol with a Spine asset plays it in place of its frames. It is started
+            // with the rounds below, not here, so it stays in step with the frame clips.
+            if (TryShowSpineSlot(slot, symbolId))
+            {
+                activeSpines.Add(slot.spine);
+                continue;
+            }
+
             // Animate only if this symbol actually has frames — otherwise its single image stays up
             // (the fallback, owner, 2026-11-16).
             if (symbolId < 0 || symbolId >= animationSpriteArrays.Length) continue;
@@ -1460,7 +1505,7 @@ public class SlotView : MonoBehaviour
         }
 
         // Nothing of our own to animate. Still hold the beat so the sequence keeps its pacing.
-        if (activeAnims.Count == 0)
+        if (activeAnims.Count == 0 && activeSpines.Count == 0)
         {
             if (rounds > 0) yield return new WaitForSeconds(winSymbolLoopDuration);
             yield break;
@@ -1475,6 +1520,14 @@ public class SlotView : MonoBehaviour
                 anim.doLoopAnimation = true;
                 anim.onLoopComplete = null;
                 anim.StartAnimation();
+            }
+
+            foreach (var spine in activeSpines)
+            {
+                // Stop first: SpineAnimController ignores Play while it still thinks a clip is
+                // playing, which it does after any one-shot round has ended.
+                spine.Stop();
+                spine.Play(true);
             }
 
             yield break;
@@ -1503,8 +1556,40 @@ public class SlotView : MonoBehaviour
                 a.StartAnimation();
             }
 
-            yield return new WaitUntil(() => finished >= activeAnims.Count);
+            // SpineAnimController reports no clip end, so a Spine round is timed by its clip length
+            // instead. The round waits for both: every frame clip's callback and the longest Spine clip.
+            float spineWait = 0f;
+            foreach (var spine in activeSpines)
+            {
+                // Stop first, for the same reason as the closing hold above.
+                spine.Stop();
+                spine.Play(false);
+                spineWait = Mathf.Max(spineWait, spine.GetAnimationDuration());
+            }
+            float spineRoundEnd = Time.time + spineWait;
+
+            yield return new WaitUntil(() => finished >= activeAnims.Count && Time.time >= spineRoundEnd);
         }
+    }
+
+    // Puts a symbol's Spine animation on its win-layer cell, ready for AnimateWinPositions to start:
+    // the asset loaded, the Spine object on and the cell's static Image off. False — leaving the cell
+    // as it was — when the cell has no Spine object, the symbol has no asset, or the asset has no
+    // animation to play; the cell then falls back to frames or the static sprite. HideWinSlots undoes it.
+    private bool TryShowSpineSlot(AnimSlot slot, int symbolId)
+    {
+        if (slot == null || slot.spine == null || slot.image == null) return false;
+        if (spineAssets == null || symbolId < 0 || symbolId >= spineAssets.Length) return false;
+
+        SkeletonDataAsset asset = spineAssets[symbolId];
+        if (asset == null) return false;
+
+        slot.spine.SetSkeletonData(asset);
+        if (slot.spine.GetAnimationDuration() <= 0f) return false;
+
+        slot.spine.gameObject.SetActive(true);
+        slot.image.enabled = false;
+        return true;
     }
 
     private void ShowPhase1TotalWin(double totalWinAmount)
@@ -1715,6 +1800,9 @@ public class SlotView : MonoBehaviour
                         slot.animation.onLoopComplete = null;
                         slot.animation.StopAnimation();
                     }
+
+                    // Switched off, and the static Image put back, by HideWinSlots below.
+                    if (slot.spine != null) slot.spine.Stop();
                 }
             }
         }
@@ -1758,8 +1846,14 @@ public class SlotView : MonoBehaviour
                 if (column == null || column.rows == null) continue;
                 foreach (var slot in column.rows)
                 {
-                    if (slot == null || slot.image == null) continue;
+                    if (slot == null) continue;
 
+                    // Undo TryShowSpineSlot: Spine off, the cell's static Image back for next time.
+                    if (slot.spine != null) slot.spine.gameObject.SetActive(false);
+
+                    if (slot.image == null) continue;
+
+                    slot.image.enabled = true;
                     slot.image.gameObject.SetActive(false);
                 }
             }
@@ -1932,15 +2026,18 @@ public class SlotView : MonoBehaviour
     #endregion
 }
 
-// One win-animation slot: the Image that shows the symbol and the ImageAnimation that plays it.
-// Both are wired explicitly rather than found with GetComponent — a missing component would
+// One win-animation slot: the Image that shows the symbol, the ImageAnimation that plays its frames,
+// and the optional Spine object (a child of the Image, built by Tools > SL-AT > Build Win Spine Slots)
+// that plays a symbol's Spine animation instead when it has one.
+// All are wired explicitly rather than found with GetComponent — a missing component would
 // otherwise just silently no-op, and these icons must have one while the reel icons must not.
-// Kept in a single struct so the two can never drift out of step with each other.
+// Kept in a single struct so they can never drift out of step with each other.
 [System.Serializable]
 public class AnimSlot
 {
     public Image image;
     public ImageAnimation animation;
+    public SpineAnimController spine;
 }
 
 // One reel column's worth of win-animation slots. These live on a layer above the dim overlay,
