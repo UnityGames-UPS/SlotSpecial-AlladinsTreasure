@@ -2260,7 +2260,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 252.5, y: 0}
+  m_AnchoredPosition: {x: 265, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &100960770
@@ -3288,7 +3288,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad710797c4c5a49d98a053ecb28392bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImageAnimation
-  textureArray: []
+  textureArray:
+  - {fileID: 21300000, guid: 087862bf0f1efda4a8d8adfeece5fbc2, type: 3}
+  - {fileID: 21300000, guid: fc7b2502e709e3f44b7eae06ffb14148, type: 3}
+  - {fileID: 21300000, guid: 82c893c4f060e8c43b185d5def40194c, type: 3}
+  - {fileID: 21300000, guid: 7b3544815545e514dbf1757f0efbe7ed, type: 3}
+  - {fileID: 21300000, guid: 0d7df61e5a6babd4b8eb868fa799fe76, type: 3}
+  - {fileID: 21300000, guid: de63dcbe3c94cbb43bbaa02831b3db5b, type: 3}
+  - {fileID: 21300000, guid: d36a5c612b9bbf14aab78dd1641cd78f, type: 3}
+  - {fileID: 21300000, guid: 092bdff84351ab14b9ee675a9719bbe3, type: 3}
+  - {fileID: 21300000, guid: c83e344a3a5ac404ebb538e8d86271eb, type: 3}
+  - {fileID: 21300000, guid: 7acde8c8a2d4b5346ace9df6e3af4670, type: 3}
+  - {fileID: 21300000, guid: ae7d0be1ac3f5254b95dd1868d21f1b5, type: 3}
+  - {fileID: 21300000, guid: 1ce40b8831c01b34bb57252745406828, type: 3}
+  - {fileID: 21300000, guid: baa800fe0f65d26479219618a373d0c3, type: 3}
+  - {fileID: 21300000, guid: bb916d0b3afe4c74abad2e92f1d8c4cd, type: 3}
+  - {fileID: 21300000, guid: 3f6b09927fb55284e8d527ace7ab60d1, type: 3}
+  - {fileID: 21300000, guid: 358f687c353bb764081cd8f80477826a, type: 3}
+  - {fileID: 21300000, guid: c1211f33f8636d14790586b9df00ee52, type: 3}
+  - {fileID: 21300000, guid: c75146b2aac189a4386a157478aadfab, type: 3}
+  - {fileID: 21300000, guid: d5a170ab58b5cdb40b30d7935f8e55cf, type: 3}
+  - {fileID: 21300000, guid: 79ce3ecf45da3604cacda695bcdf3f48, type: 3}
+  - {fileID: 21300000, guid: dd4c101d041553c4dbaded4bd0ba09be, type: 3}
+  - {fileID: 21300000, guid: bea95f3b63f711744a7be90313445b52, type: 3}
+  - {fileID: 21300000, guid: 2969a4d615b864441b1cad08e7eb5773, type: 3}
+  - {fileID: 21300000, guid: d2f9e7b953ebb754fb5296f6a99bb31c, type: 3}
+  - {fileID: 21300000, guid: 0da10b97e90a76642a67d64fb87e02b7, type: 3}
+  - {fileID: 21300000, guid: 56d54da32719fb44299915843d5d3bce, type: 3}
+  - {fileID: 21300000, guid: 8b778f376273dad4bab0c7cff86e306c, type: 3}
+  - {fileID: 21300000, guid: 15fe2f4d6ca13294cb0cd25b02ef91a0, type: 3}
+  - {fileID: 21300000, guid: 30d1a559c5c485340816c6781200cdb5, type: 3}
+  - {fileID: 21300000, guid: b90dee7ab6574c74f9e11e014ff0b9e9, type: 3}
   rendererDelegate: {fileID: 136828122}
   useSharedMaterial: 1
   doLoopAnimation: 1
@@ -3353,7 +3383,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad710797c4c5a49d98a053ecb28392bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImageAnimation
-  textureArray: []
+  textureArray:
+  - {fileID: 21300000, guid: 087862bf0f1efda4a8d8adfeece5fbc2, type: 3}
+  - {fileID: 21300000, guid: fc7b2502e709e3f44b7eae06ffb14148, type: 3}
+  - {fileID: 21300000, guid: 82c893c4f060e8c43b185d5def40194c, type: 3}
+  - {fileID: 21300000, guid: 7b3544815545e514dbf1757f0efbe7ed, type: 3}
+  - {fileID: 21300000, guid: 0d7df61e5a6babd4b8eb868fa799fe76, type: 3}
+  - {fileID: 21300000, guid: de63dcbe3c94cbb43bbaa02831b3db5b, type: 3}
+  - {fileID: 21300000, guid: d36a5c612b9bbf14aab78dd1641cd78f, type: 3}
+  - {fileID: 21300000, guid: 092bdff84351ab14b9ee675a9719bbe3, type: 3}
+  - {fileID: 21300000, guid: c83e344a3a5ac404ebb538e8d86271eb, type: 3}
+  - {fileID: 21300000, guid: 7acde8c8a2d4b5346ace9df6e3af4670, type: 3}
+  - {fileID: 21300000, guid: ae7d0be1ac3f5254b95dd1868d21f1b5, type: 3}
+  - {fileID: 21300000, guid: 1ce40b8831c01b34bb57252745406828, type: 3}
+  - {fileID: 21300000, guid: baa800fe0f65d26479219618a373d0c3, type: 3}
+  - {fileID: 21300000, guid: bb916d0b3afe4c74abad2e92f1d8c4cd, type: 3}
+  - {fileID: 21300000, guid: 3f6b09927fb55284e8d527ace7ab60d1, type: 3}
+  - {fileID: 21300000, guid: 358f687c353bb764081cd8f80477826a, type: 3}
+  - {fileID: 21300000, guid: c1211f33f8636d14790586b9df00ee52, type: 3}
+  - {fileID: 21300000, guid: c75146b2aac189a4386a157478aadfab, type: 3}
+  - {fileID: 21300000, guid: d5a170ab58b5cdb40b30d7935f8e55cf, type: 3}
+  - {fileID: 21300000, guid: 79ce3ecf45da3604cacda695bcdf3f48, type: 3}
+  - {fileID: 21300000, guid: dd4c101d041553c4dbaded4bd0ba09be, type: 3}
+  - {fileID: 21300000, guid: bea95f3b63f711744a7be90313445b52, type: 3}
+  - {fileID: 21300000, guid: 2969a4d615b864441b1cad08e7eb5773, type: 3}
+  - {fileID: 21300000, guid: d2f9e7b953ebb754fb5296f6a99bb31c, type: 3}
+  - {fileID: 21300000, guid: 0da10b97e90a76642a67d64fb87e02b7, type: 3}
+  - {fileID: 21300000, guid: 56d54da32719fb44299915843d5d3bce, type: 3}
+  - {fileID: 21300000, guid: 8b778f376273dad4bab0c7cff86e306c, type: 3}
+  - {fileID: 21300000, guid: 15fe2f4d6ca13294cb0cd25b02ef91a0, type: 3}
+  - {fileID: 21300000, guid: 30d1a559c5c485340816c6781200cdb5, type: 3}
+  - {fileID: 21300000, guid: b90dee7ab6574c74f9e11e014ff0b9e9, type: 3}
   rendererDelegate: {fileID: 145985462}
   useSharedMaterial: 1
   doLoopAnimation: 1
@@ -3388,7 +3448,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 41fdbad3c80345046b052b793e65d055, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 087862bf0f1efda4a8d8adfeece5fbc2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3441,7 +3501,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 505, y: 0}
+  m_AnchoredPosition: {x: 530, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &158075623
@@ -4981,8 +5041,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -5347,8 +5407,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -5892,9 +5952,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 68893560}
+  - {fileID: 564333209}
   - {fileID: 1153154294}
   - {fileID: 1589365521}
-  - {fileID: 564333209}
   - {fileID: 1677970337}
   - {fileID: 1151225650}
   - {fileID: 1241431069}
@@ -11362,8 +11422,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -16594,7 +16654,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -78.8}
-  m_SizeDelta: {x: 1259.4, y: 777}
+  m_SizeDelta: {x: 1330, y: 777}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &564333210
 MonoBehaviour:
@@ -16685,42 +16745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad710797c4c5a49d98a053ecb28392bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImageAnimation
-  textureArray:
-  - {fileID: 21300000, guid: 65c989e978b44fc44856438695731737, type: 3}
-  - {fileID: 21300000, guid: 594991a923c21524996ef2f46ad05bdd, type: 3}
-  - {fileID: 21300000, guid: 6217d37fc60e6a54ebb3acfae5132af8, type: 3}
-  - {fileID: 21300000, guid: a85ccdb7a1cd83d42961b8c9e6798a52, type: 3}
-  - {fileID: 21300000, guid: 36385228d2babdd4eb2147cc67be491f, type: 3}
-  - {fileID: 21300000, guid: 6b22aca5b1f165d4caf18c9f255f8087, type: 3}
-  - {fileID: 21300000, guid: 86a5df7fb98e5af44a38b3b874f7051f, type: 3}
-  - {fileID: 21300000, guid: 53b6b87cac0a8a7479492791f42b898a, type: 3}
-  - {fileID: 21300000, guid: 00ae97d0be28c0a48a31d5cbde96c874, type: 3}
-  - {fileID: 21300000, guid: a274217712e171143a9b728971977396, type: 3}
-  - {fileID: 21300000, guid: e5710a0e556ff1642a11fe8e9ba5c58b, type: 3}
-  - {fileID: 21300000, guid: d679a6ac7327eab4fb9899f63aa9712d, type: 3}
-  - {fileID: 21300000, guid: 3270e1bd5c1a0914bacdf22b29ffc725, type: 3}
-  - {fileID: 21300000, guid: fb30d71f586e7bb4094f636f658e7e61, type: 3}
-  - {fileID: 21300000, guid: c58a973f03cb79145a3ed8f989e46920, type: 3}
-  - {fileID: 21300000, guid: 711b00bbc8cbc294ea9d078d04810854, type: 3}
-  - {fileID: 21300000, guid: 3914c3160481da648898319212de7282, type: 3}
-  - {fileID: 21300000, guid: 2d37b7fa6f7058142860e6f407ce552b, type: 3}
-  - {fileID: 21300000, guid: 1d6ceb3b968f935499554bb2952d679d, type: 3}
-  - {fileID: 21300000, guid: 32ce8c23ec981834081c16f0d3e1dcfe, type: 3}
-  - {fileID: 21300000, guid: 7d9dc6c0ca546f540add265420d3a15d, type: 3}
-  - {fileID: 21300000, guid: 14016e14c7dedcd4bac533c05a0c0e53, type: 3}
-  - {fileID: 21300000, guid: 5ee2135c41e66314faa6765db69d4919, type: 3}
-  - {fileID: 21300000, guid: 8fefd565ffa3d8947a14f4f282a3167c, type: 3}
-  - {fileID: 21300000, guid: 26ab88b8b44781246bd828ed006e6bf6, type: 3}
-  - {fileID: 21300000, guid: fb33a6800bcbd6c4685e4ea1d7556ce6, type: 3}
-  - {fileID: 21300000, guid: 3b23218e7dacf4d4283a7846e354d918, type: 3}
-  - {fileID: 21300000, guid: 3481b0b3f35bd17458bdcdda606fb3cd, type: 3}
-  - {fileID: 21300000, guid: 19eb284e5f5a6174a9256d4ea31ed54f, type: 3}
-  - {fileID: 21300000, guid: 0de4ceec631c4da43be5274df3aa958c, type: 3}
-  - {fileID: 21300000, guid: 8cae03ea012769843b4b157e43046ca0, type: 3}
-  - {fileID: 21300000, guid: dae3e4fc4498a2a42b906d603d8ac41e, type: 3}
-  - {fileID: 21300000, guid: 7cf65358b79a3b74a8ba082093d0aaad, type: 3}
-  - {fileID: 21300000, guid: ff50623c38cf23441b675996e91caa07, type: 3}
-  - {fileID: 21300000, guid: b93fb14149fc287449e96298c31c3681, type: 3}
+  textureArray: []
   rendererDelegate: {fileID: 566143678}
   useSharedMaterial: 1
   doLoopAnimation: 0
@@ -16755,7 +16780,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3481b0b3f35bd17458bdcdda606fb3cd, type: 3}
+  m_Sprite: {fileID: 8995154407686431259, guid: 2c379fab5b956fd4ea4de503c5537bf0, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -16916,7 +16941,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -252.5, y: 0}
+  m_AnchoredPosition: {x: -265, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &569415419
@@ -21017,8 +21042,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -21389,8 +21414,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -22855,7 +22880,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad710797c4c5a49d98a053ecb28392bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImageAnimation
-  textureArray: []
+  textureArray:
+  - {fileID: 21300000, guid: 087862bf0f1efda4a8d8adfeece5fbc2, type: 3}
+  - {fileID: 21300000, guid: fc7b2502e709e3f44b7eae06ffb14148, type: 3}
+  - {fileID: 21300000, guid: 82c893c4f060e8c43b185d5def40194c, type: 3}
+  - {fileID: 21300000, guid: 7b3544815545e514dbf1757f0efbe7ed, type: 3}
+  - {fileID: 21300000, guid: 0d7df61e5a6babd4b8eb868fa799fe76, type: 3}
+  - {fileID: 21300000, guid: de63dcbe3c94cbb43bbaa02831b3db5b, type: 3}
+  - {fileID: 21300000, guid: d36a5c612b9bbf14aab78dd1641cd78f, type: 3}
+  - {fileID: 21300000, guid: 092bdff84351ab14b9ee675a9719bbe3, type: 3}
+  - {fileID: 21300000, guid: c83e344a3a5ac404ebb538e8d86271eb, type: 3}
+  - {fileID: 21300000, guid: 7acde8c8a2d4b5346ace9df6e3af4670, type: 3}
+  - {fileID: 21300000, guid: ae7d0be1ac3f5254b95dd1868d21f1b5, type: 3}
+  - {fileID: 21300000, guid: 1ce40b8831c01b34bb57252745406828, type: 3}
+  - {fileID: 21300000, guid: baa800fe0f65d26479219618a373d0c3, type: 3}
+  - {fileID: 21300000, guid: bb916d0b3afe4c74abad2e92f1d8c4cd, type: 3}
+  - {fileID: 21300000, guid: 3f6b09927fb55284e8d527ace7ab60d1, type: 3}
+  - {fileID: 21300000, guid: 358f687c353bb764081cd8f80477826a, type: 3}
+  - {fileID: 21300000, guid: c1211f33f8636d14790586b9df00ee52, type: 3}
+  - {fileID: 21300000, guid: c75146b2aac189a4386a157478aadfab, type: 3}
+  - {fileID: 21300000, guid: d5a170ab58b5cdb40b30d7935f8e55cf, type: 3}
+  - {fileID: 21300000, guid: 79ce3ecf45da3604cacda695bcdf3f48, type: 3}
+  - {fileID: 21300000, guid: dd4c101d041553c4dbaded4bd0ba09be, type: 3}
+  - {fileID: 21300000, guid: bea95f3b63f711744a7be90313445b52, type: 3}
+  - {fileID: 21300000, guid: 2969a4d615b864441b1cad08e7eb5773, type: 3}
+  - {fileID: 21300000, guid: d2f9e7b953ebb754fb5296f6a99bb31c, type: 3}
+  - {fileID: 21300000, guid: 0da10b97e90a76642a67d64fb87e02b7, type: 3}
+  - {fileID: 21300000, guid: 56d54da32719fb44299915843d5d3bce, type: 3}
+  - {fileID: 21300000, guid: 8b778f376273dad4bab0c7cff86e306c, type: 3}
+  - {fileID: 21300000, guid: 15fe2f4d6ca13294cb0cd25b02ef91a0, type: 3}
+  - {fileID: 21300000, guid: 30d1a559c5c485340816c6781200cdb5, type: 3}
+  - {fileID: 21300000, guid: b90dee7ab6574c74f9e11e014ff0b9e9, type: 3}
   rendererDelegate: {fileID: 817205648}
   useSharedMaterial: 1
   doLoopAnimation: 1
@@ -22890,7 +22945,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 41fdbad3c80345046b052b793e65d055, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 087862bf0f1efda4a8d8adfeece5fbc2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -25866,8 +25921,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -29255,7 +29310,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1078681222
@@ -29567,8 +29622,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -31196,7 +31251,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -252.5, y: 0}
+  m_AnchoredPosition: {x: -265, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1138347613
@@ -31320,8 +31375,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -37019,8 +37074,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -41159,7 +41214,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 252.5, y: 0}
+  m_AnchoredPosition: {x: 265, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1514737460
@@ -43170,8 +43225,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -70.063}
-  m_SizeDelta: {x: 1247, y: 740.83}
+  m_AnchoredPosition: {x: 0, y: -62.151}
+  m_SizeDelta: {x: 1319, y: 724.755}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1589365522
 MonoBehaviour:
@@ -43717,7 +43772,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad710797c4c5a49d98a053ecb28392bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImageAnimation
-  textureArray: []
+  textureArray:
+  - {fileID: 21300000, guid: 087862bf0f1efda4a8d8adfeece5fbc2, type: 3}
+  - {fileID: 21300000, guid: fc7b2502e709e3f44b7eae06ffb14148, type: 3}
+  - {fileID: 21300000, guid: 82c893c4f060e8c43b185d5def40194c, type: 3}
+  - {fileID: 21300000, guid: 7b3544815545e514dbf1757f0efbe7ed, type: 3}
+  - {fileID: 21300000, guid: 0d7df61e5a6babd4b8eb868fa799fe76, type: 3}
+  - {fileID: 21300000, guid: de63dcbe3c94cbb43bbaa02831b3db5b, type: 3}
+  - {fileID: 21300000, guid: d36a5c612b9bbf14aab78dd1641cd78f, type: 3}
+  - {fileID: 21300000, guid: 092bdff84351ab14b9ee675a9719bbe3, type: 3}
+  - {fileID: 21300000, guid: c83e344a3a5ac404ebb538e8d86271eb, type: 3}
+  - {fileID: 21300000, guid: 7acde8c8a2d4b5346ace9df6e3af4670, type: 3}
+  - {fileID: 21300000, guid: ae7d0be1ac3f5254b95dd1868d21f1b5, type: 3}
+  - {fileID: 21300000, guid: 1ce40b8831c01b34bb57252745406828, type: 3}
+  - {fileID: 21300000, guid: baa800fe0f65d26479219618a373d0c3, type: 3}
+  - {fileID: 21300000, guid: bb916d0b3afe4c74abad2e92f1d8c4cd, type: 3}
+  - {fileID: 21300000, guid: 3f6b09927fb55284e8d527ace7ab60d1, type: 3}
+  - {fileID: 21300000, guid: 358f687c353bb764081cd8f80477826a, type: 3}
+  - {fileID: 21300000, guid: c1211f33f8636d14790586b9df00ee52, type: 3}
+  - {fileID: 21300000, guid: c75146b2aac189a4386a157478aadfab, type: 3}
+  - {fileID: 21300000, guid: d5a170ab58b5cdb40b30d7935f8e55cf, type: 3}
+  - {fileID: 21300000, guid: 79ce3ecf45da3604cacda695bcdf3f48, type: 3}
+  - {fileID: 21300000, guid: dd4c101d041553c4dbaded4bd0ba09be, type: 3}
+  - {fileID: 21300000, guid: bea95f3b63f711744a7be90313445b52, type: 3}
+  - {fileID: 21300000, guid: 2969a4d615b864441b1cad08e7eb5773, type: 3}
+  - {fileID: 21300000, guid: d2f9e7b953ebb754fb5296f6a99bb31c, type: 3}
+  - {fileID: 21300000, guid: 0da10b97e90a76642a67d64fb87e02b7, type: 3}
+  - {fileID: 21300000, guid: 56d54da32719fb44299915843d5d3bce, type: 3}
+  - {fileID: 21300000, guid: 8b778f376273dad4bab0c7cff86e306c, type: 3}
+  - {fileID: 21300000, guid: 15fe2f4d6ca13294cb0cd25b02ef91a0, type: 3}
+  - {fileID: 21300000, guid: 30d1a559c5c485340816c6781200cdb5, type: 3}
+  - {fileID: 21300000, guid: b90dee7ab6574c74f9e11e014ff0b9e9, type: 3}
   rendererDelegate: {fileID: 1595471385}
   useSharedMaterial: 1
   doLoopAnimation: 1
@@ -43752,7 +43837,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 41fdbad3c80345046b052b793e65d055, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 087862bf0f1efda4a8d8adfeece5fbc2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -44259,8 +44344,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -44681,8 +44766,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -46516,8 +46601,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -47708,8 +47793,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -49047,8 +49132,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -49240,7 +49325,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -505, y: 0}
+  m_AnchoredPosition: {x: -530, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1803887346
@@ -49318,7 +49403,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -505, y: 0}
+  m_AnchoredPosition: {x: -530, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1808897447
@@ -54441,7 +54526,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 505, y: 0}
+  m_AnchoredPosition: {x: 530, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2052038170
@@ -56187,8 +56272,8 @@ MonoBehaviour:
   startingLoop: 0
   timeScale: 1
   freeze: 0
-  layoutScaleMode: 0
-  referenceSize: {x: 1, y: 1}
+  layoutScaleMode: 3
+  referenceSize: {x: 400, y: 400}
   pivotOffset: {x: 0, y: 0}
   referenceScale: 1
   layoutScale: 1
@@ -57099,7 +57184,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.0000019073486}
   m_SizeDelta: {x: 225, y: 1575}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2124849762

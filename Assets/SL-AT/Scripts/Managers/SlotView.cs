@@ -35,14 +35,17 @@ public class SlotView : MonoBehaviour
 
     // Rect size for each symbol, keyed by symbol id. Any id not listed here uses normalSymbolSize.
     //
-    // Every symbol is listed, all at DefaultSymbolSize (200) until each is sized against its own
-    // art. Sizing is per-symbol art, not a role: anything above the 175 pitch overlaps its vertical
-    // neighbours, which is intentional bleed but also means it swallows clicks aimed at the cells
-    // above and below.
+    // Every symbol is listed, all at DefaultSymbolSize (255, owner, 2026-11-18) until each is sized
+    // against its own art. Sizing is per-symbol art, not a role: anything above the 245 pitch
+    // (symbolHeight) overlaps its vertical neighbours — 255 does, by 10 — which is intentional bleed
+    // but also means it swallows clicks aimed at the cells above and below.
+    //
+    // Also the win-layer cells' size, and so the Spine animations' size: their Spine objects are
+    // stretched to the cell and scale with it (Layout Scale "Fit In Parent", set by SpineBuilder).
     //
     // Kept next to the sprite fields on purpose: both are id-keyed maps of the same symbol table, so
     // if the backend ever reorders it they have to be corrected together.
-    private static readonly Vector2 DefaultSymbolSize = new Vector2(200f, 200f);
+    private static readonly Vector2 DefaultSymbolSize = new Vector2(255f, 255f);
     private static readonly Dictionary<int, Vector2> SymbolSizeOverrides = new Dictionary<int, Vector2>
     {
         { 0, DefaultSymbolSize},  // Fairy
@@ -181,10 +184,8 @@ public class SlotView : MonoBehaviour
     [SerializeField] private float quickStopDuration = 0.2f;
 
     [Header("Scatter Anticipation")]
-    [Tooltip("Effects shown around a reel that could still complete a feature trigger. Index 0 = reel 2, index 1 = reel 3, index 2 = reel 4, index 3 = reel 5. Reel 1 can never anticipate, since a near miss needs earlier reels to have landed. Each needs an ImageAnimation; its own frame list stays empty — the list below is handed to it.")]
+    [Tooltip("Effects shown on a reel held for a possible BlueOrb trigger. Index 0 = reel 2, index 1 = reel 3, index 2 = reel 4, index 3 = reel 5. Reel 1 can never anticipate, since a near miss needs earlier reels to have landed. Each plays its own frames: give its ImageAnimation the clip, with Start On Enable and looping on.")]
     [SerializeField] private GameObject[] anticipationEffects = new GameObject[4];
-    [Tooltip("The anticipation effect's frames while a reel is held for a possible trigger.")]
-    [SerializeField] private List<Sprite> anticipationGreenFrames = new List<Sprite>();
     [Tooltip("Extra time each held reel keeps spinning. Applied per held reel and cumulative, so several holds in one spin add up.")]
     [SerializeField] private float anticipationExtraTime = 2f;
     [Tooltip("Shorter hold used when the player is on Turbo.")]
@@ -204,10 +205,10 @@ public class SlotView : MonoBehaviour
     [Header("Win Animation Settings")]
     [SerializeField] private float winSymbolLoopDuration = 1.5f;
 
-    // The shape of the win presentation: every winning symbol plays twice in step with the total, and
-    // the total waits for its burst to finish (autoplay and free spins stop there). A manual spin then
-    // walks the winning lines, each playing its own cells winLineRounds times, WalkPasses times over,
-    // and ends on the total once more — see PlayWinLineCycleRoutine. Each round lasts as long as the
+    // The shape of the win presentation: every winning symbol plays twice in step (autoplay and free
+    // spins stop there; no board total since 2026-11-18). A manual spin then walks the winning lines,
+    // each playing its own cells winLineRounds times, WalkPasses times over, and ends with every
+    // winning symbol looping — see PlayWinLineCycleRoutine. Each round lasts as long as the
     // slowest winning symbol's clip; a win whose symbols have no clip holds once for
     // winSymbolLoopDuration instead (owner, 2026-11-16, when the win boxes went).
     private const int totalWinRounds = 2;
@@ -217,16 +218,13 @@ public class SlotView : MonoBehaviour
     // 2026-11-10).
     private const int WalkPasses = 2;
 
-    // The board total's entrance (owner, 2026-11-04): from its scene scale up to this many times it,
-    // then settling to the second and staying there. Each half this long.
+    // The per-line amounts' entrance (owner, 2026-11-04; first made for the board total, which no
+    // longer shows): from its scene scale up to this many times it, then settling to the second and
+    // staying there. Each half this long.
     private const float TotalWinPopScale = 1.7f;
     private const float TotalWinSettleScale = 1.3f;
     private const float TotalWinPopUpDuration = 0.15f;
     private const float TotalWinPopSettleDuration = 0.10f;
-
-    // The longest the total waits for its burst to finish (WaitForTotalWinBurst). The clip runs about
-    // 2 s (35 frames at speed 25).
-    private const float TotalWinBurstTimeout = 5f;
     [Tooltip("Delay between raising the win animation layer and starting the ImageAnimation - for sync timing")]
     [SerializeField] private float winLineBoxToAnimationDelay = 0.05f;
 
@@ -246,10 +244,11 @@ public class SlotView : MonoBehaviour
     [Tooltip("One sprite per payline, in the server's line order — element 0 is line 0; 20 for Wild Jokers. A line with no sprite here shows no image.")]
     [SerializeField] private List<Sprite> paylineSprites = new List<Sprite>();
 
-    [Header("Phase 1 Total Win Presentation")]
+    [Header("Phase 1 Total Win Presentation (not shown)")]
+    [Tooltip("SpinWinText — the board total. Never shown since 2026-11-18 (owner); only kept off.")]
     [SerializeField] private TMPro.TMP_Text phase1TotalWinText;
 
-    [Tooltip("SpinWinAnimation — the burst behind the total, the total's parent. Switched on with the total and played ONCE each time it shows, its frames and speed as set on its own ImageAnimation; its Image goes once the clip ends, the total stays. Switched off with the total. Empty: the total shows alone.")]
+    [Tooltip("SpinWinAnimation — the burst behind the total, the total's parent. Never switched on since 2026-11-18 (owner); only kept off.")]
     [SerializeField] private ImageAnimation totalWinBurst;
 
     [Header("Symbol Info Card")]
@@ -282,10 +281,6 @@ public class SlotView : MonoBehaviour
     // own landing events. More than one reel can be held in a single spin — see
     // ComputeAnticipatedReels.
     private readonly HashSet<int> anticipatedReels = new HashSet<int>();
-
-    // Each anticipation effect's ImageAnimation, found once in Awake. Same indexing as
-    // anticipationEffects; null where an effect has none.
-    private ImageAnimation[] anticipationAnims;
 
     // A per-spin claim on the win dim: true while something raised it before the win presentation
     // and means the presentation to inherit it, instead of dropping and re-raising it (which
@@ -339,17 +334,6 @@ public class SlotView : MonoBehaviour
     {
         BuildSymbolSpriteArray();
         InitializeReels();
-        CacheAnticipationAnims();
-    }
-
-    private void CacheAnticipationAnims()
-    {
-        int count = anticipationEffects != null ? anticipationEffects.Length : 0;
-        anticipationAnims = new ImageAnimation[count];
-        for (int i = 0; i < count; i++)
-        {
-            if (anticipationEffects[i] != null) anticipationAnims[i] = anticipationEffects[i].GetComponent<ImageAnimation>();
-        }
     }
 
     private void Start()
@@ -639,7 +623,7 @@ public class SlotView : MonoBehaviour
         image.sprite = GetSymbolSprite(symbolId);
 
         // Sizing is art-driven, not role-driven, which is why this reads an id-keyed map. Anything
-        // above 175 overlaps its vertical neighbours, which is intentional art bleed, but also means
+        // above the 245 pitch overlaps its vertical neighbours, which is intentional art bleed, but also means
         // those symbols swallow clicks aimed at the ones above and below them.
         image.rectTransform.sizeDelta = SymbolSizeOverrides.TryGetValue(symbolId, out Vector2 size)
             ? size
@@ -983,34 +967,15 @@ public class SlotView : MonoBehaviour
     }
 
     // effects[0] belongs to reel index 1, effects[1] to reel index 2, and so on — reel 0 can never
-    // anticipate, since a near miss needs earlier reels to have landed.
-    //
-    // frames is the clip to play (anticipationGreenFrames). It is handed to the effect's
-    // ImageAnimation before it is switched on, so its Start On Enable plays the right clip; an effect
-    // that is already on is restarted on the new frames. An empty list leaves the effect's own frames
-    // alone.
-    private void SetAnticipationEffect(int reelIndex, bool visible, List<Sprite> frames = null)
+    // anticipate, since a near miss needs earlier reels to have landed. Each effect plays its own
+    // frames: its ImageAnimation's Start On Enable starts the clip when it is switched on.
+    private void SetAnticipationEffect(int reelIndex, bool visible)
     {
         int effectIndex = reelIndex - 1;
         if (anticipationEffects == null || effectIndex < 0 || effectIndex >= anticipationEffects.Length) return;
 
         GameObject effect = anticipationEffects[effectIndex];
-        if (effect == null) return;
-
-        if (!visible)
-        {
-            effect.SetActive(false);
-            return;
-        }
-
-        ImageAnimation anim = anticipationAnims != null && effectIndex < anticipationAnims.Length ? anticipationAnims[effectIndex] : null;
-        if (anim != null && frames != null && frames.Count > 0)
-        {
-            anim.textureArray = frames;
-            if (effect.activeSelf) anim.StartAnimation();
-        }
-
-        effect.SetActive(true);
+        if (effect != null) effect.SetActive(visible);
     }
 
     // onLanded fires once the reel's landing tween has finished — the moment it is really at rest.
@@ -1041,27 +1006,25 @@ public class SlotView : MonoBehaviour
         // No reel-stop or scatter-landing sound: the old games' clips are gone and Wild Jokers has none
         // yet (owner, 2026-11-04).
 
-        // If the next reel is being held, its effect comes in on this reel's landing slam, in green.
-        // Driven off the actual event rather than a computed timestamp so it can't drift out of sync
-        // with the staggers or the holds.
-        if (anticipatedReels.Contains(columnIndex + 1))
-        {
-            SetAnticipationEffect(columnIndex + 1, true, anticipationGreenFrames);
-
-            // Starts with the first held reel and runs across any that follow it.
-            AudioManager.Instance?.PlayAnticipation();
-        }
-
-        // The reel is at rest. If it was being teased, its effect goes whether or not the trigger
-        // symbol actually turned up; other reels keep their own holds.
+        // The reel is at rest. Only one anticipation effect is ever up: if this reel was being teased,
+        // its effect goes (whether or not the orb turned up) before the next held reel's comes in, so
+        // the two never overlap. Driven off the actual landing rather than a computed timestamp so it
+        // can't drift out of sync with the staggers or the holds.
         void OnReelLanded()
         {
-            if (anticipatedReels.Remove(columnIndex))
-            {
-                SetAnticipationEffect(columnIndex, false);
+            if (anticipatedReels.Remove(columnIndex)) SetAnticipationEffect(columnIndex, false);
 
+            if (anticipatedReels.Contains(columnIndex + 1))
+            {
+                SetAnticipationEffect(columnIndex + 1, true);
+
+                // Starts with the first held reel and runs across any that follow it.
+                AudioManager.Instance?.PlayAnticipation();
+            }
+            else if (anticipatedReels.Count == 0)
+            {
                 // The last held reel has landed: the tension is over.
-                if (anticipatedReels.Count == 0) AudioManager.Instance?.StopAnticipation();
+                AudioManager.Instance?.StopAnticipation();
             }
 
             onLanded?.Invoke();
@@ -1276,13 +1239,12 @@ public class SlotView : MonoBehaviour
         bool skipPhase2 = gameManager != null
             && (gameManager.isInFreeSpins || gameManager.isAutoPlaying);
 
-        // The total on the board, with its burst (owner, 2026-11-04). The win box shows it too.
-        ShowPhase1TotalWin(totalWinAmount);
-
+        // No total on the board (owner, 2026-11-18): SpinWinAnimation and its SpinWinText are never
+        // switched on — the win box in the bottom bar is the only place the amount shows.
         AudioManager.Instance?.PlayWinPresentationStart();
 
-        // The total: every winning symbol, twice, in step — the same in autoplay and Free Games, which
-        // end here (owner, 2026-11-06: their single round cut the burst off halfway and moved on).
+        // Phase 1: every winning symbol, twice, in step — the same in autoplay and Free Games, which
+        // end here (owner, 2026-11-06).
         //
         // Yielded directly, NOT through StartCoroutine. A nested StartCoroutine is its own coroutine:
         // stopping this one (the next spin's KillWinTweens) left it running, waiting forever for
@@ -1290,13 +1252,9 @@ public class SlotView : MonoBehaviour
         // interrupted win. Run inline, it stops with this one.
         yield return AnimateWinPositions(allWinPositions, rounds: totalWinRounds);
 
-        // The burst plays to its end before the total goes, however long its clip is set.
-        yield return WaitForTotalWinBurst();
-
         KillWinTweens(false);
-        HidePhase1TotalWinText();
 
-        // Invoke onComplete immediately after the total so game logic (Free Spins / Autoplay / Win
+        // Invoke onComplete immediately after phase 1 so game logic (Free Spins / Autoplay / Win
         // complete) can proceed while the win lines are still being walked.
         onComplete?.Invoke();
 
@@ -1331,8 +1289,8 @@ public class SlotView : MonoBehaviour
     {
         // The line walk (owner, 2026-11-05; two passes, 2026-11-10): each winning line in turn — its
         // payline image, its amount on reel 3 (popping in), and only its own cells — then
-        // the next, WalkPasses times over. The total stays hidden throughout: KillWinTweens takes it
-        // down with everything else between lines. No sound (the line-change clip was Golden Dynasty's).
+        // the next, WalkPasses times over; KillWinTweens takes each line down before the next. No
+        // sound (the line-change clip was Golden Dynasty's).
         for (int pass = 0; pass < WalkPasses && winLines != null; pass++)
         {
             float passStart = Time.time;
@@ -1355,34 +1313,15 @@ public class SlotView : MonoBehaviour
             if (!anyLineShown || Time.time <= passStart) break;
         }
 
-        // The closing total (owner, 2026-11-10): the payline and amount go; the total comes back with
-        // its stars and its pop, exactly as it first showed, and goes once the stars have played.
-        // Every winning cell's symbol is left looping — rounds: 0 starts them and returns at
-        // once — until the next spin's teardown stops them.
+        // The close: the payline and amount go, and every winning cell's symbol is left looping —
+        // rounds: 0 starts them and returns at once — until the next spin's teardown stops them.
+        // (Until 2026-11-18 the board total came back here with its burst; it no longer shows.)
         KillWinTweens(false);
-        ShowPhase1TotalWin(totalWinAmount);
-        float shownAt = Time.time;
 
-        // Inline for the same reason as the total in PlayTwoPhaseWinLines.
+        // Inline for the same reason as phase 1 in PlayTwoPhaseWinLines.
         yield return AnimateWinPositions(allWinPositions, rounds: 0);
 
-        yield return WaitForTotalWinBurst();
-
-        // No stars to wait for (none wired, or no frames): the total still gets a beat on screen.
-        float shownFor = Time.time - shownAt;
-        if (shownFor < winSymbolLoopDuration && !TotalWinBurstHasFrames())
-        {
-            yield return new WaitForSeconds(winSymbolLoopDuration - shownFor);
-        }
-
-        HidePhase1TotalWinText();
-
         winAnimationCoroutine = null;
-    }
-
-    private bool TotalWinBurstHasFrames()
-    {
-        return totalWinBurst != null && totalWinBurst.textureArray != null && totalWinBurst.textureArray.Count > 0;
     }
 
     // Every winning cell across all the wins, each once. The total is not rebuilt here: it is the
@@ -1600,20 +1539,9 @@ public class SlotView : MonoBehaviour
         return true;
     }
 
-    private void ShowPhase1TotalWin(double totalWinAmount)
-    {
-        // The burst first: it is the total's parent, so the total can't show while it is off.
-        PlayTotalWinBurst();
-
-        if (phase1TotalWinText != null)
-        {
-            // Sprite digits, drawn from the text's sprite asset — the same one the per-line amounts
-            // use, so the total and the lines always match each other.
-            phase1TotalWinText.text = SpriteTextFormatter.ToSpriteMoney(totalWinAmount);
-            AnimateTotalWinAppear(phase1TotalWinText.transform);
-        }
-    }
-
+    // Keeps the board total and its burst (SpinWinAnimation) off. Nothing shows them since 2026-11-18
+    // (owner); this still runs at Start and in every teardown, so a scene saved with them on is
+    // switched off.
     private void HidePhase1TotalWinText()
     {
         if (phase1TotalWinText != null)
@@ -1631,52 +1559,8 @@ public class SlotView : MonoBehaviour
         }
     }
 
-    // The burst behind the total: on, played once, and its Image hidden at the end — the Image, not
-    // the object, which is the total's parent. Without frames it is only the total's parent.
-    private void PlayTotalWinBurst()
-    {
-        if (totalWinBurst == null) return;
-
-        ImageAnimation burst = totalWinBurst;
-        Image burstImage = burst.GetComponent<Image>();
-
-        burst.onLoopComplete = null;
-        burst.StopAnimation();
-        burst.gameObject.SetActive(true);
-
-        bool hasFrames = burst.textureArray != null && burst.textureArray.Count > 0;
-        if (burstImage != null) burstImage.enabled = hasFrames;
-        if (!hasFrames) return;
-
-        burst.doLoopAnimation = false;
-        burst.onLoopComplete = _ =>
-        {
-            burst.onLoopComplete = null;
-            burst.StopAnimation();
-            if (burstImage != null) burstImage.enabled = false;
-        };
-        burst.StartAnimation();
-    }
-
-    // Returns once the burst has played out: its Image goes when its clip ends (PlayTotalWinBurst), and
-    // an off burst has nothing left to play. TotalWinBurstTimeout stops a clip that never reports its
-    // end from holding the spin.
-    private IEnumerator WaitForTotalWinBurst()
-    {
-        if (totalWinBurst == null) yield break;
-
-        Image burstImage = totalWinBurst.GetComponent<Image>();
-        if (burstImage == null) yield break;
-
-        float deadline = Time.time + TotalWinBurstTimeout;
-        while (burstImage.enabled && totalWinBurst.gameObject.activeInHierarchy && Time.time < deadline)
-        {
-            yield return null;
-        }
-    }
-
     // The total's scale as saved in the scene, read the first time it is needed (at Start, before
-    // anything has scaled it): the pop is relative to it, and a hidden total is put back to it.
+    // anything has scaled it): a hidden total is put back to it.
     private bool totalWinSceneScaleRead;
     private Vector3 totalWinSceneScale = Vector3.one;
     private Vector3 TotalWinSceneScale
@@ -1711,12 +1595,7 @@ public class SlotView : MonoBehaviour
             : Vector3.one;
     }
 
-    private void AnimateTotalWinAppear(Transform textTransform)
-    {
-        AnimateAmountPop(textTransform, TotalWinSceneScale);
-    }
-
-    // The amounts' entrance — the total and the per-line amounts alike (owner, 2026-11-04 and
+    // The per-line amounts' entrance (owner, 2026-11-04 and
     // 2026-11-10): on at its scene scale, up to TotalWinPopScale × it, settling to TotalWinSettleScale
     // × it, where it stays until hidden.
     private void AnimateAmountPop(Transform textTransform, Vector3 sceneScale)
