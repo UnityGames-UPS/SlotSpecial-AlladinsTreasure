@@ -133,6 +133,14 @@ public class SlotView : MonoBehaviour
     // Internal array of Spine assets, indexed by symbol id
     private SkeletonDataAsset[] spineAssets;
 
+    [Header("Bonus Orb Spine Assets")]
+    [Tooltip("The Purple (magenta) and Yellow bonus orbs' Spine animations. Not reel symbols — the reels only ever show the Blue orb (spineBlueOrb above) — so these are not in the symbol-id table and nothing in the win presentation plays them. Read through PurpleOrbSpine / YellowOrbSpine.")]
+    [SerializeField] private SkeletonDataAsset spinePurpleOrb;
+    [SerializeField] private SkeletonDataAsset spineYellowOrb;
+
+    internal SkeletonDataAsset PurpleOrbSpine => spinePurpleOrb;
+    internal SkeletonDataAsset YellowOrbSpine => spineYellowOrb;
+
     [Header("Reel Containers")]
     [SerializeField] private Transform[] reelTransforms;
 

@@ -1,0 +1,715 @@
+fileFormatVersion: 2
+guid: 174b50bba40c24d469b7e3717b28ce49
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6299809800755679415
+    second: Main_slotRedo_0
+  - first:
+      213: 5988110553009757768
+    second: Main_slotRedo_1
+  - first:
+      213: -3142145588968363361
+    second: Main_slotRedo_2
+  - first:
+      213: -1505275613491321565
+    second: Main_slotRedo_3
+  - first:
+      213: -2282569801608260315
+    second: Main_slotRedo_4
+  - first:
+      213: 1580524062918346780
+    second: Main_slotRedo_5
+  - first:
+      213: -4375085321805596614
+    second: Main_slotRedo_6
+  - first:
+      213: 9069063641537581776
+    second: Main_slotRedo_7
+  - first:
+      213: -7445294399426943025
+    second: Main_slotRedo_8
+  - first:
+      213: 7680451926127237144
+    second: Main_slotRedo_9
+  - first:
+      213: 5019325565963461936
+    second: Main_slotRedo_10
+  - first:
+      213: -4770936027351694412
+    second: Main_slotRedo_11
+  - first:
+      213: -3416165234311407036
+    second: Main_slotRedo_12
+  - first:
+      213: -4718266417672432453
+    second: Main_slotRedo_13
+  - first:
+      213: 751149976611539337
+    second: Main_slotRedo_14
+  - first:
+      213: 8094635621738519223
+    second: Main_slotRedo_15
+  - first:
+      213: -1172394202411734209
+    second: Main_slotRedo_16
+  - first:
+      213: 8217038479255869810
+    second: Main_slotRedo_17
+  - first:
+      213: 1711739323393883700
+    second: Main_slotRedo_18
+  - first:
+      213: 6555790129240526934
+    second: Main_slotRedo_19
+  - first:
+      213: 8981794884190600677
+    second: Main_slotRedo_20
+  - first:
+      213: 6261618170769084572
+    second: Main_slotRedo_21
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Main_slotRedo_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1478
+        height: 820
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94fee613d549298a0800000000000000
+      internalID: -6299809800755679415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_1
+      rect:
+        serializedVersion: 2
+        x: 1240
+        y: 805
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84e1ae352da0a1350800000000000000
+      internalID: 5988110553009757768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_2
+      rect:
+        serializedVersion: 2
+        x: 1273
+        y: 805
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9aeaf01c3bd464d0800000000000000
+      internalID: -3142145588968363361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_3
+      rect:
+        serializedVersion: 2
+        x: 1277
+        y: 811
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 325aac80ecf2c1be0800000000000000
+      internalID: -1505275613491321565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_4
+      rect:
+        serializedVersion: 2
+        x: 1389
+        y: 790
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5251b18ebdea250e0800000000000000
+      internalID: -2282569801608260315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_5
+      rect:
+        serializedVersion: 2
+        x: 1439
+        y: 801
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c188431e2462fe510800000000000000
+      internalID: 1580524062918346780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_6
+      rect:
+        serializedVersion: 2
+        x: 1469
+        y: 811
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3870cb74139843c0800000000000000
+      internalID: -4375085321805596614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_7
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 802
+        width: 44
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d2124ff459cbdd70800000000000000
+      internalID: 9069063641537581776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_8
+      rect:
+        serializedVersion: 2
+        x: 1264
+        y: 783
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc7a3f9c0300da890800000000000000
+      internalID: -7445294399426943025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_9
+      rect:
+        serializedVersion: 2
+        x: 1291
+        y: 801
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81857438552769a60800000000000000
+      internalID: 7680451926127237144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_10
+      rect:
+        serializedVersion: 2
+        x: 1352
+        y: 788
+        width: 49
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 035e94b320a38a540800000000000000
+      internalID: 5019325565963461936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_11
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 790
+        width: 20
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b3c69be5fa3acdb0800000000000000
+      internalID: -4770936027351694412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_12
+      rect:
+        serializedVersion: 2
+        x: 1446
+        y: 723
+        width: 32
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44a54daa1d75790d0800000000000000
+      internalID: -3416165234311407036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_13
+      rect:
+        serializedVersion: 2
+        x: 1465
+        y: 679
+        width: 13
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb4dafa01b9558eb0800000000000000
+      internalID: -4718266417672432453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_14
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 649
+        width: 10
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98949f88cee9c6a00800000000000000
+      internalID: 751149976611539337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_15
+      rect:
+        serializedVersion: 2
+        x: 1465
+        y: 181
+        width: 8
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ba92f3f53ce55070800000000000000
+      internalID: 8094635621738519223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_16
+      rect:
+        serializedVersion: 2
+        x: 1472
+        y: 119
+        width: 6
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3b658c3fa1dabfe0800000000000000
+      internalID: -1172394202411734209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_17
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 3
+        width: 21
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27913cd06f8c80270800000000000000
+      internalID: 8217038479255869810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_18
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 4
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43eb5fe68d151c710800000000000000
+      internalID: 1711739323393883700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_19
+      rect:
+        serializedVersion: 2
+        x: 1139
+        y: 5
+        width: 31
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 650d4637368dafa50800000000000000
+      internalID: 6555790129240526934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_20
+      rect:
+        serializedVersion: 2
+        x: 1435
+        y: 5
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5edf99d0cdeb5ac70800000000000000
+      internalID: 8981794884190600677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_slotRedo_21
+      rect:
+        serializedVersion: 2
+        x: 1471
+        y: 0
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9092d30d8cb5e650800000000000000
+      internalID: 6261618170769084572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Main_slotRedo_0: -6299809800755679415
+      Main_slotRedo_1: 5988110553009757768
+      Main_slotRedo_10: 5019325565963461936
+      Main_slotRedo_11: -4770936027351694412
+      Main_slotRedo_12: -3416165234311407036
+      Main_slotRedo_13: -4718266417672432453
+      Main_slotRedo_14: 751149976611539337
+      Main_slotRedo_15: 8094635621738519223
+      Main_slotRedo_16: -1172394202411734209
+      Main_slotRedo_17: 8217038479255869810
+      Main_slotRedo_18: 1711739323393883700
+      Main_slotRedo_19: 6555790129240526934
+      Main_slotRedo_2: -3142145588968363361
+      Main_slotRedo_20: 8981794884190600677
+      Main_slotRedo_21: 6261618170769084572
+      Main_slotRedo_3: -1505275613491321565
+      Main_slotRedo_4: -2282569801608260315
+      Main_slotRedo_5: 1580524062918346780
+      Main_slotRedo_6: -4375085321805596614
+      Main_slotRedo_7: 9069063641537581776
+      Main_slotRedo_8: -7445294399426943025
+      Main_slotRedo_9: 7680451926127237144
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
