@@ -137,10 +137,12 @@ public class SlotView : MonoBehaviour
     private SkeletonDataAsset[] spineAssets;
 
     [Header("Bonus Orb Spine Assets")]
-    [Tooltip("The Purple (magenta) and Yellow bonus orbs' Spine animations. Not reel symbols — the reels only ever show the Blue orb (spineBlueOrb above) — so these are not in the symbol-id table and nothing in the win presentation plays them. Read through PurpleOrbSpine / YellowOrbSpine.")]
+    [Tooltip("The Purple (magenta) and Yellow bonus orbs' Spine animations. Not reel symbols — the reels only ever show the Blue orb (spineBlueOrb above) — so these are not in the symbol-id table and the win presentation never plays them. The free games' end orbs play them (FramesView, via GameManager), with spineBlueOrb for the Blue end orb.")]
     [SerializeField] private SkeletonDataAsset spinePurpleOrb;
     [SerializeField] private SkeletonDataAsset spineYellowOrb;
 
+    // The three jewel Spines, read by GameManager for the free games' end orbs.
+    internal SkeletonDataAsset BlueOrbSpine => spineBlueOrb;
     internal SkeletonDataAsset PurpleOrbSpine => spinePurpleOrb;
     internal SkeletonDataAsset YellowOrbSpine => spineYellowOrb;
 

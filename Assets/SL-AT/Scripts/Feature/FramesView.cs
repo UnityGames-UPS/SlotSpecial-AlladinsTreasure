@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Spine.Unity;
 
 /// <summary>
 /// The free games' layer over the board (ATFreeGamesBonus.md §5.3, §6): one cell per position, 5 reels
@@ -10,8 +11,13 @@ using DG.Tweening;
 ///
 /// A frame is a still image, never animated: it is switched on (Blue) or its sprite swapped (Purple,
 /// Orange) instantly, and the one effect clip plays once on top of it as it changes. At the end every
-/// frame turns into an end orb that pops in, then — one at a time — plays its opening clip, shows its
-/// prize and goes, leaving the number.
+/// frame turns into an end orb that pops in, then — one at a time — plays its animation once, fades
+/// away, and its prize number appears in its place.
+///
+/// The orb's animation, like a winning symbol's: its jewel Spine (Blue / Magenta / Yellow — handed in
+/// by GameManager from SlotView) when the cell has a Spine object, else its opening frame clip, else
+/// its still image held for orbRevealFallback. Both the Spine and the frame-clip paths stay supported
+/// (owner, 2026-11-19).
 ///
 /// This object sits ABOVE SlotView's AnimationLayer in the hierarchy, so the frames draw over the
 /// winning-symbol animations (owner, 2026-11-13).
@@ -22,7 +28,7 @@ using DG.Tweening;
 public class FramesView : MonoBehaviour
 {
     [Header("Cells")]
-    [Tooltip("One entry per reel, left to right; each holds its 3 cells top to bottom. A cell: Frame (Image), Effect (Image + ImageAnimation, above the frame), Orb (Image + ImageAnimation), Prize (TMP text, above the orb).")]
+    [Tooltip("One entry per reel, left to right; each holds its 3 cells top to bottom. A cell: Frame (Image), Effect (Image + ImageAnimation, above the frame), Orb (Image + ImageAnimation, with a Spine child), Prize (TMP text, above the orb).")]
     [SerializeField] private List<FrameColumn> frameColumns = new List<FrameColumn>(5);
 
     [Header("Frames")]
@@ -40,13 +46,17 @@ public class FramesView : MonoBehaviour
     [SerializeField] private Sprite orbPurple;
     [Tooltip("The Yellow orb — what an Orange frame becomes.")]
     [SerializeField] private Sprite orbYellow;
-    [Tooltip("Each orb's opening clip, played once as it is revealed. At its end the orb goes and the prize stays.")]
+    [Tooltip("Each orb's opening frame clip, played once as it is revealed — used only when the orb has no Spine (a cell without a Spine object, or no jewel Spine handed in). Then the orb fades and the prize appears.")]
     [SerializeField] private List<Sprite> orbBlueOpenFrames = new List<Sprite>();
     [SerializeField] private List<Sprite> orbPurpleOpenFrames = new List<Sprite>();
     [SerializeField] private List<Sprite> orbYellowOpenFrames = new List<Sprite>();
     [SerializeField] private float orbOpenSpeed = 20f;
-    [Tooltip("How long an orb's reveal lasts when it has no opening clip.")]
+    [Tooltip("How long an orb's still image is held before it fades, when it has neither a Spine nor an opening clip.")]
     [SerializeField] private float orbRevealFallback = 1f;
+    [Tooltip("The orb fading away once its animation has played, before its prize appears.")]
+    [SerializeField] private float orbFadeDuration = 0.3f;
+    [Tooltip("How long each prize number holds after it appears — TOTAL PRIZE counts up over it — before the next orb starts.")]
+    [SerializeField] private float prizeHold = 1f;
     [Tooltip("The orbs' pop in: from 0, overshooting, back to their scene scale.")]
     [SerializeField] private float orbPopDuration = 0.4f;
     [SerializeField] private float orbPopOvershoot = 1.7f;
@@ -60,6 +70,12 @@ public class FramesView : MonoBehaviour
 
     private readonly List<Tween> tweens = new List<Tween>();
 
+    // The end orbs' jewel Spines, by level (1 Blue, 2 Magenta, 3 Yellow). Handed in by GameManager from
+    // SlotView, which owns the Spine assets (the Blue one is the BlueOrb symbol's) — not wired here.
+    private SkeletonDataAsset orbSpineBlue;
+    private SkeletonDataAsset orbSpinePurple;
+    private SkeletonDataAsset orbSpineYellow;
+
     #region Called by GameManager
 
     /// <summary>The board's reel count, from the init. Flat cell indices are row * reelCount + col.</summary>
@@ -67,6 +83,17 @@ public class FramesView : MonoBehaviour
     {
         if (boardReelCount > 0) reelCount = boardReelCount;
     }
+
+    /// <summary>The end orbs' jewel Spines. Any left null falls back to that orb's frame clip / image.</summary>
+    internal void SetOrbSpines(SkeletonDataAsset blue, SkeletonDataAsset purple, SkeletonDataAsset yellow)
+    {
+        orbSpineBlue = blue;
+        orbSpinePurple = purple;
+        orbSpineYellow = yellow;
+    }
+
+    /// <summary>How long a prize number holds after it appears; GameManager counts TOTAL PRIZE up over it.</summary>
+    internal float PrizeHold => Mathf.Max(0f, prizeHold);
 
     /// <summary>Everything off and still: no frames, no orbs, no numbers. The base game's state.</summary>
     internal void ResetAll()
@@ -77,8 +104,7 @@ public class FramesView : MonoBehaviour
         {
             if (cell.frame != null) cell.frame.gameObject.SetActive(false);
             StopAndHide(cell.effect);
-            StopAndHide(cell.orbAnimation);
-            if (cell.orb != null) cell.orb.gameObject.SetActive(false);
+            HideOrb(cell);
             if (cell.prize != null) cell.prize.gameObject.SetActive(false);
         }
     }
@@ -166,7 +192,7 @@ public class FramesView : MonoBehaviour
                 if (cell == null || cell.orb == null) continue;
 
                 if (cell.prize != null) cell.prize.gameObject.SetActive(false);
-                StopAndHide(cell.orbAnimation);
+                HideOrb(cell);
 
                 Sprite resting = OrbSprite(prize.level);
                 if (resting != null) cell.orb.sprite = resting;
@@ -191,61 +217,62 @@ public class FramesView : MonoBehaviour
     }
 
     /// <summary>
-    /// How long one orb's reveal lasts — its opening clip, or the fallback when it has none. The
-    /// controller counts TOTAL PRIZE up over this, so the count runs while the orb opens (§6.3).
+    /// One orb's reveal (§6.3), in order: its animation plays once (the jewel Spine, else the opening
+    /// clip, else the still image held for orbRevealFallback); the orb fades away; its prize scales in
+    /// where it was — onPrizeShown fires then, for TOTAL PRIZE to count up — and holds for prizeHold;
+    /// then onDone. The number stays until ResetAll.
     /// </summary>
-    internal float GetRevealDuration(int level)
-    {
-        List<Sprite> clip = OrbOpenFrames(level);
-        if (clip == null || clip.Count == 0 || orbOpenSpeed <= 0f) return orbRevealFallback;
-
-        // ImageAnimation's pace: frames ÷ (24 × speed) seconds a frame, over every frame.
-        float frameTime = clip.Count / (24f * orbOpenSpeed);
-        return frameTime * clip.Count;
-    }
-
-    /// <summary>
-    /// One orb's reveal (§6.3): its opening clip plays once and its prize scales in at its centre; at
-    /// the clip's end the orb goes and the number stays (until ResetAll). onDone fires then.
-    /// </summary>
-    internal void RevealOrb(EndPrize prize, Action onDone)
+    internal void RevealOrb(EndPrize prize, Action onPrizeShown, Action onDone)
     {
         FrameCell cell = prize != null ? GetCell(prize.cell) : null;
         if (cell == null)
         {
+            onPrizeShown?.Invoke();
             onDone?.Invoke();
             return;
         }
 
-        ShowPrize(cell, prize.cash);
-
-        bool finished = false;
-        void Finish()
+        bool opened = false;
+        void Opened()
         {
-            if (finished) return;
-            finished = true;
-            StopAndHide(cell.orbAnimation);
-            if (cell.orb != null) cell.orb.gameObject.SetActive(false);
-            onDone?.Invoke();
+            if (opened) return;
+            opened = true;
+
+            FadeOutOrb(cell, () =>
+            {
+                HideOrb(cell);
+                ShowPrize(cell, prize.cash);
+                onPrizeShown?.Invoke();
+                tweens.Add(DOVirtual.DelayedCall(PrizeHold, () => onDone?.Invoke()));
+            });
         }
 
+        // 1. The jewel Spine, once — the controller has no end callback, so timed by its duration.
+        if (TryPlayOrbSpine(cell, prize.level, out float spineDuration))
+        {
+            tweens.Add(DOVirtual.DelayedCall(spineDuration, Opened));
+            return;
+        }
+
+        // 2. The opening frame clip, once — its last frame stays up while the orb fades.
         List<Sprite> clip = OrbOpenFrames(prize.level);
         ImageAnimation anim = cell.orbAnimation;
-        if (anim == null || clip == null || clip.Count == 0)
+        if (anim != null && clip != null && clip.Count > 0)
         {
-            tweens.Add(DOVirtual.DelayedCall(orbRevealFallback, Finish));
+            anim.textureArray = clip;
+            anim.doLoopAnimation = false;
+            anim.AnimationSpeed = orbOpenSpeed;
+            anim.onLoopComplete = loop => { anim.onLoopComplete = null; Opened(); };
+            anim.gameObject.SetActive(true);
+            anim.StartAnimation();
+
+            // A safety net only, so a clip stopped from outside can never stall the reveal.
+            tweens.Add(DOVirtual.DelayedCall(GetClipDuration(clip) + 1f, Opened));
             return;
         }
 
-        anim.textureArray = clip;
-        anim.doLoopAnimation = false;
-        anim.AnimationSpeed = orbOpenSpeed;
-        anim.onLoopComplete = loop => { anim.onLoopComplete = null; Finish(); };
-        anim.gameObject.SetActive(true);
-        anim.StartAnimation();
-
-        // A safety net only, so a clip stopped from outside can never stall the reveal.
-        tweens.Add(DOVirtual.DelayedCall(GetRevealDuration(prize.level) + 1f, Finish));
+        // 3. The still image.
+        tweens.Add(DOVirtual.DelayedCall(orbRevealFallback, Opened));
     }
 
     #endregion
@@ -324,6 +351,111 @@ public class FramesView : MonoBehaviour
         tweens.Add(t.DOScale(home, prizeScaleInDuration).SetEase(Ease.OutBack));
     }
 
+    // The orb's jewel Spine, started once: the cell's Image component goes off (the Spine is its child,
+    // so it still draws) — as SlotView does for a winning symbol. False, with nothing changed, when
+    // the cell has no Spine object or there is no jewel Spine (or clip) for this level.
+    private bool TryPlayOrbSpine(FrameCell cell, int level, out float duration)
+    {
+        duration = 0f;
+        SpineAnimController spine = cell.orbSpine;
+        SkeletonDataAsset asset = OrbSpineAsset(level);
+        if (spine == null || asset == null) return false;
+
+        spine.SetSkeletonData(asset);
+        duration = spine.GetAnimationDuration();
+        if (duration <= 0f) return false;
+
+        spine.gameObject.SetActive(true);
+        if (cell.orb != null) cell.orb.enabled = false;
+
+        // Play is ignored while the controller thinks it is still playing — Stop first, every time.
+        spine.Stop();
+        spine.Play(false);
+        return true;
+    }
+
+    // Fades whatever is showing the orb — its Spine, its opening clip's image, its still image — to
+    // nothing, then calls back. HideOrb puts the alphas back.
+    private void FadeOutOrb(FrameCell cell, Action onFaded)
+    {
+        var graphics = new List<Graphic>(3);
+        if (cell.orb != null && cell.orb.enabled && cell.orb.gameObject.activeInHierarchy) graphics.Add(cell.orb);
+        if (cell.orbAnimation != null)
+        {
+            Image clipImage = cell.orbAnimation.GetComponent<Image>();
+            if (clipImage != null && clipImage != cell.orb && clipImage.enabled && clipImage.gameObject.activeInHierarchy) graphics.Add(clipImage);
+        }
+        if (cell.orbSpine != null && cell.orbSpine.gameObject.activeInHierarchy && cell.orbSpine.SkeletonGraphic != null)
+        {
+            graphics.Add(cell.orbSpine.SkeletonGraphic);
+        }
+
+        if (graphics.Count == 0 || orbFadeDuration <= 0f)
+        {
+            onFaded?.Invoke();
+            return;
+        }
+
+        foreach (Graphic graphic in graphics)
+        {
+            Graphic g = graphic;
+            RememberAlpha(g);
+            tweens.Add(DOTween.To(() => g.color.a, a => SetAlpha(g, a), 0f, orbFadeDuration).SetEase(Ease.InQuad));
+        }
+        tweens.Add(DOVirtual.DelayedCall(orbFadeDuration, () => onFaded?.Invoke()));
+    }
+
+    // The orb fully off and back to its resting state: no clip, no Spine, the Image component on, every
+    // faded alpha restored — ready to pop in again.
+    private void HideOrb(FrameCell cell)
+    {
+        StopAndHide(cell.orbAnimation);
+
+        if (cell.orbSpine != null)
+        {
+            cell.orbSpine.Stop();
+            RestoreAlpha(cell.orbSpine.SkeletonGraphic);
+            cell.orbSpine.gameObject.SetActive(false);
+        }
+
+        if (cell.orbAnimation != null) RestoreAlpha(cell.orbAnimation.GetComponent<Image>());
+
+        if (cell.orb != null)
+        {
+            RestoreAlpha(cell.orb);
+            cell.orb.enabled = true;
+            cell.orb.gameObject.SetActive(false);
+        }
+    }
+
+    // Each faded graphic's alpha as saved in the scene, read the first time it is faded.
+    private readonly Dictionary<Graphic, float> homeAlphas = new Dictionary<Graphic, float>();
+
+    private void RememberAlpha(Graphic graphic)
+    {
+        if (graphic != null && !homeAlphas.ContainsKey(graphic)) homeAlphas[graphic] = graphic.color.a;
+    }
+
+    private void RestoreAlpha(Graphic graphic)
+    {
+        if (graphic != null && homeAlphas.TryGetValue(graphic, out float alpha)) SetAlpha(graphic, alpha);
+    }
+
+    private static void SetAlpha(Graphic graphic, float alpha)
+    {
+        Color color = graphic.color;
+        color.a = alpha;
+        graphic.color = color;
+    }
+
+    // ImageAnimation's pace: frames ÷ (24 × speed) seconds a frame, over every frame.
+    private float GetClipDuration(List<Sprite> clip)
+    {
+        if (clip == null || clip.Count == 0 || orbOpenSpeed <= 0f) return orbRevealFallback;
+        float frameTime = clip.Count / (24f * orbOpenSpeed);
+        return frameTime * clip.Count;
+    }
+
     // The scale an object was saved with in the scene, read the first time it is popped — so a pop
     // always lands back on it, however often it has been scaled since.
     private readonly Dictionary<Transform, Vector3> homeScales = new Dictionary<Transform, Vector3>();
@@ -356,6 +488,17 @@ public class FramesView : MonoBehaviour
             case 1: return orbBlue;
             case 2: return orbPurple;
             case 3: return orbYellow;
+            default: return null;
+        }
+    }
+
+    private SkeletonDataAsset OrbSpineAsset(int level)
+    {
+        switch (level)
+        {
+            case 1: return orbSpineBlue;
+            case 2: return orbSpinePurple;
+            case 3: return orbSpineYellow;
             default: return null;
         }
     }
@@ -437,8 +580,10 @@ public class FrameCell
     public ImageAnimation effect;
     [Tooltip("The end orb's Image.")]
     public Image orb;
-    [Tooltip("The end orb's ImageAnimation — on the Orb object itself, or a child over it. Plays the opening clip.")]
+    [Tooltip("The end orb's ImageAnimation — on the Orb object itself, or a child over it. Plays the opening clip when the orb has no Spine.")]
     public ImageAnimation orbAnimation;
+    [Tooltip("The end orb's jewel Spine — a 'Spine' child of the Orb (SkeletonGraphic + SpineAnimController), saved off. Built and wired by Tools > SL-AT > Build Win Spine Slots. Empty: the orb uses its opening clip / still image.")]
+    public SpineAnimController orbSpine;
     [Tooltip("The prize number at the orb's centre. Stays after the orb goes.")]
     public TMPro.TMP_Text prize;
 }

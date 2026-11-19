@@ -124,6 +124,8 @@ public class GameManager : MonoBehaviour
         if (framesView != null)
         {
             framesView.Configure(gameConfig.reelCount);
+            // The end orbs play the jewel Spines, which SlotView owns (owner, 2026-11-19).
+            if (slotView != null) framesView.SetOrbSpines(slotView.BlueOrbSpine, slotView.PurpleOrbSpine, slotView.YellowOrbSpine);
             framesView.ResetAll();
         }
         if (slotView != null) slotView.SetFreeGamesFiller(false);
@@ -877,8 +879,8 @@ public class GameManager : MonoBehaviour
     //  2. every framed position empties — frame and symbol;
     //  3. TOTAL PRIZE (blank) and every end orb pop in together;
     //  4. one orb at a time — all Blue, then Purple, then Yellow; within a colour reel by reel, top to
-    //     bottom — opens and shows its prize, TOTAL PRIZE counting up meanwhile and the win box
-    //     stepping up by it;
+    //     bottom — plays its jewel Spine once, fades away, and its prize appears; TOTAL PRIZE counts up
+    //     by it and the win box steps up as the number appears (owner, 2026-11-19);
     //  5. CONGRATULATIONS counts up to the bonus total; COLLECT;
     //  6. the transition — behind it the base game comes back with the triggering board, the balance
     //     is released and the win box keeps the total until the next spin.
@@ -927,12 +929,24 @@ public class GameManager : MonoBehaviour
                 prizeSoFar += prize.cash;
                 freeSpinsRoundWin += prize.cash;
 
-                float reveal = framesView != null ? framesView.GetRevealDuration(prize.level) : 0f;
-                if (freeGameView != null) freeGameView.CountTotalPrizeTo(prizeSoFar, reveal);
-                uiManager.SetWinDisplay(freeSpinsRoundWin);
+                // The totals move when the orb's number appears — after its animation and fade.
+                double totalPrize = prizeSoFar;
+                double roundWin = freeSpinsRoundWin;
+                float countDuration = framesView != null ? framesView.PrizeHold : 0f;
+                void PrizeShown()
+                {
+                    if (freeGameView != null) freeGameView.CountTotalPrizeTo(totalPrize, countDuration);
+                    uiManager.SetWinDisplay(roundWin);
+                }
 
-                bool revealed = framesView == null;
-                if (framesView != null) framesView.RevealOrb(prize, () => revealed = true);
+                if (framesView == null)
+                {
+                    PrizeShown();
+                    continue;
+                }
+
+                bool revealed = false;
+                framesView.RevealOrb(prize, PrizeShown, () => revealed = true);
                 yield return new WaitUntil(() => revealed);
             }
         }
