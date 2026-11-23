@@ -316,6 +316,11 @@ public class SlotView : MonoBehaviour
 
     private bool isSpinning;
 
+    // Cells (flat indices) whose reel icon stays hidden through every win teardown until the next spin
+    // or RestoreBoard — a free game's Orange hits, whose BlueOrb has handed over to its amount
+    // (KeepCellsHidden; owner, 2026-11-23).
+    private readonly HashSet<int> keptHiddenCells = new HashSet<int>();
+
     // Config-driven, not Inspector-array-length-driven: reelTransforms/reelImagesList may still
     // have leftover unused slots from an older game's layout, so this must
     // reflect the real backend's reel count, not the serialized array size.
@@ -766,6 +771,9 @@ public class SlotView : MonoBehaviour
         // the previous win for PlayWinLineCycle to replay over the new board.
         lastWinLines = null;
 
+        // A new board: every icon spins and lands, the last game's Orange-hit cells included.
+        keptHiddenCells.Clear();
+
         KillAllTweens();
 
         DisableAllOverlays();
@@ -1126,7 +1134,9 @@ public class SlotView : MonoBehaviour
 
             for (int row = 0; row < rowCount && row < column.Count; row++)
             {
-                if (column[row] == symbolId) cells.Add(row * ReelCount + col);
+                int cell = row * ReelCount + col;
+                // An Orange hit's cell keeps its amount, not a looping orb (owner, 2026-11-23).
+                if (column[row] == symbolId && !keptHiddenCells.Contains(cell)) cells.Add(cell);
             }
         }
 
@@ -1156,11 +1166,27 @@ public class SlotView : MonoBehaviour
     }
 
     /// <summary>
+    /// A free game's Orange hits (ATFreeGamesBonus.md §5.3): the reel icon at each of these cells goes
+    /// and stays gone through every win teardown — the ways wins, a retrigger's orb loop (which skips
+    /// them) — until the next spin starts or RestoreBoard.
+    /// </summary>
+    internal void KeepCellsHidden(IEnumerable<int> cells)
+    {
+        if (cells == null) return;
+        foreach (int cell in cells)
+        {
+            keptHiddenCells.Add(cell);
+            SetDisplayIconActive(cell % ReelCount, cell / ReelCount, false);
+        }
+    }
+
+    /// <summary>
     /// Puts a board back on the reels — the triggering board, after the free games (§8) — with every
     /// reel icon showing again and any presentation taken down.
     /// </summary>
     internal void RestoreBoard(List<List<int>> matrix)
     {
+        keptHiddenCells.Clear();
         lastWinLines = null;
         KillWinTweens();
         SetInitialMatrix(matrix);
@@ -1776,6 +1802,12 @@ public class SlotView : MonoBehaviour
             {
                 if (reel.displayImages[row] != null) reel.displayImages[row].gameObject.SetActive(true);
             }
+        }
+
+        // Except the cells kept hidden for this game (KeepCellsHidden).
+        foreach (int cell in keptHiddenCells)
+        {
+            SetDisplayIconActive(cell % ReelCount, cell / ReelCount, false);
         }
     }
 

@@ -32,7 +32,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float winCountUpDuration = 1f;
 
     // The big-win popup: on again (owner, 2026-11-20) with AT's big_win Spine — one tier, at
-    // bigWinMultiplierThreshold, base game only. The feature's special cases come later.
+    // bigWinMultiplierThreshold. The free games show it too (owner, 2026-11-23): for every game with an
+    // Orange hit, else a ways win at the threshold (FreeGameBigWinAmount). Never on the trigger spin.
     private const bool BigWinPopupEnabled = true;
 
     [Header("Win Settings")]
@@ -274,6 +275,10 @@ public class GameManager : MonoBehaviour
         // and the reels all start together (ATFreeGamesBonus.md §5.1, §5.2).
         if (isInFreeSpins && freeGameView != null) freeGameView.ShowRemaining(freeGamesShownRemaining);
 
+        // The last game's Orange-hit amounts go as this one starts; the frames stay (owner, 2026-11-23).
+        // Their hidden BlueOrb cells come back with SlotView.StartSpin.
+        if (isInFreeSpins && framesView != null) framesView.HideHitAmounts();
+
         if (slotView != null)
         {
             slotView.StartSpin(together: isInFreeSpins);
@@ -377,8 +382,8 @@ public class GameManager : MonoBehaviour
             double totalPay = GetTotalPay();
             double multiplier = totalPay > 0 ? (lastResult.winAmount / totalPay) : 0;
 
-            // The big-win popup (BigWinPopupEnabled) never shows during free spins (owner): they show
-            // their wins and move on.
+            // The base game's big win. The free games never come through here — they show theirs from
+            // PlayFreeGame (FreeGameBigWinAmount).
             if (IsBigWin(multiplier))
             {
                 uiManager.DisableControlsDuringWinAnimation();
@@ -414,8 +419,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Whether a win of this many times the total bet gets the big-win popup: never while it is switched
-    // off, and never during free spins.
+    // Whether a base-game win of this many times the total bet gets the big-win popup: never while it
+    // is switched off. The free games have their own rule (FreeGameBigWinAmount).
     private bool IsBigWin(double multiplier)
     {
         return BigWinPopupEnabled && !isInFreeSpins && multiplier >= bigWinMultiplierThreshold;
@@ -719,7 +724,8 @@ public class GameManager : MonoBehaviour
 
     // The trigger (§3, §4):
     //  1. the game is taken over; the trigger spin's own win only reaches the balance — no win
-    //     presentation, the win box untouched (§3.2) — and from here the shown balance is held;
+    //     presentation, the win box untouched (§3.2), and never the big win, whatever it wins (owner,
+    //     2026-11-23) — and from here the shown balance is held;
     //  2. the BlueOrbs loop (no dim);
     //  3. "N FREE GAMES" pops in, holds, pops out;
     //  4. the transition — behind it the orbs stop, the free-games background and top panel come in,
@@ -786,12 +792,17 @@ public class GameManager : MonoBehaviour
     }
 
     // One free game, once its reels have landed (§5.3–§5.5):
-    //  1. its frame changes, all together, each with the effect (an Orange hit has no visual yet — V-9);
-    //  2. its ways wins — the overall win only — with the win box counting this game's win (ways +
-    //     Orange hit) up onto the running total; or a short hold when it won nothing;
-    //  3. a retrigger, when the round's total grew: the orbs loop and "N FREE GAMES" shows the games
+    //  1. its frame changes, all together, each with the effect (an Orange hit changes no frame);
+    //  2. its Orange hits, all together (V-9, owner 2026-11-23): each hit's BlueOrb plays once, fades
+    //     and leaves the hit's amount on the cell — the symbol stays hidden, the amount stays, until
+    //     the next spin starts;
+    //  3. at most one big win (FreeGameBigWinAmount): the Orange hits' cash, else a ways win at the
+    //     threshold;
+    //  4. its ways wins — the overall win only — with the win box counting this game's win (ways +
+    //     Orange hits) up onto the running total; or a short hold when it had no ways win;
+    //  5. a retrigger, when the round's total grew: the orbs loop and "N FREE GAMES" shows the games
     //     actually added (a retrigger at the cap adds none and plays as an ordinary game);
-    //  4. the next game — or, after the last, the end phase.
+    //  6. the next game — or, after the last, the end phase.
     private IEnumerator PlayFreeGame(SpinResult result)
     {
         currentState = GameState.ShowingWin;
@@ -808,22 +819,36 @@ public class GameManager : MonoBehaviour
             yield break;
         }
 
-        // 1. Frames.
+        // 1. Frames — new and upgraded; an Orange hit changes none.
         bool framesChanged = false;
+        var hitCells = new List<int>();
         foreach (FrameChange change in game.changes)
         {
-            if (!change.IsOrangeHit) { framesChanged = true; break; }
+            if (change.IsOrangeHit) hitCells.Add(change.cell);
+            else framesChanged = true;
         }
 
-        if (game.changes.Count > 0 && framesView != null)
+        if (framesChanged && framesView != null)
         {
             bool applied = false;
             framesView.ApplyChanges(game.changes, () => applied = true);
             yield return new WaitUntil(() => applied);
         }
 
-        // 2. Wins. The Orange hit joins this game's count-up for now (owner, 2026-11-15) — the place
-        // to change once its presentation is known (V-9).
+        // 2. Orange hits: the reel BlueOrb hands over to FramesView's Blue orb in the same frame.
+        if (hitCells.Count > 0 && framesView != null)
+        {
+            if (slotView != null) slotView.KeepCellsHidden(hitCells);
+            bool revealed = false;
+            framesView.RevealHits(game.changes, () => revealed = true);
+            yield return new WaitUntil(() => revealed);
+        }
+
+        // 3. The big win, before the ways wins.
+        double bigWin = FreeGameBigWinAmount(result, game);
+        if (bigWin > 0) yield return ShowFreeGameBigWin(bigWin);
+
+        // 4. Wins. The win box counts the whole game's win — ways + Orange hits — onto the round's.
         double gameWin = result.lineWinAmount + game.orangeHitCash;
         if (gameWin > 0)
         {
@@ -842,11 +867,14 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // Frames but no win: 0.5 s after the effect has ended. Nothing at all: 0.5 s.
-            yield return new WaitForSeconds(framesChanged ? frameOnlyHold : nothingHold);
+            // Frames but no win: 0.5 s after the effect has ended. Nothing at all: 0.5 s. An Orange
+            // hit's win (no ways win) holds at least until its count-up has finished.
+            float hold = framesChanged ? frameOnlyHold : nothingHold;
+            if (gameWin > 0) hold = Mathf.Max(hold, winCountUpDuration);
+            yield return new WaitForSeconds(hold);
         }
 
-        // 3. Retrigger.
+        // 5. Retrigger.
         int added = game.totalAwarded - freeGamesTotalAwarded;
         if (game.totalAwarded > 0) freeGamesTotalAwarded = game.totalAwarded;
 
@@ -862,7 +890,7 @@ public class GameManager : MonoBehaviour
 
         freeGamesShownRemaining = game.remaining;
 
-        // 4. On.
+        // 6. On.
         lastResult = null;
         uiManager.UpdateBalanceDisplay();
 
@@ -874,6 +902,29 @@ public class GameManager : MonoBehaviour
 
         currentState = GameState.Idle;
         RequestSpin();
+    }
+
+    // A free game's big win (owner, 2026-11-23) — one at most: the Orange hits' combined cash whenever
+    // there are any (every hit is 10x total bet, so always), else the ways win when it reaches
+    // bigWinMultiplierThreshold. A game with both shows the Orange hits' only. 0: no big win.
+    private double FreeGameBigWinAmount(SpinResult result, FreeGamesData game)
+    {
+        if (!BigWinPopupEnabled) return 0;
+        if (game.orangeHitCash > 0) return game.orangeHitCash;
+
+        double totalPay = GetTotalPay();
+        double ways = result.lineWinAmount;
+        return totalPay > 0 && ways > 0 && ways / totalPay >= bigWinMultiplierThreshold ? ways : 0;
+    }
+
+    // The big-win popup inside a free game, waited out: it closes on its own or on TAKE. Its close puts
+    // the button back to the free games' greyed Stop. No popup in the scene: nothing to wait for.
+    private IEnumerator ShowFreeGameBigWin(double amount)
+    {
+        bool closed = false;
+        uiManager.ShowUniversalWinPopup(WinPopupType.BigWin, amount, () => closed = true);
+        if (!uiManager.IsSpecialWinActive) closed = true;
+        yield return new WaitUntil(() => closed);
     }
 
     // The end (§5.6–§8):

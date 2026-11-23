@@ -10,7 +10,9 @@ using Spine.Unity;
 /// x 3 rows, each holding a frame, the effect played on top of it, the end orb and its prize number.
 ///
 /// A frame is a still image, never animated: it is switched on (Blue) or its sprite swapped (Purple,
-/// Orange) instantly, and the one effect clip plays once on top of it as it changes. At the end every
+/// Orange) instantly, and the one effect clip plays once on top of it as it changes. An Orange hit
+/// plays no effect: its BlueOrb plays once as the Blue orb, fades, and leaves its amount on the cell
+/// until the next spin (RevealHits). At the end every
 /// frame turns into an end orb that pops in, then — one at a time — plays its animation once, fades
 /// away, and its prize number appears in its place.
 ///
@@ -133,8 +135,8 @@ public class FramesView : MonoBehaviour
     /// colour (or switched on, for a new Blue), with the effect on top. onDone fires once every effect
     /// has played — straight away when there is nothing to show.
     ///
-    /// An Orange hit (Orange stays Orange, 10x total bet) has NO visual yet — known gap V-9, waiting on
-    /// the owner. This is where it goes: today its frame is left as it is.
+    /// An Orange hit (Orange stays Orange, 10x total bet) changes no frame, so it plays no effect here
+    /// (owner, 2026-11-23) — it goes through RevealHits instead.
     /// </summary>
     internal void ApplyChanges(List<FrameChange> changes, Action onDone)
     {
@@ -145,13 +147,75 @@ public class FramesView : MonoBehaviour
         {
             foreach (FrameChange change in changes)
             {
-                if (change == null || change.IsOrangeHit) continue;   // V-9: no visual yet
+                if (change == null || change.IsOrangeHit) continue;
                 cells.Add(change.cell);
                 cellLevels.Add(change.toLevel);
             }
         }
 
         PlayFrameChanges(cells, cellLevels, onDone);
+    }
+
+    /// <summary>
+    /// One free game's Orange hits (V-9, owner 2026-11-23), all together: the BlueOrb that made each hit
+    /// plays once, fades, and leaves the hit's amount on the cell — the end orbs' reveal (RevealOrb),
+    /// as the Blue orb, switched on in place with no pop: it is the BlueOrb symbol's art and Spine, so
+    /// it takes over from the reel symbol (which GameManager hides) without a visible change. onDone
+    /// fires once every reveal, hold included, has finished — straight away when there are none. The
+    /// amounts stay until HideHitAmounts.
+    /// </summary>
+    internal void RevealHits(List<FrameChange> changes, Action onDone)
+    {
+        int playing = 0;
+        bool allStarted = false;
+
+        void OneDone()
+        {
+            playing--;
+            if (allStarted && playing == 0) onDone?.Invoke();
+        }
+
+        if (changes != null)
+        {
+            foreach (FrameChange change in changes)
+            {
+                if (change == null || !change.IsOrangeHit) continue;
+                FrameCell cell = GetCell(change.cell);
+                if (cell == null || cell.orb == null) continue;
+
+                if (cell.prize != null) cell.prize.gameObject.SetActive(false);
+                HideOrb(cell);
+
+                Sprite resting = OrbSprite(1);
+                if (resting != null) cell.orb.sprite = resting;
+
+                Transform t = cell.orb.transform;
+                t.DOKill();
+                t.localScale = HomeScale(t);
+                cell.orb.gameObject.SetActive(true);
+
+                playing++;
+                RevealOrb(new EndPrize { cell = change.cell, level = 1, cash = change.orangeHitCash }, null, OneDone);
+            }
+        }
+
+        allStarted = true;
+        if (playing == 0) onDone?.Invoke();
+    }
+
+    /// <summary>
+    /// The Orange hits' amounts and orbs go, as the next spin starts (owner, 2026-11-23). The frames
+    /// stay. Free games never show any other number on the cells, so every prize text goes off.
+    /// </summary>
+    internal void HideHitAmounts()
+    {
+        foreach (FrameCell cell in AllCells())
+        {
+            HideOrb(cell);
+            if (cell.prize == null) continue;
+            cell.prize.transform.DOKill();
+            cell.prize.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>The end phase (§6.1): these positions' frames go, instantly.</summary>
