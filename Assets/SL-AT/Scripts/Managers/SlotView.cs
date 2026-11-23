@@ -35,33 +35,42 @@ public class SlotView : MonoBehaviour
 
     // Rect size for each symbol, keyed by symbol id. Any id not listed here uses normalSymbolSize.
     //
-    // Every symbol is listed, all at DefaultSymbolSize (255, owner, 2026-11-18) until each is sized
-    // against its own art. Sizing is per-symbol art, not a role: anything above the 245 pitch
-    // (symbolHeight) overlaps its vertical neighbours — 255 does, by 10 — which is intentional bleed
-    // but also means it swallows clicks aimed at the cells above and below.
+    // Every symbol is listed. Each static PNG frames its art differently, so each is sized by eye
+    // against its Spine animation (owner, 2026-11-20); the rest stay at DefaultSymbolSize (255,
+    // owner, 2026-11-18) until sized. Sizing is per-symbol art, not a role: anything above the 245
+    // pitch (symbolHeight) overlaps its vertical neighbours, which is intentional bleed but also means
+    // it swallows clicks aimed at the cells above and below.
     //
-    // Also the win-layer cells' size, and so the Spine animations' size: their Spine objects are
-    // stretched to the cell and scale with it (Layout Scale "Fit In Parent", set by SpineBuilder).
+    // Applies to the reel icons (spinning and landed) and the win layer's copies, so the frame-clip
+    // fallback matches too. NOT to Spine: the Spine art is drawn consistently, so every Spine
+    // animation uses the one SpineCellSize below, whatever its symbol's size here.
     //
     // Kept next to the sprite fields on purpose: both are id-keyed maps of the same symbol table, so
     // if the backend ever reorders it they have to be corrected together.
     private static readonly Vector2 DefaultSymbolSize = new Vector2(255f, 255f);
     private static readonly Dictionary<int, Vector2> SymbolSizeOverrides = new Dictionary<int, Vector2>
     {
-        { 0, DefaultSymbolSize},  // Fairy
-        { 1, DefaultSymbolSize},  // Unicorn
-        { 2, DefaultSymbolSize},  // Squirrel
-        { 3, DefaultSymbolSize},  // Mushrooms
-        { 4, DefaultSymbolSize},  // Lotus
-        { 5, DefaultSymbolSize},  // A
-        { 6, DefaultSymbolSize},  // K
-        { 7, DefaultSymbolSize},  // Q
-        { 8, DefaultSymbolSize},  // J
-        { 9, DefaultSymbolSize},  // "10"
-        {10, DefaultSymbolSize},  // "9"
-        {11, DefaultSymbolSize},  // Wild
-        {12, DefaultSymbolSize}   // BlueOrb
+        { 0, new Vector2(270f, 270f)},  // Fairy
+        { 1, DefaultSymbolSize},        // Unicorn
+        { 2, new Vector2(280f, 280f)},  // Squirrel
+        { 3, new Vector2(210f, 210f)},  // Mushrooms
+        { 4, new Vector2(225f, 225f)},  // Lotus
+        { 5, new Vector2(180f, 180f)},  // A
+        { 6, new Vector2(175f, 175f)},  // K
+        { 7, new Vector2(235f, 235f)},  // Q
+        { 8, new Vector2(180f, 180f)},  // J
+        { 9, DefaultSymbolSize},        // "10"
+        {10, new Vector2(200f, 200f)},  // "9"
+        {11, DefaultSymbolSize},        // Wild
+        {12, DefaultSymbolSize}         // BlueOrb
     };
+
+    // The box every Spine win animation is drawn in, centred on its cell — one size for all symbols,
+    // independent of SymbolSizeOverrides. SkeletonGraphic's Layout Scale ("Fit In Parent" against a
+    // 400 reference, set by SpineBuilder) draws the skeleton at SpineCellSize / 400 — 0.64 at 255.
+    // Change this to resize every Spine animation together. Public so SpineBuilder (another assembly)
+    // can size the objects the same way in the Editor.
+    public static readonly Vector2 SpineCellSize = new Vector2(255f, 255f);
 
     // Playback speed per symbol, applied wherever that symbol's clip is assigned.
     //
@@ -1535,6 +1544,15 @@ public class SlotView : MonoBehaviour
 
         slot.spine.SetSkeletonData(asset);
         if (slot.spine.GetAnimationDuration() <= 0f) return false;
+
+        // One fixed box, centred on the cell, so the symbol's own size (SymbolSizeOverrides, which the
+        // cell has just been given) doesn't rescale its Spine. Set here as well as by SpineBuilder so
+        // the code is what decides it at runtime.
+        var spineRect = (RectTransform)slot.spine.transform;
+        spineRect.anchorMin = new Vector2(0.5f, 0.5f);
+        spineRect.anchorMax = new Vector2(0.5f, 0.5f);
+        spineRect.anchoredPosition = Vector2.zero;
+        spineRect.sizeDelta = SpineCellSize;
 
         slot.spine.gameObject.SetActive(true);
         slot.image.enabled = false;

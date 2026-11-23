@@ -31,14 +31,16 @@ public class GameManager : MonoBehaviour
     [Tooltip("How long the win box takes to count a free game's win up onto the running total (§5.4).")]
     [SerializeField] private float winCountUpDuration = 1f;
 
-    // The big-win popup is switched off game-wide for now (owner, 2026-11-03). Set true to bring it
-    // back; its threshold is bigWinMultiplierThreshold below.
-    private const bool BigWinPopupEnabled = false;
+    // The big-win popup: on again (owner, 2026-11-20) with AT's big_win Spine — one tier, at
+    // bigWinMultiplierThreshold, base game only. The feature's special cases come later.
+    private const bool BigWinPopupEnabled = true;
 
     [Header("Win Settings")]
     // Win / total bet at or above which the big-win popup plays. Serialized, so the scene's value is
     // the one that runs — this default only matters for a fresh component. Kept equal to the scene.
-    [SerializeField] private double bigWinMultiplierThreshold = 10.0;
+    // TODO (owner, 2026-11-23): the SCENE value is lowered to 0.1 for now so big wins come up while
+    // testing — FIX LATER: set the scene back to the real threshold, 10x (this default already is).
+    [SerializeField] private double bigWinMultiplierThreshold = 10;
 
     internal GameConfig gameConfig;
     internal PlayerData playerData;
@@ -375,8 +377,8 @@ public class GameManager : MonoBehaviour
             double totalPay = GetTotalPay();
             double multiplier = totalPay > 0 ? (lastResult.winAmount / totalPay) : 0;
 
-            // The big-win popup is switched off for now (BigWinPopupEnabled), and never shows during
-            // free spins (owner): they show their wins and move on.
+            // The big-win popup (BigWinPopupEnabled) never shows during free spins (owner): they show
+            // their wins and move on.
             if (IsBigWin(multiplier))
             {
                 uiManager.DisableControlsDuringWinAnimation();

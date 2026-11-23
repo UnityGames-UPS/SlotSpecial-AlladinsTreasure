@@ -24,8 +24,6 @@ public class FeaturePopupView : MonoBehaviour
     [SerializeField] private TMPro.TMP_Text awardedCountText;
     [Tooltip("The \"FREE GAMES\" label — shown for every N, 1 included (owner, 2026-11-16). Optional.")]
     [SerializeField] private GameObject awardedLabelPlural;
-    [Tooltip("On: N is written as sprite digits. Off: plain text.")]
-    [SerializeField] private bool countUsesSpriteDigits;
     [Tooltip("Seconds the popup holds before it goes on its own (owner: 5 s to start with).")]
     [SerializeField] private float awardedHold = 5f;
     [SerializeField] private float popInDuration = 0.4f;
@@ -41,8 +39,6 @@ public class FeaturePopupView : MonoBehaviour
     [SerializeField] private GameObject congratulationsPopup;
     [Tooltip("X — counted up from 0 to the bonus total.")]
     [SerializeField] private TMPro.TMP_Text congratulationsAmountText;
-    [Tooltip("On: X is written as sprite digits. Off: plain text, \"12.50\".")]
-    [SerializeField] private bool amountUsesSpriteDigits;
     [SerializeField] private float congratulationsCountUpDuration = 2f;
     [Tooltip("COLLECT — greyed (not interactable) until the count-up ends. Its click is added in code.")]
     [SerializeField] private Button collectButton;
@@ -91,8 +87,8 @@ public class FeaturePopupView : MonoBehaviour
 
         if (awardedCountText != null)
         {
-            string n = Mathf.Max(0, games).ToString();
-            awardedCountText.text = countUsesSpriteDigits ? SpriteTextFormatter.ToSpriteDigits(n) : n;
+            // Sprite digits — AwardedCountText uses the AT-GoldText sprite asset.
+            awardedCountText.text = SpriteTextFormatter.ToSpriteDigits(Mathf.Max(0, games).ToString());
         }
         if (awardedLabelPlural != null) awardedLabelPlural.SetActive(true);
 
@@ -181,9 +177,8 @@ public class FeaturePopupView : MonoBehaviour
     private void WriteAmount(double amount)
     {
         if (congratulationsAmountText == null) return;
-        congratulationsAmountText.text = amountUsesSpriteDigits
-            ? SpriteTextFormatter.ToSpriteMoney(amount)
-            : amount.ToString(SpriteTextFormatter.MoneyFormat);
+        // Sprite digits — CongratulationsAmountText uses the AT-GoldText sprite asset.
+        congratulationsAmountText.text = SpriteTextFormatter.ToSpriteMoney(amount);
     }
 
     // The scale the popup was saved with, read once, so every pop lands back on it.

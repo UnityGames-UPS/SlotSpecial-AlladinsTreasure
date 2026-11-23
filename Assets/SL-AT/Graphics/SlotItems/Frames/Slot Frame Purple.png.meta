@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 86ebff5b3bf379d429d0222e4f903176
+guid: b83460757a1de454da85ad7e490835b4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4676307914867313644
-    second: Screenshot 2026-11-17 105159_0
+      213: 6899046177263622447
+    second: Slot Frame Purple_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Screenshot 2026-11-17 105159_0
+      name: Slot Frame Purple_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1534
-        height: 862
+        x: 17
+        y: 27
+        width: 366
+        height: 346
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4147cf14aba6a1fb0800000000000000
-      internalID: -4676307914867313644
+      spriteID: f2990dc02f55ebf50800000000000000
+      internalID: 6899046177263622447
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Screenshot 2026-11-17 105159_0: -4676307914867313644
+      Slot Frame Purple_0: 6899046177263622447
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

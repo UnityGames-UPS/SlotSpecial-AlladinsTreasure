@@ -45,6 +45,16 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject universalWinPopup;
     [SerializeField] private RectTransform universalWinPopupRect;
     [SerializeField] private TMP_Text bigWinAmount;
+    [Tooltip("The big win's Spine — a full-screen SkeletonGraphic + SpineAnimController under the popup, behind the amount, saved off. Plays appear → loop → out at the artist's speed. No dim (owner, 2026-11-23). Raycast Target off, or it blocks TAKE. Empty: the popup uses its old scale-in look.")]
+    [SerializeField] private SpineAnimController bigWinSpine;
+    [Tooltip("How many times the loop plays before out, when Take isn't pressed. appear 1.67 s + loops × 1.33 s + out 0.67 s: 3 = 6.3 s, 4 = 7.7 s.")]
+    [SerializeField] private int bigWinLoops = 3;
+    [Tooltip("When the amount pops in, in seconds into appear — the Spine's panel starts growing at 0.23 s. The count-up starts then.")]
+    [SerializeField] private float bigWinAmountShowAt = 0.23f;
+    [Tooltip("The amount's pop in, with the panel.")]
+    [SerializeField] private float bigWinAmountPopDuration = 0.6f;
+    [Tooltip("The amount counting up from 0.")]
+    [SerializeField] private float bigWinCountUpDuration = 3.8f;
 
     // One button, six modes. The mode is the single source of truth for the art, the click routing
     // and the autoplay count (see SpinButtonMode).
@@ -206,7 +216,19 @@ public class UIManager : MonoBehaviour
     // The amount the count-up is heading for. Taking early kills that tween mid-number, so the
     // close path needs the target to snap the label to before it collapses.
     private double uwpTargetWinAmount;
+    [Tooltip("Without the Spine: seconds before the popup closes on its own. With it, the close comes after appear + bigWinLoops loops instead.")]
     [SerializeField] private float uwpAutoCloseDelay = 5f;
+    // The Spine path's timers (the amount, appear → loop, the auto-close, out's end), killed together.
+    private Sequence bigWinSpineTimers;
+    // Set once a close has begun, so Take and the auto-close can't both run it.
+    private bool uwpClosing;
+
+    // The big win Spine's animations.
+    private const string BigWinAppear = "appear";
+    private const string BigWinLoop = "loop";
+    private const string BigWinOut = "out";
+    // How fast the amount shrinks as out starts — the Spine's panel goes in 0.067 s.
+    private const float BigWinAmountOutDuration = 0.07f;
 
     private void Awake()
     {
@@ -263,6 +285,7 @@ public class UIManager : MonoBehaviour
         if (guidePanel) guidePanel.SetActive(false);
         if (uwpWinTween != null) { uwpWinTween.Kill(); uwpWinTween = null; }
         if (universalWinPopup) universalWinPopup.SetActive(false);
+        if (bigWinSpine) bigWinSpine.gameObject.SetActive(false);
 
         UpdatePingDisplay("-- ms");
     }
@@ -1465,9 +1488,9 @@ public class UIManager : MonoBehaviour
     {
         if (universalWinPopup == null) return;
 
-        // No sound: its clips were the old games' (removed 2026-11-04). The popup is switched off for
-        // now anyway (GameManager.BigWinPopupEnabled).
+        // No sound: its clips were the old games' (removed 2026-11-04); AT's aren't in yet.
         isSpecialWinActive = true;
+        uwpClosing = false;
         universalWinPopupCallback = onTakePressed;
         uwpTargetWinAmount = winAmount;
 
@@ -1476,6 +1499,12 @@ public class UIManager : MonoBehaviour
             uwpWinTween.Kill();
             uwpWinTween = null;
         }
+        KillBigWinSpineTimers();
+        if (uwpAutoCloseCoroutine != null)
+        {
+            StopCoroutine(uwpAutoCloseCoroutine);
+            uwpAutoCloseCoroutine = null;
+        }
 
         if (bigWinAmount)
         {
@@ -1483,10 +1512,19 @@ public class UIManager : MonoBehaviour
             bigWinAmount.text = SpriteTextFormatter.ToSpriteDigits(FormatAmount(winAmount));
         }
 
-        // Take lets the player cut the popup short; otherwise it auto-closes after uwpAutoCloseDelay.
+        // Take lets the player cut the popup short; otherwise it closes on its own.
         SetSpinButtonMode(SpinButtonMode.BigWinTake, interactable: true);
 
         universalWinPopup.SetActive(true);
+
+        // The big win Spine (owner, 2026-11-20) when it's wired and has its appear animation.
+        if (BigWinClipLength(BigWinAppear) > 0f)
+        {
+            OpenBigWinSpine(winAmount);
+            return;
+        }
+
+        // Without it, the old look: the popup scales in and swells, and closes after uwpAutoCloseDelay.
         if (universalWinPopupRect)
         {
             // A previous popup's swell could still be running if this one opens soon after it.
@@ -1501,30 +1539,74 @@ public class UIManager : MonoBehaviour
             uwpOpenSequence.Append(universalWinPopupRect.DOScale(1.5f, 4f).SetEase(Ease.Linear));
         }
 
-        if (bigWinAmount != null && bigWinAmount.gameObject.activeSelf && winAmount > 0)
+        StartBigWinCountUp(winAmount);
+        uwpAutoCloseCoroutine = StartCoroutine(AutoCloseUniversalWinPopup());
+    }
+
+    // The Spine path's opening: appear plays once; the amount pops in with the Spine's panel and counts
+    // up; then loop plays bigWinLoops times and the popup closes on its own (out, in
+    // CloseUniversalWinPopup). Take closes it at any point — during appear too, skipping the rest of it.
+    // The popup itself isn't scaled: the Spine is full screen, its black screen included.
+    private void OpenBigWinSpine(double winAmount)
+    {
+        KillUniversalWinOpenSequence();
+        if (universalWinPopupRect)
         {
-            bigWinAmount.text = SpriteTextFormatter.ToSpriteMoney(0);
-
-            float countUpDuration = 3.8f;
-
-            uwpWinTween = DOVirtual.Float(0f, (float)winAmount, countUpDuration, (val) =>
-            {
-                if (bigWinAmount != null)
-                {
-                    bigWinAmount.text = SpriteTextFormatter.ToSpriteMoney(val);
-                }
-            }).OnComplete(() =>
-            {
-                if (bigWinAmount != null)
-                {
-                    bigWinAmount.text = SpriteTextFormatter.ToSpriteMoney(winAmount);
-                }
-                uwpWinTween = null;
-            });
+            universalWinPopupRect.DOKill();
+            universalWinPopupRect.localScale = Vector3.one;
         }
 
-        if (uwpAutoCloseCoroutine != null) StopCoroutine(uwpAutoCloseCoroutine);
-        uwpAutoCloseCoroutine = StartCoroutine(AutoCloseUniversalWinPopup());
+        Transform amount = bigWinAmount != null ? bigWinAmount.transform : null;
+        Vector3 amountHome = BigWinAmountHome();
+        if (amount != null)
+        {
+            amount.DOKill();
+            amount.localScale = Vector3.zero;
+        }
+
+        bigWinSpine.gameObject.SetActive(true);
+        float appear = PlayBigWinClip(BigWinAppear, false);
+        float loop = BigWinClipLength(BigWinLoop);
+
+        bigWinSpineTimers = DOTween.Sequence();
+        bigWinSpineTimers.InsertCallback(Mathf.Clamp(bigWinAmountShowAt, 0f, appear), () =>
+        {
+            if (amount != null) amount.DOScale(amountHome, bigWinAmountPopDuration).SetEase(Ease.OutBack);
+            StartBigWinCountUp(winAmount);
+        });
+
+        if (loop > 0f && bigWinLoops > 0)
+        {
+            bigWinSpineTimers.InsertCallback(appear, () => PlayBigWinClip(BigWinLoop, true));
+            bigWinSpineTimers.InsertCallback(appear + loop * bigWinLoops, CloseUniversalWinPopup);
+        }
+        else
+        {
+            bigWinSpineTimers.InsertCallback(appear, CloseUniversalWinPopup);
+        }
+    }
+
+    // The amount counting up from 0 to the win, over bigWinCountUpDuration.
+    private void StartBigWinCountUp(double winAmount)
+    {
+        if (bigWinAmount == null || !bigWinAmount.gameObject.activeSelf || winAmount <= 0) return;
+
+        bigWinAmount.text = SpriteTextFormatter.ToSpriteMoney(0);
+
+        uwpWinTween = DOVirtual.Float(0f, (float)winAmount, Mathf.Max(0f, bigWinCountUpDuration), (val) =>
+        {
+            if (bigWinAmount != null)
+            {
+                bigWinAmount.text = SpriteTextFormatter.ToSpriteMoney(val);
+            }
+        }).OnComplete(() =>
+        {
+            if (bigWinAmount != null)
+            {
+                bigWinAmount.text = SpriteTextFormatter.ToSpriteMoney(winAmount);
+            }
+            uwpWinTween = null;
+        });
     }
 
     private void KillUniversalWinOpenSequence()
@@ -1533,6 +1615,15 @@ public class UIManager : MonoBehaviour
         {
             uwpOpenSequence.Kill();
             uwpOpenSequence = null;
+        }
+    }
+
+    private void KillBigWinSpineTimers()
+    {
+        if (bigWinSpineTimers != null)
+        {
+            bigWinSpineTimers.Kill();
+            bigWinSpineTimers = null;
         }
     }
 
@@ -1551,7 +1642,8 @@ public class UIManager : MonoBehaviour
 
     private void CloseUniversalWinPopup()
     {
-        if (universalWinPopup == null || !universalWinPopup.activeSelf) return;
+        if (universalWinPopup == null || !universalWinPopup.activeSelf || uwpClosing) return;
+        uwpClosing = true;
 
         if (uwpWinTween != null)
         {
@@ -1576,9 +1668,32 @@ public class UIManager : MonoBehaviour
         System.Action callback = universalWinPopupCallback;
         universalWinPopupCallback = null;
 
-        // Greyed immediately so the popup can't be taken twice while it collapses. The mode is
-        // released below, once the popup is actually gone.
+        // Greyed immediately so the popup can't be taken twice while it closes. The mode is
+        // released in FinishUniversalWinPopup, once the popup is actually gone.
         SetButtonInteractable(spinButton, spinButtonPortrait, false);
+
+        // The Spine path: out plays once — the amount shrinks with the panel — then the popup goes.
+        if (bigWinSpine != null && bigWinSpine.gameObject.activeSelf)
+        {
+            KillBigWinSpineTimers();
+
+            if (bigWinAmount != null)
+            {
+                bigWinAmount.transform.DOKill();
+                bigWinAmount.transform.DOScale(Vector3.zero, BigWinAmountOutDuration).SetEase(Ease.InQuad);
+            }
+
+            float outLength = PlayBigWinClip(BigWinOut, false);
+            if (outLength <= 0f)
+            {
+                FinishUniversalWinPopup(callback);
+                return;
+            }
+
+            bigWinSpineTimers = DOTween.Sequence();
+            bigWinSpineTimers.InsertCallback(outLength, () => FinishUniversalWinPopup(callback));
+            return;
+        }
 
         if (universalWinPopupRect)
         {
@@ -1592,30 +1707,90 @@ public class UIManager : MonoBehaviour
 
             // Straight collapse from wherever the swell left it — no anticipation bump.
             closeSeq.Append(universalWinPopupRect.DOScale(0f, 0.5f).SetEase(Ease.InQuad));
-
-            closeSeq.OnComplete(() =>
-            {
-                universalWinPopupRect.localScale = Vector3.one;
-                universalWinPopup.SetActive(false);
-
-                // Release the mode before re-enabling controls, or EnableControlsAfterWinAnimation's
-                // SetSpinStopButtonStates would see BigWinTake still held and only touch interactable.
-                spinButtonMode = SpinButtonMode.Spin;
-                isSpecialWinActive = false;
-                EnableControlsAfterWinAnimation();
-
-                callback?.Invoke();
-            });
+            closeSeq.OnComplete(() => FinishUniversalWinPopup(callback));
         }
         else
         {
-            universalWinPopup.SetActive(false);
-            spinButtonMode = SpinButtonMode.Spin;
-            isSpecialWinActive = false;
-            EnableControlsAfterWinAnimation();
-
-            callback?.Invoke();
+            FinishUniversalWinPopup(callback);
         }
+    }
+
+    // The popup gone and everything put back for next time; then the controls come back and the
+    // caller hears about it.
+    private void FinishUniversalWinPopup(System.Action callback)
+    {
+        bigWinSpineTimers = null;
+
+        if (bigWinSpine != null)
+        {
+            bigWinSpine.Stop();
+            bigWinSpine.gameObject.SetActive(false);
+        }
+
+        if (bigWinAmount != null)
+        {
+            bigWinAmount.transform.DOKill();
+            bigWinAmount.transform.localScale = BigWinAmountHome();
+        }
+
+        if (universalWinPopupRect) universalWinPopupRect.localScale = Vector3.one;
+        universalWinPopup.SetActive(false);
+        uwpClosing = false;
+
+        // Release the mode before re-enabling controls, or EnableControlsAfterWinAnimation's
+        // SetSpinStopButtonStates would see BigWinTake still held and only touch interactable.
+        spinButtonMode = SpinButtonMode.Spin;
+        isSpecialWinActive = false;
+        EnableControlsAfterWinAnimation();
+
+        callback?.Invoke();
+    }
+
+    // One of the big win's animations, through SpineAnimController (Stop before Play, as everywhere),
+    // then set back to the artist's speed: the controller starts every animation at 0.5, and the big
+    // win plays at 1 (owner, 2026-11-20) — the controller itself is untouched. Posed straight away, so
+    // the setup pose (panel at full size, black screen on) never shows for a frame. Returns the
+    // animation's length at that speed.
+    private float PlayBigWinClip(string clip, bool loop)
+    {
+        var graphic = bigWinSpine != null ? bigWinSpine.SkeletonGraphic : null;
+        if (graphic == null) return 0f;
+
+        bigWinSpine.SetSkeletonData(graphic.skeletonDataAsset, clip);
+        bigWinSpine.Stop();
+        bigWinSpine.Play(loop);
+
+        var track = graphic.AnimationState != null ? graphic.AnimationState.GetCurrent(0) : null;
+        if (track != null) track.TimeScale = 1f;
+        graphic.Update(0f);
+
+        return BigWinClipLength(clip);
+    }
+
+    // A big win animation's length at the artist's speed — 0 with no Spine wired or no such animation.
+    private float BigWinClipLength(string clip)
+    {
+        var graphic = bigWinSpine != null ? bigWinSpine.SkeletonGraphic : null;
+        if (graphic == null || graphic.skeletonDataAsset == null) return 0f;
+
+        var data = graphic.skeletonDataAsset.GetSkeletonData(true);
+        var animation = data != null ? data.FindAnimation(clip) : null;
+        return animation != null ? animation.Duration : 0f;
+    }
+
+    // The amount's scale as saved in the scene, read the first time — every pop lands back on it.
+    private Vector3 bigWinAmountHomeScale;
+    private bool bigWinAmountHomeRead;
+
+    private Vector3 BigWinAmountHome()
+    {
+        if (!bigWinAmountHomeRead && bigWinAmount != null)
+        {
+            Vector3 scale = bigWinAmount.transform.localScale;
+            bigWinAmountHomeScale = scale == Vector3.zero ? Vector3.one : scale;
+            bigWinAmountHomeRead = true;
+        }
+        return bigWinAmountHomeRead ? bigWinAmountHomeScale : Vector3.one;
     }
 
     #endregion

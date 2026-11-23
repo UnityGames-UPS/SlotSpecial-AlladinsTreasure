@@ -51,8 +51,6 @@ public class FreeGameView : MonoBehaviour
     [SerializeField] private RectTransform totalPrizePanel;
     [Tooltip("Its value — blank until the first orb's count-up.")]
     [SerializeField] private TMPro.TMP_Text totalPrizeValueText;
-    [Tooltip("On: the value is written as sprite digits. Off: plain text, \"12.50\".")]
-    [SerializeField] private bool prizeUsesSpriteDigits;
     [SerializeField] private float totalPrizePopDuration = 0.4f;
     [SerializeField] private float totalPrizePopOvershoot = 1.7f;
 
@@ -256,9 +254,8 @@ public class FreeGameView : MonoBehaviour
     private void WriteTotalPrize(double value)
     {
         if (totalPrizeValueText == null) return;
-        totalPrizeValueText.text = prizeUsesSpriteDigits
-            ? SpriteTextFormatter.ToSpriteMoney(value)
-            : value.ToString(SpriteTextFormatter.MoneyFormat);
+        // Sprite digits — TotalPrizeValueText uses the AT-GoldText sprite asset.
+        totalPrizeValueText.text = SpriteTextFormatter.ToSpriteMoney(value);
     }
 
     // Killed without completing, so an interrupted transition never calls back.
