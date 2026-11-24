@@ -39362,20 +39362,26 @@ MonoBehaviour:
   reserveSource: {fileID: 126421844}
   spinLoopSource: {fileID: 222087912}
   anticipationSource: {fileID: 815170892}
-  clipGameMainBg: {fileID: 8300000, guid: 2d06a051bcdd49f49b0acb67a8d249b3, type: 3}
+  clipGameMainBg: {fileID: 8300000, guid: 4b8f61469fd6fc84ba13bfac443a538e, type: 3}
   clipBetPlusMinus: {fileID: 8300000, guid: 619303bc65965c74ca58fe18f74d34b4, type: 3}
   clipMaxBetReached: {fileID: 8300000, guid: 6ea9c083bebf22049a1e9e4b117e8989, type: 3}
-  clipSpinStart: {fileID: 8300000, guid: 86a215adab75318498d6c5ebdac89aaf, type: 3}
+  clipSpinStart: {fileID: 8300000, guid: 8cf2489f4294c534d9421c3569564ea4, type: 3}
   clipPrimaryActionButton: {fileID: 8300000, guid: cdc28904abf8f482a86f75b5b1087cd1, type: 3}
   clipGeneralButtonClick: {fileID: 8300000, guid: f708894f01ee84c49a23d2d53243e98e, type: 3}
   clipPopupOpenClose: {fileID: 8300000, guid: c2ed94ff9b16b4493b05db8e783049c7, type: 3}
   clipAutoplayPanelOpen: {fileID: 8300000, guid: dd5389c5ed7638d4d804b2ebdb6ce3fc, type: 3}
-  clipWinPresentationStart: {fileID: 8300000, guid: cdeeed74a9498be4286c2cff51337d7f, type: 3}
+  clipWinPresentationStart: {fileID: 8300000, guid: 9683a8bc1163f4f4389b9904a06c5421, type: 3}
   clipTurboButton: {fileID: 8300000, guid: 046ee8eaf08caa643ab085519a188118, type: 3}
-  clipCongratulations: {fileID: 8300000, guid: cff9534ac9505f04fa6e12c8fa379042, type: 3}
-  clipAnticipation: {fileID: 8300000, guid: 6eeb6d512948d2543b4dafbed617341d, type: 3}
-  clipFreeSpinsMusic: {fileID: 8300000, guid: ffda65c407ef6f445b158ec73c30fda4, type: 3}
-  clipTotalWin: {fileID: 8300000, guid: e5201b78aab587d45bded3559e24b278, type: 3}
+  clipCongratulations: {fileID: 8300000, guid: de5bd2d2fe7b119438280b84a47644fb, type: 3}
+  clipAnticipation: {fileID: 8300000, guid: e9ae8a885ccb4344dbcd8af636888b00, type: 3}
+  clipFreeSpinsMusic: {fileID: 0}
+  clipTotalWin: {fileID: 8300000, guid: 9d4f90b8e3a85664295f0c2bebf5d61f, type: 3}
+  clipReelStop: {fileID: 8300000, guid: 99c2929d5bda9134ebc13761c48658af, type: 3}
+  clipOrbLand: {fileID: 8300000, guid: 2c9f8332a0786bb44a1779ad07f86795, type: 3}
+  clipFrameEffect: {fileID: 8300000, guid: e6b672aeac116ed4f92adf2e9c0216f9, type: 3}
+  clipTransition: {fileID: 8300000, guid: 1455cf0b821dff8478cd125db530c69a, type: 3}
+  clipOrbPrize: {fileID: 8300000, guid: 63e353bb793788345842745b335a00d3, type: 3}
+  clipBonusReady: {fileID: 8300000, guid: 16eb148aacbe4d54b91d9c0c0ff7c4c7, type: 3}
 --- !u!4 &1330086577
 Transform:
   m_ObjectHideFlags: 0

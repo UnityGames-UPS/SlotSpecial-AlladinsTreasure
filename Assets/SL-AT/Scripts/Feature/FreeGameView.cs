@@ -106,6 +106,9 @@ public class FreeGameView : MonoBehaviour
             onDone?.Invoke();
         }
 
+        // Its sound, going in and coming out alike (AT: magical transition, 2026-11-24).
+        AudioManager.Instance?.PlayTransition();
+
         bool hasClip = transition != null && transition.textureArray != null && transition.textureArray.Count > 0;
         if (!hasClip)
         {

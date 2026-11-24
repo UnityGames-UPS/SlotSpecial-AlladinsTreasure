@@ -298,6 +298,7 @@ public class FramesView : MonoBehaviour
             {
                 HideOrb(cell);
                 ShowPrize(cell, prize.cash);
+                AudioManager.Instance?.PlayOrbPrize();
                 onPrizeShown?.Invoke();
                 tweens.Add(DOVirtual.DelayedCall(PrizeHold, () => onDone?.Invoke()));
             });
@@ -338,6 +339,9 @@ public class FramesView : MonoBehaviour
             SetFrame(cell, levels[i]);
             if (PlayEffect(cell, OneFinished)) playing++;
         }
+
+        // The frame effect's sound, once for the whole batch (owner, 2026-11-24).
+        if (cells.Count > 0) AudioManager.Instance?.PlayFrameEffect();
 
         allStarted = true;
         if (playing == 0) onDone?.Invoke();

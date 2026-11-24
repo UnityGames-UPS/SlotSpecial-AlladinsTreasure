@@ -979,6 +979,20 @@ public class SlotView : MonoBehaviour
         return count;
     }
 
+    // Whether a landing reel's visible rows hold the BlueOrb — for its landing sound.
+    private bool ColumnHasOrb(List<int> column)
+    {
+        GameConfig config = gameManager != null ? gameManager.gameConfig : null;
+        if (column == null || config == null || config.freeSpinsSymbolId < 0) return false;
+
+        int rowEnd = Mathf.Min(RowCount, column.Count);
+        for (int row = 0; row < rowEnd; row++)
+        {
+            if (column[row] == config.freeSpinsSymbolId) return true;
+        }
+        return false;
+    }
+
     private float GetAnticipationHold()
     {
         bool isTurbo = gameManager != null && gameManager.currentSpinSpeed == SpinSpeed.Turbo;
@@ -1022,8 +1036,10 @@ public class SlotView : MonoBehaviour
             0
         );
 
-        // No reel-stop or scatter-landing sound: the old games' clips are gone and Wild Jokers has none
-        // yet (owner, 2026-11-04).
+        // The reel lands: its stop sound, and the BlueOrb's when it brought one (AT, 2026-11-24). Several
+        // reels landing together play each once (AudioManager).
+        AudioManager.Instance?.PlayReelStop();
+        if (ColumnHasOrb(targetSymbols)) AudioManager.Instance?.PlayOrbLand();
 
         // The reel is at rest. Only one anticipation effect is ever up: if this reel was being teased,
         // its effect goes (whether or not the orb turned up) before the next held reel's comes in, so
@@ -1037,7 +1053,7 @@ public class SlotView : MonoBehaviour
             {
                 SetAnticipationEffect(columnIndex + 1, true);
 
-                // Starts with the first held reel and runs across any that follow it.
+                // Restarted for every held reel, so each hold has its own rise (owner, 2026-11-24).
                 AudioManager.Instance?.PlayAnticipation();
             }
             else if (anticipatedReels.Count == 0)

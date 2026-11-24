@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -42,31 +43,51 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource anticipationSource;
 
     [Header("Audio Clips")]
+    [Tooltip("The base game's music, looped (AT: bg .mp3).")]
     [SerializeField] private AudioClip clipGameMainBg;
     [SerializeField] private AudioClip clipBetPlusMinus;
     [SerializeField] private AudioClip clipMaxBetReached;
-    [Tooltip("Spin button only. Stop / Take / AutoplayStop share clipPrimaryActionButton below.")]
+    [Tooltip("Loops while the reels spin, cut as the last one lands (AT: reel spining.mp3). Stop / Take / AutoplayStop share clipPrimaryActionButton below.")]
     [SerializeField] private AudioClip clipSpinStart;
     [SerializeField] private AudioClip clipPrimaryActionButton;
     [SerializeField] private AudioClip clipGeneralButtonClick;
     [SerializeField] private AudioClip clipPopupOpenClose;
     [SerializeField] private AudioClip clipAutoplayPanelOpen;
-    [Tooltip("The winning symbols coming up (normal win.mp3).")]
+    [Tooltip("The winning symbols coming up (AT: winning.mp3).")]
     [SerializeField] private AudioClip clipWinPresentationStart;
     [SerializeField] private AudioClip clipTurboButton;
 
-    [Header("Audio Clips - Wild Jokers")]
-    [Tooltip("CONGRATULATIONS, for all three features (congrats bonus game.mp3).")]
+    [Header("Audio Clips - Free Games")]
+    [Tooltip("The \"N FREE GAMES\" popup, on the trigger and on a retrigger, while the BlueOrbs loop (AT: 10 free games while moon sparkles.mp3). The name is a leftover.")]
     [SerializeField] private AudioClip clipCongratulations;
 
-    [Tooltip("Anticipation (bonus scatter fail.mp3): plays while reels are held, and is cut when the last held reel lands. Needs anticipationSource.")]
+    [Tooltip("Anticipation (AT: Riser 1.mp3): plays while reels are held, and is cut when the last held reel lands. Needs anticipationSource.")]
     [SerializeField] private AudioClip clipAnticipation;
 
-    [Tooltip("Music for a Free Spins round (free spin bg.mp3), in place of clipGameMainBg until TAKE.")]
+    [Tooltip("Music for the free games, in place of clipGameMainBg until the round ends. Empty: the main music plays on through the bonus.")]
     [SerializeField] private AudioClip clipFreeSpinsMusic;
 
-    [Tooltip("TOTAL WIN (total win .mp3): once, from the popup opening; cut when the popup goes (TAKE).")]
+    [Tooltip("The CONGRATULATIONS popup at the end of the bonus: once, as it opens and counts up; cut at COLLECT (AT: congrats.mp3). The name is a leftover.")]
     [SerializeField] private AudioClip clipTotalWin;
+
+    [Header("Audio Clips - Aladdin's Treasure")]
+    [Tooltip("Each reel landing (AT: reel stop.mp3). Several reels in the same frame (a quick stop) play it once.")]
+    [SerializeField] private AudioClip clipReelStop;
+
+    [Tooltip("A reel landing with a BlueOrb on it (AT: moon in slot .mp3), base game and free games.")]
+    [SerializeField] private AudioClip clipOrbLand;
+
+    [Tooltip("The frame effect: a frame appearing or changing colour — the trigger's Blue frames and each free game's changes, once per batch (AT: all moons in slot.mp3).")]
+    [SerializeField] private AudioClip clipFrameEffect;
+
+    [Tooltip("The free games' transition, going in and coming out (AT: magical transition.mp3).")]
+    [SerializeField] private AudioClip clipTransition;
+
+    [Tooltip("An orb's amount appearing — each end prize, and the free games' Orange hits (AT: money in moon.mp3). Several in the same frame play it once.")]
+    [SerializeField] private AudioClip clipOrbPrize;
+
+    [Tooltip("The free games ready to start: the Blue frames are in and START appears (AT: ready for bonus game.mp3).")]
+    [SerializeField] private AudioClip clipBonusReady;
 
     // A music switch dips rather than overlaps: there is one music source, so the old track fades out
     // over the first half and the new one starts and fades in over the second.
@@ -297,8 +318,28 @@ public class AudioManager : MonoBehaviour
     // 16. Turbo / spin-speed toggle
     internal void PlayTurboButton() => PlayUISound(clipTurboButton);
 
-    // 17. Wild Jokers cues.
+    // 17. Free games cues. PlayCongratulations is the "N FREE GAMES" popup's (the name is a leftover).
     internal void PlayCongratulations() => PlayUISound(clipCongratulations);
+
+    // 18. Aladdin's Treasure cues (2026-11-24).
+    internal void PlayReelStop()   => PlayOncePerFrame(clipReelStop);
+    internal void PlayOrbLand()    => PlayOncePerFrame(clipOrbLand);
+    internal void PlayFrameEffect() => PlayOncePerFrame(clipFrameEffect);
+    internal void PlayTransition() => PlayUISound(clipTransition);
+    internal void PlayOrbPrize()   => PlayOncePerFrame(clipOrbPrize);
+    internal void PlayBonusReady() => PlayUISound(clipBonusReady);
+
+    // The frame each clip was last started on. Several reels landing together (a quick stop), or
+    // several Orange hits revealed together, would otherwise stack identical one-shots into one loud hit.
+    private readonly Dictionary<AudioClip, int> lastPlayedFrame = new Dictionary<AudioClip, int>();
+
+    private void PlayOncePerFrame(AudioClip clip)
+    {
+        if (clip == null) return;
+        if (lastPlayedFrame.TryGetValue(clip, out int frame) && frame == Time.frameCount) return;
+        lastPlayedFrame[clip] = Time.frameCount;
+        PlayUISound(clip);
+    }
 
     // Free Spins' music for the round; PlayBgMusic brings the main track back at TAKE. Same dip as any
     // music switch.
@@ -323,10 +364,10 @@ public class AudioManager : MonoBehaviour
         if (uiSource != null && uiSource.clip == clip) StopSource(uiSource);
     }
 
-    // Scatter anticipation is a DURATION sound: it runs while reels are held and stops when the last
-    // held reel lands. Several reels can be held in one spin, so it is started once and left running
-    // across them — a second call while it plays does nothing rather than restarting it. Not looped:
-    // the clip outlasts any hold.
+    // Scatter anticipation is a DURATION sound: it runs while a reel is held and stops when the last
+    // held reel lands. Several reels can be held in one spin: each one restarts it from the beginning
+    // (owner, 2026-11-24). Not looped: the clip (Riser 1, 4.3 s) outlasts any one hold (~2.15 s, Turbo
+    // ~0.95 s).
     private bool anticipationSourceWarned;
     internal void PlayAnticipation()
     {
@@ -342,8 +383,7 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        if (anticipationSource.isPlaying) return;
-
+        anticipationSource.Stop();
         anticipationSource.clip   = clipAnticipation;
         anticipationSource.loop   = false;
         anticipationSource.volume = _sfxVolume;
