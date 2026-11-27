@@ -777,7 +777,6 @@ public class GameManager : MonoBehaviour
         if (framesView != null) framesView.ShowFrames(award.frameLevels, () => framesShown = true);
         yield return new WaitUntil(() => framesShown);
 
-        AudioManager.Instance?.PlayBonusReady();
         pendingFeatureStart = BeginFreeGames;
         uiManager.SetSpinButtonMode(UIManager.SpinButtonMode.FeatureStart);
     }

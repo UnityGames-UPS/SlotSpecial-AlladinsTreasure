@@ -1474,8 +1474,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -68.10003}
-  m_SizeDelta: {x: 1347.15, y: 865.5}
+  m_AnchoredPosition: {x: -0.0061989, y: -57.413}
+  m_SizeDelta: {x: 1330, y: 734.23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &68893561
 MonoBehaviour:
@@ -10173,7 +10173,7 @@ MonoBehaviour:
   m_fontSize: 46.4
   m_fontSizeBase: 46.4
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 46
   m_fontStyle: 0
@@ -12924,7 +12924,7 @@ MonoBehaviour:
   m_fontSize: 46.4
   m_fontSizeBase: 46.4
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 46
   m_fontStyle: 0
@@ -14193,7 +14193,7 @@ MonoBehaviour:
   m_fontSize: 46.4
   m_fontSizeBase: 46.4
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 46
   m_fontStyle: 0
@@ -17644,7 +17644,7 @@ MonoBehaviour:
   m_fontSize: 46.4
   m_fontSizeBase: 46.4
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 46
   m_fontStyle: 0
@@ -18267,7 +18267,7 @@ MonoBehaviour:
   m_fontSize: 46.4
   m_fontSizeBase: 46.4
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 46
   m_fontStyle: 0
@@ -25924,6 +25924,21 @@ MonoBehaviour:
     tier: 2
   - button: {fileID: 1950063455}
     tier: 3
+  paytableTexts:
+  - symbolId: 0
+    text: {fileID: 489106072}
+  - symbolId: 1
+    text: {fileID: 581001450}
+  - symbolId: 2
+    text: {fileID: 438667930}
+  - symbolId: 3
+    text: {fileID: 563476691}
+  - symbolId: 4
+    text: {fileID: 369335631}
+  - symbolId: 5
+    text: {fileID: 1300490607}
+  - symbolId: 7
+    text: {fileID: 1715434894}
   pingText: {fileID: 198469602}
   pingTextPortrait: {fileID: 460680268}
   grandJackpotText: {fileID: 198469601}
@@ -37080,7 +37095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f521a04de7f494272a617b2719edd271, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SocketIOManager
-  testToken: b416a643463c401fa14a8eb43ed3a303
+  testToken: 7be7d7b5fcf04af49ab339738d95e814
   gameManager: {fileID: 1206269883}
   uiManager: {fileID: 885496184}
   popupManager: {fileID: 1363796882}
@@ -38811,7 +38826,7 @@ MonoBehaviour:
   m_fontSize: 46.4
   m_fontSizeBase: 46.4
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 46
   m_fontStyle: 0
@@ -39374,7 +39389,7 @@ MonoBehaviour:
   clipTurboButton: {fileID: 8300000, guid: 046ee8eaf08caa643ab085519a188118, type: 3}
   clipCongratulations: {fileID: 8300000, guid: de5bd2d2fe7b119438280b84a47644fb, type: 3}
   clipAnticipation: {fileID: 8300000, guid: e9ae8a885ccb4344dbcd8af636888b00, type: 3}
-  clipFreeSpinsMusic: {fileID: 0}
+  clipFreeSpinsMusic: {fileID: 8300000, guid: 084f9d7878548e74eb44f5f4b12f9373, type: 3}
   clipTotalWin: {fileID: 8300000, guid: 9d4f90b8e3a85664295f0c2bebf5d61f, type: 3}
   clipReelStop: {fileID: 8300000, guid: 99c2929d5bda9134ebc13761c48658af, type: 3}
   clipOrbLand: {fileID: 8300000, guid: 2c9f8332a0786bb44a1779ad07f86795, type: 3}
@@ -50583,7 +50598,7 @@ MonoBehaviour:
   m_fontSize: 46.4
   m_fontSizeBase: 46.4
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 46
   m_fontStyle: 0

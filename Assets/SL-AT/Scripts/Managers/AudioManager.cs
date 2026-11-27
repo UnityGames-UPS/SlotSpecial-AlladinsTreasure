@@ -86,7 +86,7 @@ public class AudioManager : MonoBehaviour
     [Tooltip("An orb's amount appearing — each end prize, and the free games' Orange hits (AT: money in moon.mp3). Several in the same frame play it once.")]
     [SerializeField] private AudioClip clipOrbPrize;
 
-    [Tooltip("The free games ready to start: the Blue frames are in and START appears (AT: ready for bonus game.mp3).")]
+    [Tooltip("An orb playing its animation once before its amount shows — each end orb, and the free games' Orange hits (AT: ready for bonus game.mp3). Several in the same frame play it once. The name is a leftover.")]
     [SerializeField] private AudioClip clipBonusReady;
 
     // A music switch dips rather than overlaps: there is one music source, so the old track fades out
@@ -327,7 +327,7 @@ public class AudioManager : MonoBehaviour
     internal void PlayFrameEffect() => PlayOncePerFrame(clipFrameEffect);
     internal void PlayTransition() => PlayUISound(clipTransition);
     internal void PlayOrbPrize()   => PlayOncePerFrame(clipOrbPrize);
-    internal void PlayBonusReady() => PlayUISound(clipBonusReady);
+    internal void PlayOrbReveal()  => PlayOncePerFrame(clipBonusReady);
 
     // The frame each clip was last started on. Several reels landing together (a quick stop), or
     // several Orange hits revealed together, would otherwise stack identical one-shots into one loud hit.

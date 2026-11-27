@@ -159,10 +159,12 @@ public class ServerSymbolInfo
     // The fewest matching reels that pay: 3 for every symbol, including the Wild and the BlueOrb,
     // which have no paytable. Only cross-checked — the converter derives it from the paytable.
     public int minMatch;
-    // The paytable, ASCENDING from minMatch and ENDING at a full-reel match: with 5 reels, index
-    // 0 = 3-of-a-kind, 1 = 4, 2 = 5. In credits; the cash value of a credit is not confirmed yet.
-    // Empty on the Wild and the BlueOrb. The converter reverses it, because the client works
-    // descending from a full-reel match.
+    // The paytable as the init sends it now (seen 2026-11-27): match count → credits, e.g.
+    // {"3": 100, "4": 100, "5": 600}. Empty on the Wild and the BlueOrb.
+    public Dictionary<string, double> payouts;
+    // The older shape (captured 2026-11-11), used only when "payouts" is absent: ASCENDING from
+    // minMatch and ENDING at a full-reel match — with 5 reels, index 0 = 3-of-a-kind, 1 = 4, 2 = 5.
+    // The converter turns either into the client's list, descending from a full-reel match.
     public List<double> payout;
 }
 
@@ -750,7 +752,29 @@ public static class InitDataConverter
     // fewest that pay and nothing downstream shows a "pays 0" row.
     private static List<double> ConvertPaytable(ServerSymbolInfo serverSymbol, int reelCount)
     {
-        var multipliers = new List<double>(serverSymbol.payout ?? new List<double>());
+        List<double> multipliers;
+        if (serverSymbol.payouts != null)
+        {
+            // Keyed by match count: laid out ascending, 1-of-a-kind up to a full reel, with 0 for
+            // every count it doesn't list — the same shape as the old array once its zeros are cut.
+            multipliers = new List<double>(reelCount);
+            for (int count = 1; count <= reelCount; count++)
+            {
+                multipliers.Add(serverSymbol.payouts.TryGetValue(count.ToString(), out double credits) ? credits : 0);
+            }
+
+            foreach (string key in serverSymbol.payouts.Keys)
+            {
+                if (!int.TryParse(key, out int count) || count < 1 || count > reelCount)
+                {
+                    UnityEngine.Debug.LogError($"[InitDataConverter] Symbol id {serverSymbol.id} sends a payout for '{key}' — not a match count on {reelCount} reels; ignored.");
+                }
+            }
+        }
+        else
+        {
+            multipliers = new List<double>(serverSymbol.payout ?? new List<double>());
+        }
 
         if (multipliers.Count > reelCount)
         {

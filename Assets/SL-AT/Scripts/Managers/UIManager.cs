@@ -171,6 +171,19 @@ public class UIManager : MonoBehaviour
     [Tooltip("The four tier buttons, each paired with the tier it opens. A list rather than four fields so the tier sits explicitly beside its button.")]
     [SerializeField] private List<JackpotButton> jackpotButtons = new List<JackpotButton>();
 
+    // One paytable text on the info page and the symbol it lists. The id is stated here, like the
+    // jackpot tiers, so the text never depends on the order or names of the holders.
+    [System.Serializable]
+    public class PaytableText
+    {
+        public int symbolId;
+        public TMP_Text text;
+    }
+
+    [Header("Info Page Paytable")]
+    [Tooltip("The info page's paytable texts (InfoPage/…/Pays/IconHolder (n)/Text (TMP)), each with the id of the symbol it shows: Fairy 0, Unicorn 1, Squirrel 2, Mushrooms 3, Lotus 4, A/K 5, Q/J/10/9 7. Written from the init's paytable as payouts at the current bet, at the init and on every bet change. An entry whose symbol has no paytable keeps its scene text.")]
+    [SerializeField] private List<PaytableText> paytableTexts = new List<PaytableText>();
+
     [Header("Ping Display")]
     [SerializeField] private TMP_Text pingText;
     [SerializeField] private TMP_Text pingTextPortrait;
@@ -769,6 +782,45 @@ public class UIManager : MonoBehaviour
         if (betAmountTextPortrait) betAmountTextPortrait.text = "TOTAL PAY : " + FormatAmount(totalPay);
 
         UpdateBetButtonStates();
+
+        // The paytable shows payouts at this bet, so it follows every change (and the init, which
+        // comes through here too).
+        RefreshPaytableTexts();
+    }
+
+    // The info page's paytable (ported from Wild Jokers, owner 2026-11-27): for each symbol, one line
+    // per paying match count, the full-reel match first — the count, then what it pays for one way at
+    // the current bet: the server's multiplier × the bet per credit. The same figures and format as
+    // SymbolInfoCard's. One line break between lines, as the scene's texts had (the scene file shows a
+    // single break as a blank line).
+    private void RefreshPaytableTexts()
+    {
+        if (paytableTexts == null || gameManager == null || gameManager.gameConfig == null) return;
+
+        GameConfig config = gameManager.gameConfig;
+        double bet = gameManager.currentBetAmount;
+
+        foreach (PaytableText entry in paytableTexts)
+        {
+            if (entry == null || entry.text == null) continue;
+
+            SymbolInfo symbol = config.symbols != null ? config.symbols.Find(s => s.id == entry.symbolId) : null;
+            if (symbol == null || symbol.multipliers == null || symbol.multipliers.Count == 0)
+            {
+                Debug.LogWarning($"[UIManager] Paytable text '{entry.text.name}' names symbol {entry.symbolId}, which has no paytable in the init — its scene text is left as it is.");
+                continue;
+            }
+
+            var lines = new List<string>(symbol.multipliers.Count);
+            int matchCount = config.reelCount;
+            foreach (double multiplier in symbol.multipliers)
+            {
+                lines.Add($"{matchCount}   {(multiplier * bet).ToString("0.###")}");
+                matchCount--;
+            }
+
+            entry.text.text = string.Join("\n", lines);
+        }
     }
 
     private void UpdateBetButtonStates()

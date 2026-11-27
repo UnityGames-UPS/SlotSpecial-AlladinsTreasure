@@ -304,6 +304,9 @@ public class FramesView : MonoBehaviour
             });
         }
 
+        // The orb's animation sound — Spine or still image alike (owner, 2026-11-26).
+        AudioManager.Instance?.PlayOrbReveal();
+
         // 1. The jewel Spine, once — the controller has no end callback, so timed by its duration.
         if (TryPlayOrbSpine(cell, prize.level, out float spineDuration))
         {
